@@ -9,6 +9,7 @@ import {
   Karla_700Bold,
 } from '@expo-google-fonts/karla'
 import { ActivityIndicator } from 'react-native'
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -17,13 +18,17 @@ export default function App() {
   })
 
   return (
-    <NativeBaseProvider theme={THEME}>
-      <StatusBar
-        barStyle={'dark-content'}
-        backgroundColor={'transparent'}
-        translucent
-      />
-      {fontsLoaded ? <Routes /> : <ActivityIndicator />}
-    </NativeBaseProvider>
+    <SafeAreaProvider>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#EDECEE' }}>
+        <NativeBaseProvider theme={THEME}>
+          <StatusBar
+            barStyle={'dark-content'}
+            backgroundColor={'transparent'}
+            translucent={true}
+          />
+          {fontsLoaded ? <Routes /> : <ActivityIndicator />}
+        </NativeBaseProvider>
+      </SafeAreaView>
+    </SafeAreaProvider>
   )
 }
