@@ -1,14 +1,22 @@
-import { IInputProps, Input as NativeBaseInput } from 'native-base'
+import { IInputProps, Input as NativeBaseInput, Pressable } from 'native-base'
+import { Eye, EyeSlash } from 'phosphor-react-native'
+import { useState } from 'react'
 
 type Props = IInputProps & {
   variant?: 'shadow' | 'normal'
+  inputType?: 'normal' | 'password'
 }
 
-export function Input({ variant = 'normal', ...rest }: Props) {
+export function Input({
+  inputType = 'normal',
+  variant = 'normal',
+  ...rest
+}: Props) {
+  const [passordVisibility, setPassordVisibility] = useState(false)
+
   return (
     <NativeBaseInput
       w={'full'}
-      // h={12}
       mt={4}
       px={4}
       py={3}
@@ -21,6 +29,27 @@ export function Input({ variant = 'normal', ...rest }: Props) {
       color={'gray.200'}
       fontFamily={'body'}
       fontSize={'md'}
+      type={
+        inputType === 'password'
+          ? passordVisibility
+            ? 'text'
+            : 'password'
+          : 'text'
+      }
+      InputRightElement={
+        <Pressable
+          onPress={() => setPassordVisibility(!passordVisibility)}
+          mr={4}
+        >
+          {inputType === 'normal' ? (
+            <></>
+          ) : passordVisibility ? (
+            <Eye size={20} />
+          ) : (
+            <EyeSlash size={20} />
+          )}
+        </Pressable>
+      }
       {...rest}
     ></NativeBaseInput>
   )

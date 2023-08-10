@@ -16,7 +16,7 @@ export function SignUp() {
   }
 
   return (
-    <ScrollView>
+    <ScrollView showsVerticalScrollIndicator={false}>
       <VStack>
         <Center px={12} pt={12} pb={12}>
           <LogoSvg />
@@ -42,7 +42,7 @@ export function SignUp() {
             seus produtos
           </Text>
 
-          <Avatar mt={8} />
+          <Avatar mt={8} variant="edit" imageSize={22} />
 
           <Input placeholder="Nome" />
 
@@ -50,9 +50,9 @@ export function SignUp() {
 
           <Input placeholder="Telefone" />
 
-          <Input placeholder="Senha" />
+          <Input placeholder="Senha" inputType="password" />
 
-          <Input placeholder="Confirmar senha" />
+          <Input placeholder="Confirmar senha" inputType="password" />
 
           <Button title="Criar" variant={'gray-dark'} mt={6} />
 

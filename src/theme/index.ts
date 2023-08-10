@@ -5,6 +5,7 @@ export const THEME = extendTheme({
     blue: {
       700: '#647AC7',
       500: '#364D9D',
+      // 501: 'rgba(100, 122, 199, 1)',
     },
     gray: {
       700: '#F7F7F8',
@@ -25,17 +26,18 @@ export const THEME = extendTheme({
     body: 'Karla_400Regular',
   },
   fontSizes: {
-    xs: 12, // 12px
-    sm: 14, // 14px
-    md: 16, // 16px
-    lg: 20, // 20px
-    xl: 24, // 24px
+    xs: '12px', // 12px
+    sm: '14px', // 14px
+    md: '16px', // 16px
+    lg: '20px', // 20px
+    xl: '24px', // 24px
   },
   sizes: {
-    3.5: 14, // 14px
-    15: 56,
-    22: 88,
-    31: 124, // 124px
-    68: 279, // 279px
+    3.5: '14px', // 14px
+    15: '56px',
+    22: '88px',
+    30: '139px',
+    31: '124px', // 124px
+    68: '279px', // 279px
   },
 })

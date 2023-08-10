@@ -1,32 +1,60 @@
-import { Image, View } from 'native-base'
+import { IImageProps, Image, View } from 'native-base'
 import { PencilSimpleLine } from 'phosphor-react-native'
 import AvatarPng from '../../assets/avatarImg.png'
-import { IViewProps } from 'native-base/lib/typescript/components/basic/View/types'
 
-type AvatarProps = IViewProps
+type AvatarProps = IImageProps & {
+  variant?: 'normal' | 'edit'
+  imageSize: number
+  avatarImage?: string
+}
 
-export function Avatar({ ...rest }: AvatarProps) {
+export function Avatar({
+  avatarImage = AvatarPng,
+  imageSize,
+  variant = 'normal',
+  ...rest
+}: AvatarProps) {
   return (
     <View
-      borderRadius={96}
+      borderRadius={99}
       borderColor={'blue.700'}
       borderWidth={3}
       background={'gray.500'}
       position={'relative'}
-      {...rest}
     >
-      <Image source={AvatarPng} alt="avatar image" size={22} />
-      <View
-        background={'blue.700'}
-        borderRadius={96}
-        position={'absolute'}
-        top={12}
-        left={16}
-        p={3}
-        zIndex={12}
-      >
-        <PencilSimpleLine size={16} color="#EDECEE" />
-      </View>
+      {avatarImage ? (
+        <Image
+          source={{ uri: avatarImage }}
+          rounded={99}
+          alt="avatar image"
+          size={imageSize}
+          {...rest}
+        />
+      ) : (
+        <Image
+          source={AvatarPng}
+          rounded={99}
+          alt="avatar image"
+          size={imageSize}
+          {...rest}
+        />
+      )}
+
+      {variant === 'edit' ? (
+        <View
+          background={'blue.700'}
+          borderRadius={96}
+          position={'absolute'}
+          top={12}
+          left={16}
+          p={3}
+          zIndex={12}
+        >
+          <PencilSimpleLine size={16} color="#EDECEE" />
+        </View>
+      ) : (
+        <></>
+      )}
     </View>
   )
 }

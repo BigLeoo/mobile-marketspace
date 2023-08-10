@@ -3,9 +3,15 @@ import { Button as ButtonNativeBase, IButtonProps, Text } from 'native-base'
 type ButtonProps = IButtonProps & {
   title: string
   variant: 'blue-light' | 'gray-light' | 'gray-dark'
+  buttonSize?: 'full' | number
 }
 
-export function Button({ title, variant, ...rest }: ButtonProps) {
+export function Button({
+  buttonSize = 'full',
+  title,
+  variant,
+  ...rest
+}: ButtonProps) {
   return (
     <ButtonNativeBase
       {...rest}
@@ -17,7 +23,7 @@ export function Button({ title, variant, ...rest }: ButtonProps) {
           ? 'gray.500'
           : 'gray.100'
       }
-      w={'full'}
+      w={buttonSize}
       borderRadius={6}
       _pressed={
         variant === 'blue-light'
