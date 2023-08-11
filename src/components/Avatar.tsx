@@ -1,5 +1,8 @@
 import { IImageProps, Image, View } from 'native-base'
+// import { TouchableOpacity } from 'react-native'
+
 import { PencilSimpleLine } from 'phosphor-react-native'
+
 import AvatarPng from '../../assets/avatarImg.png'
 
 type AvatarProps = IImageProps & {
@@ -9,31 +12,35 @@ type AvatarProps = IImageProps & {
 }
 
 export function Avatar({
-  avatarImage = AvatarPng,
+  avatarImage,
   imageSize,
   variant = 'normal',
   ...rest
 }: AvatarProps) {
   return (
-    <View
-      borderRadius={99}
-      borderColor={'blue.700'}
-      borderWidth={3}
-      background={'gray.500'}
-      position={'relative'}
-    >
+    <View>
       {avatarImage ? (
         <Image
           source={{ uri: avatarImage }}
           rounded={99}
           alt="avatar image"
           size={imageSize}
+          borderRadius={99}
+          borderColor={'blue.700'}
+          borderWidth={2}
+          background={'gray.500'}
+          position={'relative'}
           {...rest}
         />
       ) : (
         <Image
           source={AvatarPng}
           rounded={99}
+          borderRadius={99}
+          borderColor={'blue.700'}
+          borderWidth={3}
+          background={'gray.500'}
+          position={'relative'}
           alt="avatar image"
           size={imageSize}
           {...rest}
