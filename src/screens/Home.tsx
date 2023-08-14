@@ -1,101 +1,115 @@
-import {
-  Center,
-  HStack,
-  Heading,
-  Pressable,
-  ScrollView,
-  Text,
-  VStack,
-} from 'native-base'
+import { Center, FlatList, HStack, Text, VStack, View } from 'native-base'
+import { TouchableOpacity } from 'react-native'
 
 import { HeaderHome } from '../components/HeaderHome'
-
-import {
-  ArrowRight,
-  MagnifyingGlass,
-  Sliders,
-  Tag,
-} from 'phosphor-react-native'
-
 import { Input } from '../components/Input'
 import { Ads } from '../components/Ads'
-import { Avatar } from '../components/Avatar'
+import { AdsInfo } from '../components/AdsInfo'
+
+import { MagnifyingGlass, Sliders } from 'phosphor-react-native'
+
+const ProdutosVenda = [
+  {
+    name: 'Tenis Nike',
+    state: 'used',
+    price: '60,00',
+  },
+  {
+    name: 'Teclado',
+    state: 'new',
+    price: '100,00',
+  },
+  {
+    name: 'Mouse',
+    state: 'used',
+    price: '70,00',
+  },
+  {
+    name: 'Monitor',
+    state: 'used',
+    price: '4000,00',
+  },
+  {
+    name: 'Monitor',
+    state: 'used',
+    price: '4000,00',
+  },
+  {
+    name: 'Monitor',
+    state: 'new',
+    price: '4000,00',
+  },
+  {
+    name: 'Monitor',
+    state: 'used',
+    price: '4000,00',
+  },
+  {
+    name: 'Monitor',
+    state: 'used',
+    price: '4000,00',
+  },
+  {
+    name: 'Monitor',
+    state: 'used',
+    price: '4000,00',
+  },
+]
 
 export function Home() {
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <Center>
-        <VStack w={80}>
-          <HeaderHome pt={8} />
+    <Center>
+      <VStack w={80}>
+        <HeaderHome pt={8} />
 
-          <Text fontFamily={'body'} fontSize={'sm'} color={'gray.300'} mt={8}>
-            Seus produtos anunciados para venda
-          </Text>
+        <Text fontFamily={'body'} fontSize={'sm'} color={'gray.300'} mt={8}>
+          Seus produtos anunciados para venda
+        </Text>
 
-          <HStack
-            mt={3}
-            backgroundColor={'rgba(100, 122, 199, 0.1)'}
-            alignItems={'center'}
-            justifyContent={'space-between'}
-            rounded={6}
-            py={3}
-            px={4}
-          >
+        <AdsInfo mt={3} />
+
+        <Text mt={8}>Compre produtos variados</Text>
+
+        <Input
+          w={'full'}
+          placeholder="Buscar anúncio"
+          InputRightElement={
             <HStack alignItems={'center'}>
-              <Tag size={22} color={'#364D9D'} />
+              <TouchableOpacity>
+                <View px={3}>
+                  <MagnifyingGlass size={20} color="#3E3A40" />
+                </View>
+              </TouchableOpacity>
 
-              <VStack ml={4}>
-                <Heading
-                  fontFamily={'heading'}
-                  fontSize={'lg'}
-                  color={'gray.200'}
-                >
-                  4
-                </Heading>
-
-                <Text fontFamily={'body'} fontSize={'xs'} color={'gray.200'}>
-                  anúncios ativos
-                </Text>
-              </VStack>
-            </HStack>
-
-            <HStack>
-              <Text
-                fontFamily={'heading'}
-                fontSize={'xs'}
-                color={'blue.500'}
-                mr={2}
-              >
-                Meus anúncios
+              <Text color={'gray.400'} fontSize={'lg'}>
+                |
               </Text>
 
-              <ArrowRight size={16} color="#364D9D" />
-            </HStack>
-          </HStack>
-
-          <Text mt={8}>Compre produtos variados</Text>
-
-          <Input
-            w={'full'}
-            placeholder="Buscar anúncio"
-            InputRightElement={
-              <HStack alignItems={'center'}>
-                <Pressable px={3}>
-                  <MagnifyingGlass size={20} color="#3E3A40" />
-                </Pressable>
-                <Text color={'gray.400'} fontSize={'lg'}>
-                  |
-                </Text>
-                <Pressable pl={3} pr={4}>
+              <TouchableOpacity>
+                <View pl={3} pr={4}>
                   <Sliders size={20} color="#3E3A40" />
-                </Pressable>
-              </HStack>
-            }
-          />
+                </View>
+              </TouchableOpacity>
+            </HStack>
+          }
+        />
+      </VStack>
 
-          <Ads mt={6} />
-        </VStack>
-      </Center>
-    </ScrollView>
+      <FlatList
+        ml={5}
+        data={ProdutosVenda}
+        keyExtractor={(item) => item.name}
+        numColumns={2}
+        mt={6}
+        maxH={85}
+        minH={85}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => (
+          <View mr={4} mb={6}>
+            <Ads name={item.name} price={item.price} state={item.state} />
+          </View>
+        )}
+      />
+    </Center>
   )
 }
