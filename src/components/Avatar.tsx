@@ -9,12 +9,14 @@ type AvatarProps = IImageProps & {
   variant?: 'normal' | 'edit'
   imageSize: number
   avatarImage?: string
+  borderImageColor?: 'blue' | 'white'
 }
 
 export function Avatar({
   avatarImage,
   imageSize,
   variant = 'normal',
+  borderImageColor = 'blue',
   ...rest
 }: AvatarProps) {
   return (
@@ -26,7 +28,7 @@ export function Avatar({
           alt="avatar image"
           size={imageSize}
           borderRadius={99}
-          borderColor={'blue.700'}
+          borderColor={borderImageColor === 'blue' ? 'blue.700' : 'gray.700'}
           borderWidth={2}
           background={'gray.500'}
           position={'relative'}

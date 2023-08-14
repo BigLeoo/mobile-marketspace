@@ -18,6 +18,7 @@ export const THEME = extendTheme({
     white: '#FFFFFF',
     red: {
       700: '#EE7979',
+      600: '#E07878',
     },
   },
   fonts: {
@@ -25,6 +26,7 @@ export const THEME = extendTheme({
     body: 'Karla_400Regular',
   },
   fontSizes: {
+    xxs: '10px',
     xs: '12px', // 12px
     sm: '14px', // 14px
     md: '16px', // 16px
@@ -40,5 +42,6 @@ export const THEME = extendTheme({
     31: '124px', // 124px
     37: '152px',
     68: '279px', // 279px
+    85: '365px',
   },
 })
