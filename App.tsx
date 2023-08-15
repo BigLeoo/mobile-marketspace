@@ -8,6 +8,7 @@ import {
   Karla_400Regular,
   Karla_700Bold,
 } from '@expo-google-fonts/karla'
+
 import { ActivityIndicator } from 'react-native'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 

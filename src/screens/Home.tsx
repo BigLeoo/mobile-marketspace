@@ -1,4 +1,15 @@
-import { Center, FlatList, HStack, Text, VStack, View } from 'native-base'
+import {
+  Actionsheet,
+  Center,
+  FlatList,
+  HStack,
+  Heading,
+  Text,
+  VStack,
+  View,
+  useDisclose,
+  useTheme,
+} from 'native-base'
 import { TouchableOpacity } from 'react-native'
 
 import { HeaderHome } from '../components/HeaderHome'
@@ -6,7 +17,7 @@ import { Input } from '../components/Input'
 import { Ads } from '../components/Ads'
 import { AdsInfo } from '../components/AdsInfo'
 
-import { MagnifyingGlass, Sliders } from 'phosphor-react-native'
+import { MagnifyingGlass, Sliders, X } from 'phosphor-react-native'
 
 const ProdutosVenda = [
   {
@@ -57,6 +68,10 @@ const ProdutosVenda = [
 ]
 
 export function Home() {
+  const { isOpen, onOpen, onClose } = useDisclose()
+
+  const { colors, fonts, sizes } = useTheme()
+
   return (
     <Center>
       <VStack w={80}>
@@ -85,7 +100,7 @@ export function Home() {
                 |
               </Text>
 
-              <TouchableOpacity>
+              <TouchableOpacity onPress={onOpen}>
                 <View pl={3} pr={4}>
                   <Sliders size={20} color="#3E3A40" />
                 </View>
@@ -93,6 +108,35 @@ export function Home() {
             </HStack>
           }
         />
+        <Actionsheet isOpen={isOpen} onClose={onClose}>
+          <Actionsheet.Content>
+            {/* <HStack alignItems={'center'} justifyContent={'space-between'}> */}
+            <Actionsheet.Item
+              _text={{
+                color: 'gray.100',
+                size: '20px',
+                fontFamily: 'heading',
+              }}
+              endIcon={<X size={24} color={colors.gray[400]} />}
+            >
+              Filtrar anúncio
+            </Actionsheet.Item>
+            {/* <Heading
+                fontFamily={'heading'}
+                fontSize={'lg'}
+                color={'gray.100'}
+              >
+                Filtrar anúncio
+              </Heading> */}
+
+            {/* <X size={24} color={colors.gray[400]} /> */}
+            {/* </HStack> */}
+
+            <Text fontFamily={'body'} color={'gray.200'} fontSize={'sm'}>
+              Condição
+            </Text>
+          </Actionsheet.Content>
+        </Actionsheet>
       </VStack>
 
       <FlatList
