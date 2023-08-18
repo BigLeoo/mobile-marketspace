@@ -8,16 +8,18 @@ import { House, Tag, SignOut as SignOutIcon } from 'phosphor-react-native'
 
 import { useTheme } from 'native-base'
 import { SignOut } from '../screens/SignOut'
+import { AdDetail } from '../screens/AdDetail'
 
-type AuthRoutes = {
+type AppRoutes = {
   home: undefined
   myAds: undefined
   logOut: undefined
+  adDetail: undefined
 }
 
-export type AuthNavigatorRoutesProps = NativeStackNavigationProp<AuthRoutes>
+export type AppNavigatorRoutesProps = NativeStackNavigationProp<AppRoutes>
 
-const { Navigator, Screen } = createBottomTabNavigator<AuthRoutes>()
+const { Navigator, Screen } = createBottomTabNavigator<AppRoutes>()
 
 export function AppRoutes() {
   const { sizes, colors } = useTheme()
@@ -61,6 +63,15 @@ export function AppRoutes() {
         component={SignOut}
         options={{
           tabBarIcon: () => <SignOutIcon size={24} color={colors.red[600]} />,
+        }}
+      />
+
+      <Screen
+        name="adDetail"
+        component={AdDetail}
+        options={{
+          tabBarButton: () => null,
+          tabBarStyle: { display: 'none' },
         }}
       />
     </Navigator>

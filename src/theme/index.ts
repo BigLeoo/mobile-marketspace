@@ -42,6 +42,7 @@ export const THEME = extendTheme({
     31: '124px', // 124px
     37: '152px',
     68: '279px', // 279px
+    76: '303px',
     85: '365px',
   },
 })

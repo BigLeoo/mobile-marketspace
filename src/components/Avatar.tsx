@@ -4,11 +4,12 @@ import { IImageProps, Image, View } from 'native-base'
 import { PencilSimpleLine } from 'phosphor-react-native'
 
 import AvatarPng from '../../assets/avatarImg.png'
+import { ImageSourcePropType } from 'react-native'
 
 type AvatarProps = IImageProps & {
   variant?: 'normal' | 'edit'
-  imageSize: number
-  avatarImage?: string
+  imageSize: number | string
+  avatarImage?: ImageSourcePropType | undefined | string
   borderImageColor?: 'blue' | 'white'
 }
 

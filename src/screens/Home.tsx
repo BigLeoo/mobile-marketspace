@@ -1,9 +1,12 @@
 import {
   Actionsheet,
+  Box,
   Center,
+  Checkbox,
   FlatList,
   HStack,
   Heading,
+  Switch,
   Text,
   VStack,
   View,
@@ -16,8 +19,12 @@ import { HeaderHome } from '../components/HeaderHome'
 import { Input } from '../components/Input'
 import { Ads } from '../components/Ads'
 import { AdsInfo } from '../components/AdsInfo'
+import { Button } from '../components/Button'
+import { TagComponent } from '../components/TagComponent'
 
 import { MagnifyingGlass, Sliders, X } from 'phosphor-react-native'
+import { useNavigation } from '@react-navigation/native'
+import { AppNavigatorRoutesProps } from '../routes/app.routes'
 
 const ProdutosVenda = [
   {
@@ -70,7 +77,13 @@ const ProdutosVenda = [
 export function Home() {
   const { isOpen, onOpen, onClose } = useDisclose()
 
-  const { colors, fonts, sizes } = useTheme()
+  const { colors } = useTheme()
+
+  const navigation = useNavigation<AppNavigatorRoutesProps>()
+
+  function handleAdDetail() {
+    navigation.navigate('adDetail')
+  }
 
   return (
     <Center>
@@ -108,33 +121,125 @@ export function Home() {
             </HStack>
           }
         />
+
         <Actionsheet isOpen={isOpen} onClose={onClose}>
           <Actionsheet.Content>
-            {/* <HStack alignItems={'center'} justifyContent={'space-between'}> */}
-            <Actionsheet.Item
-              _text={{
-                color: 'gray.100',
-                size: '20px',
-                fontFamily: 'heading',
-              }}
-              endIcon={<X size={24} color={colors.gray[400]} />}
-            >
-              Filtrar anúncio
-            </Actionsheet.Item>
-            {/* <Heading
+            <Box>
+              <HStack>
+                <Heading
+                  color={'gray.100'}
+                  fontFamily={'heading'}
+                  fontSize={'lg'}
+                  width={76}
+                >
+                  Filtrar anúncios
+                </Heading>
+
+                <TouchableOpacity onPress={onClose}>
+                  <X size={24} color={colors.gray[400]} />
+                </TouchableOpacity>
+              </HStack>
+
+              <Text
+                color={'gray.200'}
                 fontFamily={'heading'}
-                fontSize={'lg'}
-                color={'gray.100'}
+                fontSize={'sm'}
+                mt={6}
+                mb={3}
               >
-                Filtrar anúncio
-              </Heading> */}
+                Condição
+              </Text>
 
-            {/* <X size={24} color={colors.gray[400]} /> */}
-            {/* </HStack> */}
+              <HStack>
+                <TagComponent title="NOVO" selected />
+                <TagComponent title="USADO" marginLeft={2} selected={false} />
+              </HStack>
 
-            <Text fontFamily={'body'} color={'gray.200'} fontSize={'sm'}>
-              Condição
-            </Text>
+              <Text
+                color={'gray.200'}
+                fontFamily={'heading'}
+                fontSize={'sm'}
+                mt={6}
+              >
+                Aceita troca?
+              </Text>
+
+              <Switch
+                alignSelf={'flex-start'}
+                size={'lg'}
+                onTrackColor={'blue.700'}
+              />
+
+              <Text
+                color={'gray.200'}
+                fontFamily={'heading'}
+                fontSize={'sm'}
+                pb={3}
+              >
+                Meios de pagamento aceitos
+              </Text>
+
+              <VStack space={2}>
+                <Checkbox
+                  value="boleto"
+                  _checked={{
+                    backgroundColor: 'blue.700',
+                    borderColor: 'blue.700',
+                  }}
+                >
+                  Boleto
+                </Checkbox>
+                <Checkbox
+                  value="Pix"
+                  _checked={{
+                    backgroundColor: 'blue.700',
+                    borderColor: 'blue.700',
+                  }}
+                >
+                  Pix
+                </Checkbox>
+                <Checkbox
+                  value="Dinheiro"
+                  _checked={{
+                    backgroundColor: 'blue.700',
+                    borderColor: 'blue.700',
+                  }}
+                >
+                  Dinheiro
+                </Checkbox>
+                <Checkbox
+                  value="Cartão de Crédito"
+                  _checked={{
+                    backgroundColor: 'blue.700',
+                    borderColor: 'blue.700',
+                  }}
+                >
+                  Cartão de Crédito
+                </Checkbox>
+                <Checkbox
+                  value="Depósito Bancário"
+                  _checked={{
+                    backgroundColor: 'blue.700',
+                    borderColor: 'blue.700',
+                  }}
+                >
+                  Cartão de Débito
+                </Checkbox>
+              </VStack>
+
+              <HStack mt={16} mb={8} space={3}>
+                <Button
+                  title="Resetar filtros"
+                  variant={'gray-light'}
+                  buttonSize={40}
+                />
+                <Button
+                  title="Aplicar filtros"
+                  variant={'gray-dark'}
+                  buttonSize={40}
+                />
+              </HStack>
+            </Box>
           </Actionsheet.Content>
         </Actionsheet>
       </VStack>
@@ -150,7 +255,9 @@ export function Home() {
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
           <View mr={4} mb={6}>
-            <Ads name={item.name} price={item.price} state={item.state} />
+            <TouchableOpacity onPress={handleAdDetail}>
+              <Ads name={item.name} price={item.price} state={item.state} />
+            </TouchableOpacity>
           </View>
         )}
       />
