@@ -5,16 +5,24 @@ import { Button } from './Button'
 
 import { Plus } from 'phosphor-react-native'
 import { IHStackProps } from 'native-base/lib/typescript/components/primitives/Stack/HStack'
+import { useNavigation } from '@react-navigation/native'
+import { AppNavigatorRoutesProps } from '../routes/app.routes'
 
 type headerHomeProps = IHStackProps
 
 export function HeaderHome({ ...rest }: headerHomeProps) {
-  return (
-    <HStack justifyContent={'space-between'} width={80} {...rest}>
-      <HStack>
-        <Avatar imageSize={45} avatarImage={'https://github.com/BigLeoo.png'} />
+  const navigation = useNavigation<AppNavigatorRoutesProps>()
 
-        <VStack ml={2}>
+  function handleCreateAd() {
+    navigation.navigate('createAd')
+  }
+
+  return (
+    <HStack justifyContent={'space-between'} {...rest}>
+      <HStack>
+        <Avatar imageSize={46} avatarImage={'https://github.com/BigLeoo.png'} />
+
+        <VStack ml={3}>
           <Text fontFamily={'body'} fontSize={'md'} color={'gray.100'}>
             Boas vindas,
           </Text>
@@ -26,6 +34,7 @@ export function HeaderHome({ ...rest }: headerHomeProps) {
 
       <Button
         title="Criar anúncio"
+        onPress={handleCreateAd}
         variant={'gray-dark'}
         buttonSize={30}
         leftIcon={<Plus size={16} color="#EDECEE" />}

@@ -19,12 +19,18 @@ import {
   Barcode,
   CreditCard,
   Money,
+  Power,
   QrCode,
+  TrashSimple,
   WhatsappLogo,
 } from 'phosphor-react-native'
 import { Button } from '../components/Button'
 
-export function AdDetail() {
+type AdDetailProps = {
+  active: boolean
+}
+
+export function AdDetail({ active = true }: AdDetailProps) {
   const { colors } = useTheme()
 
   return (
@@ -105,33 +111,48 @@ export function AdDetail() {
           />
         </View>
       </VStack>
-      <HStack
-        bg={'gray.700'}
-        justifyContent={'space-between'}
-        mt={7}
-        px={6}
-        pt={5}
-        pb={7}
-        alignItems={'center'}
-      >
-        <HStack alignItems={'baseline'} space={1}>
-          <Text color={'blue.700'} fontFamily={'heading'} fontSize={'sm'}>
-            R$
-          </Text>
-          <Text color={'blue.700'} fontFamily={'heading'} fontSize={'lg'}>
-            120,00
-          </Text>
-        </HStack>
+      {active ? (
+        <HStack
+          bg={'gray.700'}
+          justifyContent={'space-between'}
+          mt={7}
+          px={6}
+          pt={5}
+          pb={7}
+          alignItems={'center'}
+        >
+          <HStack alignItems={'baseline'} space={1}>
+            <Text color={'blue.700'} fontFamily={'heading'} fontSize={'sm'}>
+              R$
+            </Text>
+            <Text color={'blue.700'} fontFamily={'heading'} fontSize={'lg'}>
+              120,00
+            </Text>
+          </HStack>
 
-        <Button
-          variant={'blue-light'}
-          title="Entrar em contato"
-          leftIcon={
-            <WhatsappLogo size={16} color={colors.white} weight="fill" />
-          }
-          buttonSize={'169px'}
-        />
-      </HStack>
+          <Button
+            variant={'blue-light'}
+            title="Entrar em contato"
+            leftIcon={
+              <WhatsappLogo size={16} color={colors.white} weight="fill" />
+            }
+            buttonSize={'169px'}
+          />
+        </HStack>
+      ) : (
+        <VStack px={6} mt={'32px'} pb={'30px'} space={'8px'}>
+          <Button
+            title="Reativar anúncio"
+            variant={'blue-light'}
+            leftIcon={<Power size={16} color={colors.gray[700]} />}
+          />
+          <Button
+            title="Excluir anúncio"
+            variant={'gray-light'}
+            leftIcon={<TrashSimple size={16} color={colors.gray[200]} />}
+          />
+        </VStack>
+      )}
     </ScrollView>
   )
 }

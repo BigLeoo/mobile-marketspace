@@ -9,12 +9,14 @@ import { House, Tag, SignOut as SignOutIcon } from 'phosphor-react-native'
 import { useTheme } from 'native-base'
 import { SignOut } from '../screens/SignOut'
 import { AdDetail } from '../screens/AdDetail'
+import { CreateAd } from '../screens/CreateAd'
 
 type AppRoutes = {
   home: undefined
   myAds: undefined
   logOut: undefined
   adDetail: undefined
+  createAd: undefined
 }
 
 export type AppNavigatorRoutesProps = NativeStackNavigationProp<AppRoutes>
@@ -69,6 +71,15 @@ export function AppRoutes() {
       <Screen
         name="adDetail"
         component={AdDetail}
+        options={{
+          tabBarButton: () => null,
+          tabBarStyle: { display: 'none' },
+        }}
+      />
+
+      <Screen
+        name="createAd"
+        component={CreateAd}
         options={{
           tabBarButton: () => null,
           tabBarStyle: { display: 'none' },

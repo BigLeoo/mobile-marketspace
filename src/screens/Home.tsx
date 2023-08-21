@@ -87,7 +87,7 @@ export function Home() {
 
   return (
     <Center>
-      <VStack w={80}>
+      <VStack px={6}>
         <HeaderHome pt={8} />
 
         <Text fontFamily={'body'} fontSize={'sm'} color={'gray.300'} mt={8}>
@@ -235,6 +235,7 @@ export function Home() {
                 />
                 <Button
                   title="Aplicar filtros"
+                  onPress={onClose}
                   variant={'gray-dark'}
                   buttonSize={40}
                 />

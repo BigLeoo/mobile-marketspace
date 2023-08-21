@@ -1,4 +1,4 @@
-import { HStack, Heading, Image, Text, VStack, View } from 'native-base'
+import { Box, HStack, Heading, Image, Text, VStack, View } from 'native-base'
 
 import tenisPng from '../../assets/shoes.png'
 
@@ -9,50 +9,92 @@ import { ProductState } from './ProductState'
 type AdsProps = IVStackProps & {
   name: string
   state: 'used' | 'new'
+  active: boolean
   price: number | string
 }
 
-export function Ads({ name, state, price, ...rest }: AdsProps) {
+export function Ads({ name, state, price, active = true, ...rest }: AdsProps) {
   return (
-    <VStack {...rest} width={37}>
+    <VStack {...rest} width={'162px'}>
       <View position={'relative'}>
         <Image
           source={tenisPng}
           alt="Anúncio do usuário"
-          width={37}
-          height={25}
+          width={'162px'}
+          height={'100px'}
           borderRadius={6}
         />
 
-        <Avatar
-          imageSize={8}
-          borderImageColor="white"
-          avatarImage={'https://github.com/BigLeoo.png'}
-          zIndex={12}
-          top={-95}
-          left={1}
-          position={'absolute'}
-        />
+        {active ? (
+          <Avatar
+            imageSize={8}
+            borderImageColor="white"
+            avatarImage={'https://github.com/BigLeoo.png'}
+            zIndex={12}
+            top={-95}
+            left={1}
+            position={'absolute'}
+          />
+        ) : (
+          <></>
+        )}
 
         <ProductState
           position={'absolute'}
-          left={99}
+          left={105}
           top={2}
           ProductState={state}
         />
+
+        {!active ? (
+          <View w={'full'} height={'100px'} position={'absolute'}>
+            <Box
+              w={'full'}
+              height={'100px'}
+              opacity={'0.5'}
+              background={'gray.100'}
+              position={'absolute'}
+            ></Box>
+            <Text
+              position={'absolute'}
+              color={'gray.700'}
+              fontFamily={'heading'}
+              fontSize={'11px'}
+              bottom={'8px'}
+              left={'8px'}
+              zIndex={1}
+            >
+              ANÚNCIO DESATIVADO
+            </Text>
+          </View>
+        ) : (
+          <></>
+        )}
       </View>
 
-      <VStack>
-        <Text color={'gray.200'} fontFamily={'body'} fontSize={'sm'}>
+      <VStack pl={'2px'}>
+        <Text
+          color={active ? 'gray.200' : 'gray.400'}
+          fontFamily={'body'}
+          fontSize={'sm'}
+        >
           {name}
         </Text>
 
         <HStack alignItems={'center'}>
-          <Heading color={'gray.200'} fontFamily={'heading'} fontSize={'xs'}>
+          <Heading
+            color={active ? 'gray.200' : 'gray.400'}
+            fontFamily={'heading'}
+            fontSize={'xs'}
+          >
             R${' '}
           </Heading>
 
-          <Heading fontFamily={'heading'} color={'gray.100'} fontSize={'md'}>
+          <Heading
+            fontFamily={'heading'}
+            color={active ? 'gray.100' : 'gray.400'}
+            fontSize={'md'}
+          >
             {price.toString()}
           </Heading>
         </HStack>
