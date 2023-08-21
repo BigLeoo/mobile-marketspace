@@ -9,7 +9,7 @@ type CreateAdImage = {
 // ['https://github.com/BigLeoo.png']
 
 export function CreateAdImage({
-  images = ['https://github.com/BigLeoo.png'],
+  images = ['https://github.com/BigLeoo.png', 'https://github.com/BigLeoo.png'],
 }: CreateAdImage) {
   const { colors } = useTheme()
 
@@ -36,11 +36,12 @@ export function CreateAdImage({
           <Plus size={24} color={colors.gray[400]} />
         </Box>
       ) : images.length < 3 ? (
-        <HStack alignItems={'center'} justifyContent={'center'} space={'8px'}>
+        <HStack alignItems={'center'} justifyContent={'center'}>
           <FlatList
             data={images}
+            horizontal
             renderItem={({ item }) => (
-              <Box w={'100px'} h={'100px'} borderRadius={'6px'}>
+              <Box w={'100px'} h={'100px'} borderRadius={'6px'} mr={'8px'}>
                 <Image
                   src={item}
                   alt="Product image"
@@ -71,7 +72,28 @@ export function CreateAdImage({
           </TouchableOpacity>
         </HStack>
       ) : (
-        <></>
+        <HStack alignItems={'center'} justifyContent={'center'} space={'8px'}>
+          <FlatList
+            data={images}
+            horizontal
+            renderItem={({ item }) => (
+              <Box w={'100px'} h={'100px'} borderRadius={'6px'} mr={'10px'}>
+                <Image
+                  src={item}
+                  alt="Product image"
+                  w={'full'}
+                  h={'full'}
+                  borderRadius={'6px'}
+                />
+                <Box position={'absolute'} left={'80px'} top={'3px'}>
+                  <TouchableOpacity>
+                    <XCircle size={16} weight="fill" color={colors.gray[200]} />
+                  </TouchableOpacity>
+                </Box>
+              </Box>
+            )}
+          />
+        </HStack>
       )}
     </Box>
   )
