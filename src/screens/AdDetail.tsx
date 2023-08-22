@@ -14,7 +14,10 @@ import { Header } from '../components/Header'
 import { Avatar } from '../components/Avatar'
 import { TagComponent } from '../components/TagComponent'
 import { PaymantChose } from '../components/PaymantChose'
+import { Button } from '../components/Button'
+
 import {
+  ArrowLeft,
   Bank,
   Barcode,
   CreditCard,
@@ -23,19 +26,22 @@ import {
   QrCode,
   TrashSimple,
   WhatsappLogo,
+  Tag,
 } from 'phosphor-react-native'
-import { Button } from '../components/Button'
+import { HeaderPreAd } from '../components/HeaderPreAd'
+import { BottomMenu } from '../components/BottomMenu'
 
 type AdDetailProps = {
   active: boolean
+  preAd: boolean
 }
 
-export function AdDetail({ active = true }: AdDetailProps) {
+export function AdDetail({ active = true, preAd = false }: AdDetailProps) {
   const { colors } = useTheme()
 
   return (
     <ScrollView bg={'gray.600'}>
-      <Header backButton />
+      {!preAd ? <Header backButton /> : <HeaderPreAd />}
 
       <Image
         source={ProductImage}
@@ -139,6 +145,18 @@ export function AdDetail({ active = true }: AdDetailProps) {
             buttonSize={'169px'}
           />
         </HStack>
+      ) : preAd ? (
+        <BottomMenu
+          mt={'10px'}
+          buttonTitle1="Voltar e editar"
+          varianButton1="gray-light"
+          leftIcon1={
+            <ArrowLeft size={16} weight="bold" color={colors.gray[200]} />
+          }
+          buttonTitle2="Publicar"
+          varianButton2="blue-light"
+          leftIcon2={<Tag size={16} weight="bold" color={colors.gray[600]} />}
+        />
       ) : (
         <VStack px={6} mt={'32px'} pb={'30px'} space={'8px'}>
           <Button
