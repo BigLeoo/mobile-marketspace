@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { Center, Heading, ScrollView, Text, VStack } from 'native-base'
 import { AuthNavigatorRoutesProps } from '../routes/auth.routes'
 import { useNavigation } from '@react-navigation/native'
@@ -8,11 +9,69 @@ import { Input } from '../components/Input'
 import { Button } from '../components/Button'
 import { Avatar } from '../components/Avatar'
 
+import { Controller, useForm } from 'react-hook-form'
+import * as yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
+
+type FormDataProps = {
+  name: string
+  email: string
+  phone: number
+  password: string
+  confirm_password: string
+}
+
 export function SignUp() {
   const navigation = useNavigation<AuthNavigatorRoutesProps>()
 
+  const signUpSchema = yup
+    .object({
+      name: yup.string().required('Informe o nome'),
+      email: yup.string().required('Informe o e-mail').email('E-mail inválido'),
+      phone: yup.number().required('Informe o número de telefone'),
+      password: yup
+        .string()
+        .min(6, 'A senha deve ter 6 caracteres no mínimo.')
+        .nullable()
+        .transform((value) => value || null)
+        .required('Informe a senha.'),
+      confirm_password: yup
+        .string()
+        .nullable()
+        .transform((value) => value || null)
+        .oneOf(
+          [yup.ref('password'), null],
+          'A confirmação da senha não confere.',
+        )
+        .when('password', {
+          is: (Field: any) => Field,
+          then: (schema) =>
+            schema
+              .nullable()
+              .required('Informe a confirmação da senha')
+              .transform((value) => value || null),
+        }),
+    })
+    .required()
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormDataProps>({ resolver: yupResolver(signUpSchema) })
+
   function handleSignIn() {
     navigation.navigate('signIn')
+  }
+
+  function handleSingUp({
+    name,
+    email,
+    phone,
+    password,
+    confirm_password,
+  }: FormDataProps) {
+    console.log({ name, email, phone, password, confirm_password })
   }
 
   return (
@@ -44,17 +103,79 @@ export function SignUp() {
 
           <Avatar mt={8} variant="edit" imageSize={22} />
 
-          <Input placeholder="Nome" />
+          <Controller
+            control={control}
+            name="name"
+            render={({ field: { onChange, value } }) => (
+              <Input
+                placeholder="Nome"
+                onChangeText={onChange}
+                value={value}
+                errorMessage={errors.name?.message}
+              />
+            )}
+          />
 
-          <Input placeholder="E-mail" />
+          <Controller
+            control={control}
+            name="email"
+            render={({ field: { onChange, value } }) => (
+              <Input
+                placeholder="E-mail"
+                onChangeText={onChange}
+                value={value}
+                errorMessage={errors.email?.message}
+              />
+            )}
+          />
 
-          <Input placeholder="Telefone" />
+          <Controller
+            control={control}
+            name="phone"
+            render={({ field: { onChange, value } }) => (
+              <Input
+                placeholder="Telefone"
+                onChangeText={onChange}
+                value={value}
+                errorMessage={errors.phone?.message}
+              />
+            )}
+          />
 
-          <Input placeholder="Senha" inputType="password" />
+          <Controller
+            control={control}
+            name="password"
+            render={({ field: { onChange, value } }) => (
+              <Input
+                placeholder="Senha"
+                inputType="password"
+                onChangeText={onChange}
+                value={value}
+                errorMessage={errors.password?.message}
+              />
+            )}
+          />
 
-          <Input placeholder="Confirmar senha" inputType="password" />
+          <Controller
+            control={control}
+            name="confirm_password"
+            render={({ field: { onChange, value } }) => (
+              <Input
+                placeholder="Confirmar senha"
+                inputType="password"
+                onChangeText={onChange}
+                value={value}
+                errorMessage={errors.confirm_password?.message}
+              />
+            )}
+          />
 
-          <Button title="Criar" variant={'gray-dark'} mt={6} />
+          <Button
+            title="Criar"
+            variant={'gray-dark'}
+            mt={6}
+            onPress={handleSubmit(handleSingUp)}
+          />
 
           <Text mt={12} fontFamily={'body'} fontSize={'sm'} color={'gray.200'}>
             Já tem uma conta?
@@ -64,7 +185,7 @@ export function SignUp() {
             title="Ir para o login"
             variant={'gray-light'}
             mt={4}
-            onPress={handleSignIn}
+            onPress={handleSubmit(handleSingUp)}
           />
         </Center>
       </VStack>
