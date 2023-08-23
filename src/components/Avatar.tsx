@@ -1,15 +1,16 @@
-import { IImageProps, Image, View } from 'native-base'
+import { FormControl, IImageProps, Image, View } from 'native-base'
 
 import { PencilSimpleLine } from 'phosphor-react-native'
 
 import AvatarPng from '../../assets/avatarImg.png'
-import { ImageSourcePropType, TouchableOpacity } from 'react-native'
+import { ImageSourcePropType } from 'react-native'
 
 type AvatarProps = IImageProps & {
   variant?: 'normal' | 'edit'
   imageSize: number | string
   avatarImage?: ImageSourcePropType | undefined | string
   borderImageColor?: 'blue' | 'white'
+  // errorMessage?: string | null
 }
 
 export function Avatar({
@@ -17,6 +18,7 @@ export function Avatar({
   imageSize,
   variant = 'normal',
   borderImageColor = 'blue',
+  // errorMessage = null,
   ...rest
 }: AvatarProps) {
   return (
@@ -50,23 +52,22 @@ export function Avatar({
       )}
 
       {variant === 'edit' ? (
-        <TouchableOpacity>
-          <View
-            background={'blue.700'}
-            borderRadius={96}
-            position={'absolute'}
-            // top={12}
-            bottom={1}
-            left={16}
-            p={3}
-            zIndex={12}
-          >
-            <PencilSimpleLine size={16} color="#EDECEE" />
-          </View>
-        </TouchableOpacity>
+        <View
+          background={'blue.700'}
+          borderRadius={96}
+          position={'absolute'}
+          // top={12}
+          bottom={1}
+          left={16}
+          p={3}
+          zIndex={12}
+        >
+          <PencilSimpleLine size={16} color="#EDECEE" />
+        </View>
       ) : (
         <></>
       )}
+      {/* <FormControl.ErrorMessage>{errorMessage}</FormControl.ErrorMessage> */}
     </View>
   )
 }

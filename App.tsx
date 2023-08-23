@@ -11,6 +11,7 @@ import {
 
 import { ActivityIndicator } from 'react-native'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
+import { AuthContextProvider } from './src/contexts/AuthContext'
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -22,12 +23,14 @@ export default function App() {
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1, backgroundColor: '#EDECEE' }}>
         <NativeBaseProvider theme={THEME}>
-          <StatusBar
-            barStyle={'dark-content'}
-            backgroundColor={'transparent'}
-            translucent={true}
-          />
-          {fontsLoaded ? <Routes /> : <ActivityIndicator />}
+          <AuthContextProvider>
+            <StatusBar
+              barStyle={'dark-content'}
+              backgroundColor={'transparent'}
+              translucent={true}
+            />
+            {fontsLoaded ? <Routes /> : <ActivityIndicator />}
+          </AuthContextProvider>
         </NativeBaseProvider>
       </SafeAreaView>
     </SafeAreaProvider>

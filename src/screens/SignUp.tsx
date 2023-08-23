@@ -1,7 +1,18 @@
 /* eslint-disable camelcase */
-import { Center, Heading, ScrollView, Text, VStack } from 'native-base'
+import {
+  Center,
+  Heading,
+  ScrollView,
+  Text,
+  VStack,
+  useToast,
+} from 'native-base'
+import { TouchableOpacity } from 'react-native'
+
 import { AuthNavigatorRoutesProps } from '../routes/auth.routes'
 import { useNavigation } from '@react-navigation/native'
+
+import * as ImagePicker from 'expo-image-picker'
 
 import LogoSvg from '../../assets/Logo.svg'
 
@@ -12,8 +23,13 @@ import { Avatar } from '../components/Avatar'
 import { Controller, useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { useState } from 'react'
+import { useAuth } from '../hooks/useAuth'
+import { api } from '../services/api'
+import { AppError } from '../utils/AppErros'
 
 type FormDataProps = {
+  avatar: string
   name: string
   email: string
   phone: number
@@ -22,13 +38,24 @@ type FormDataProps = {
 }
 
 export function SignUp() {
+  const [isLoading, setIsLoading] = useState(false)
+  const [userPhoto, setUserPhoto] = useState()
+
+  const toast = useToast()
+
+  const { user } = useAuth()
+
   const navigation = useNavigation<AuthNavigatorRoutesProps>()
 
   const signUpSchema = yup
     .object({
+      // avatar: yup.string().required('Selecione a foto'),
       name: yup.string().required('Informe o nome'),
       email: yup.string().required('Informe o e-mail').email('E-mail inválido'),
-      phone: yup.number().required('Informe o número de telefone'),
+      phone: yup
+        .number()
+        .required('Informe o número de telefone')
+        .min(7, 'Informe o número de telefone correto.'),
       password: yup
         .string()
         .min(6, 'A senha deve ter 6 caracteres no mínimo.')
@@ -60,18 +87,71 @@ export function SignUp() {
     formState: { errors },
   } = useForm<FormDataProps>({ resolver: yupResolver(signUpSchema) })
 
-  function handleSignIn() {
-    navigation.navigate('signIn')
+  function handleGoBack() {
+    navigation.goBack()
   }
 
-  function handleSingUp({
+  async function handleSingUp({
+    avatar = userPhoto.uri,
     name,
     email,
     phone,
     password,
     confirm_password,
   }: FormDataProps) {
-    console.log({ name, email, phone, password, confirm_password })
+    console.log({ avatar, name, email, phone, password, confirm_password })
+    try {
+      setIsLoading(true)
+
+      await api.post('/users', { avatar, email, phone, password })
+
+      toast.show({
+        title: 'Usuário criado com sucesso',
+        placement: 'top',
+        bgColor: 'green.500',
+      })
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const title = isAppError
+        ? error.message
+        : 'Não foi possível criar a conta, tente novamente mais tarde.'
+
+      toast.show({
+        title,
+        placement: 'top',
+        bgColor: 'red.500',
+      })
+      console.log(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  async function handleUserPhotoSelect() {
+    const photoSelected = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 1,
+      aspect: [4, 4],
+      allowsEditing: true,
+    })
+    if (!photoSelected.canceled) {
+      setUserPhoto(photoSelected.assets[0].uri)
+    }
+
+    const fileExtension = photoSelected.assets[0].uri.split('.').pop()
+
+    const photoFile = {
+      name: `${user.name}.${fileExtension}`.toLowerCase(),
+      uri: photoSelected.assets[0].uri,
+      type: `${photoSelected.assets[0].type}/${fileExtension}`,
+    } as any
+
+    const userPhotoUploadForm = new FormData()
+    userPhotoUploadForm.append('avatar', photoFile)
+
+    setUserPhoto(photoFile)
+
+    console.log(userPhoto)
   }
 
   return (
@@ -101,7 +181,24 @@ export function SignUp() {
             seus produtos
           </Text>
 
-          <Avatar mt={8} variant="edit" imageSize={22} />
+          {/* <Controller
+            control={control}
+            name="avatar"
+            render={() => (
+              <TouchableOpacity onPress={handleUserPhotoSelect}>
+                <Avatar
+                  mt={8}
+                  variant="edit"
+                  imageSize={22}
+                  errorMessage={errors.avatar?.message}
+                />
+              </TouchableOpacity>
+            )}
+          /> */}
+
+          <TouchableOpacity onPress={handleUserPhotoSelect}>
+            <Avatar mt={8} variant="edit" imageSize={22} />
+          </TouchableOpacity>
 
           <Controller
             control={control}
@@ -109,6 +206,7 @@ export function SignUp() {
             render={({ field: { onChange, value } }) => (
               <Input
                 placeholder="Nome"
+                textContentType="name"
                 onChangeText={onChange}
                 value={value}
                 errorMessage={errors.name?.message}
@@ -123,6 +221,7 @@ export function SignUp() {
               <Input
                 placeholder="E-mail"
                 onChangeText={onChange}
+                textContentType="emailAddress"
                 value={value}
                 errorMessage={errors.email?.message}
               />
@@ -136,6 +235,7 @@ export function SignUp() {
               <Input
                 placeholder="Telefone"
                 onChangeText={onChange}
+                keyboardType="numeric"
                 value={value}
                 errorMessage={errors.phone?.message}
               />
@@ -174,6 +274,7 @@ export function SignUp() {
             title="Criar"
             variant={'gray-dark'}
             mt={6}
+            isLoading={isLoading}
             onPress={handleSubmit(handleSingUp)}
           />
 
@@ -185,7 +286,7 @@ export function SignUp() {
             title="Ir para o login"
             variant={'gray-light'}
             mt={4}
-            onPress={handleSubmit(handleSingUp)}
+            onPress={handleGoBack}
           />
         </Center>
       </VStack>
