@@ -3,7 +3,6 @@ import { UserDTO } from '../dtos/userDTO'
 
 export type AuthContextDataProps = {
   user: UserDTO
-  // setUser:
 }
 
 type AuthContextProviderProps = {

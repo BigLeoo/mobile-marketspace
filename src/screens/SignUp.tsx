@@ -46,7 +46,6 @@ export function SignUp() {
 
   const signUpSchema = yup
     .object({
-      // avatar: yup.string().required('Selecione a foto'),
       name: yup.string().required('Informe o nome'),
       email: yup.string().required('Informe o e-mail').email('E-mail inválido'),
       tel: yup
@@ -118,8 +117,6 @@ export function SignUp() {
       userForm.append('tel', tel)
       userForm.append('password', password)
 
-      console.log(userForm)
-
       await api.post('/users', userForm, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -144,7 +141,6 @@ export function SignUp() {
         placement: 'top',
         bgColor: 'red.500',
       })
-      console.log(error)
     } finally {
       setIsLoading(false)
     }
