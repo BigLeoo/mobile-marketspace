@@ -1,16 +1,14 @@
-import { FormControl, IImageProps, Image, View } from 'native-base'
+import { IImageProps, Image, View } from 'native-base'
 
 import { PencilSimpleLine } from 'phosphor-react-native'
 
 import AvatarPng from '../../assets/avatarImg.png'
-import { ImageSourcePropType } from 'react-native'
 
 type AvatarProps = IImageProps & {
   variant?: 'normal' | 'edit'
   imageSize: number | string
-  avatarImage?: ImageSourcePropType | undefined | string
+  avatarImage?: string
   borderImageColor?: 'blue' | 'white'
-  // errorMessage?: string | null
 }
 
 export function Avatar({
@@ -18,7 +16,6 @@ export function Avatar({
   imageSize,
   variant = 'normal',
   borderImageColor = 'blue',
-  // errorMessage = null,
   ...rest
 }: AvatarProps) {
   return (
@@ -67,7 +64,6 @@ export function Avatar({
       ) : (
         <></>
       )}
-      {/* <FormControl.ErrorMessage>{errorMessage}</FormControl.ErrorMessage> */}
     </View>
   )
 }

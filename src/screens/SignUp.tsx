@@ -24,15 +24,14 @@ import { Controller, useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useState } from 'react'
-import { useAuth } from '../hooks/useAuth'
+
 import { api } from '../services/api'
 import { AppError } from '../utils/AppErros'
 
 type FormDataProps = {
-  avatar: string
   name: string
   email: string
-  phone: number
+  tel: string
   password: string
   confirm_password: string
 }
@@ -43,8 +42,6 @@ export function SignUp() {
 
   const toast = useToast()
 
-  const { user } = useAuth()
-
   const navigation = useNavigation<AuthNavigatorRoutesProps>()
 
   const signUpSchema = yup
@@ -52,8 +49,8 @@ export function SignUp() {
       // avatar: yup.string().required('Selecione a foto'),
       name: yup.string().required('Informe o nome'),
       email: yup.string().required('Informe o e-mail').email('E-mail inválido'),
-      phone: yup
-        .number()
+      tel: yup
+        .string()
         .required('Informe o número de telefone')
         .min(7, 'Informe o número de telefone correto.'),
       password: yup
@@ -91,19 +88,45 @@ export function SignUp() {
     navigation.goBack()
   }
 
-  async function handleSingUp({
-    avatar = userPhoto.uri,
-    name,
-    email,
-    phone,
-    password,
-    confirm_password,
-  }: FormDataProps) {
-    console.log({ avatar, name, email, phone, password, confirm_password })
+  async function handleSingUp({ name, email, tel, password }: FormDataProps) {
     try {
       setIsLoading(true)
 
-      await api.post('/users', { avatar, email, phone, password })
+      if (!userPhoto) {
+        toast.show({
+          title: 'Porfavor envie uma imagem.',
+          placement: 'top',
+          bgColor: 'red.500',
+        })
+
+        return
+      }
+
+      const fileExtension = userPhoto.assets[0].uri.split('.').pop()
+
+      const photoFile = {
+        name: `${name}.${fileExtension}`.toLowerCase(),
+        uri: userPhoto.assets[0].uri,
+        type: `${userPhoto.assets[0].type}/${fileExtension}`,
+      }
+
+      const userForm = new FormData()
+
+      userForm.append('avatar', photoFile)
+      userForm.append('name', name)
+      userForm.append('email', email)
+      userForm.append('tel', tel)
+      userForm.append('password', password)
+
+      console.log(userForm)
+
+      await api.post('/users', userForm, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+
+      handleGoBack()
 
       toast.show({
         title: 'Usuário criado com sucesso',
@@ -134,24 +157,12 @@ export function SignUp() {
       aspect: [4, 4],
       allowsEditing: true,
     })
-    if (!photoSelected.canceled) {
-      setUserPhoto(photoSelected.assets[0].uri)
+
+    if (photoSelected.canceled) {
+      return
     }
 
-    const fileExtension = photoSelected.assets[0].uri.split('.').pop()
-
-    const photoFile = {
-      name: `${user.name}.${fileExtension}`.toLowerCase(),
-      uri: photoSelected.assets[0].uri,
-      type: `${photoSelected.assets[0].type}/${fileExtension}`,
-    } as any
-
-    const userPhotoUploadForm = new FormData()
-    userPhotoUploadForm.append('avatar', photoFile)
-
-    setUserPhoto(photoFile)
-
-    console.log(userPhoto)
+    setUserPhoto(photoSelected)
   }
 
   return (
@@ -181,23 +192,13 @@ export function SignUp() {
             seus produtos
           </Text>
 
-          {/* <Controller
-            control={control}
-            name="avatar"
-            render={() => (
-              <TouchableOpacity onPress={handleUserPhotoSelect}>
-                <Avatar
-                  mt={8}
-                  variant="edit"
-                  imageSize={22}
-                  errorMessage={errors.avatar?.message}
-                />
-              </TouchableOpacity>
-            )}
-          /> */}
-
           <TouchableOpacity onPress={handleUserPhotoSelect}>
-            <Avatar mt={8} variant="edit" imageSize={22} />
+            <Avatar
+              mt={8}
+              variant="edit"
+              imageSize={22}
+              avatarImage={userPhoto?.assets[0].uri}
+            />
           </TouchableOpacity>
 
           <Controller
@@ -230,7 +231,7 @@ export function SignUp() {
 
           <Controller
             control={control}
-            name="phone"
+            name="tel"
             render={({ field: { onChange, value } }) => (
               <Input
                 placeholder="Telefone"
@@ -266,6 +267,7 @@ export function SignUp() {
                 onChangeText={onChange}
                 value={value}
                 errorMessage={errors.confirm_password?.message}
+                onSubmitEditing={handleSubmit(handleSingUp)}
               />
             )}
           />
