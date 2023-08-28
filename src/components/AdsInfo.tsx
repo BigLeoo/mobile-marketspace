@@ -2,9 +2,11 @@ import { HStack, Heading, Text, VStack } from 'native-base'
 import { IHStackProps } from 'native-base/lib/typescript/components/primitives/Stack/HStack'
 import { ArrowRight, Tag } from 'phosphor-react-native'
 
-type AdsInfoProps = IHStackProps
+type AdsInfoProps = IHStackProps & {
+  numberOfMyAds: string
+}
 
-export function AdsInfo({ ...rest }: AdsInfoProps) {
+export function AdsInfo({ numberOfMyAds, ...rest }: AdsInfoProps) {
   return (
     <HStack
       {...rest}
@@ -20,7 +22,7 @@ export function AdsInfo({ ...rest }: AdsInfoProps) {
 
         <VStack ml={4}>
           <Heading fontFamily={'heading'} fontSize={'lg'} color={'gray.200'}>
-            4
+            {numberOfMyAds}
           </Heading>
 
           <Text fontFamily={'body'} fontSize={'xs'} color={'gray.200'}>

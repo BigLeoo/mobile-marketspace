@@ -13,8 +13,8 @@ import { Controller, useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 
-import { api } from '../services/api'
 import { AppError } from '../utils/AppErros'
+import { useAuth } from '../hooks/useAuth'
 
 type FormDataProps = {
   email: string
@@ -23,6 +23,8 @@ type FormDataProps = {
 
 export function SignIn() {
   const [isLoading, setIsLoading] = useState(false)
+
+  const { signIn } = useAuth()
 
   const toast = useToast()
 
@@ -53,9 +55,7 @@ export function SignIn() {
     try {
       setIsLoading(true)
 
-      const response = await api.post('/sessions', { email, password })
-
-      console.log(response.headers)
+      await signIn(email, password)
     } catch (error) {
       const isAppError = error instanceof AppError
       const title = isAppError

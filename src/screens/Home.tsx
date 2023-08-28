@@ -23,8 +23,11 @@ import { Button } from '../components/Button'
 import { TagComponent } from '../components/TagComponent'
 
 import { MagnifyingGlass, Sliders, X } from 'phosphor-react-native'
-import { useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { AppNavigatorRoutesProps } from '../routes/app.routes'
+import { api } from '../services/api'
+import { useCallback } from 'react'
+import { useAuth } from '../hooks/useAuth'
 
 const ProdutosVenda = [
   {
@@ -79,11 +82,29 @@ export function Home() {
 
   const { colors } = useTheme()
 
+  const { user } = useAuth()
+
   const navigation = useNavigation<AppNavigatorRoutesProps>()
 
   function handleAdDetail() {
     navigation.navigate('adDetail')
   }
+
+  async function fetchMyAds() {
+    console.log(user)
+
+    // const data = await api.get('/products', {
+    //   headers: `Bearer ${user.token}`,
+    // })
+
+    // console.log(data)
+  }
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchMyAds()
+    }, []),
+  )
 
   return (
     <Center>
@@ -94,7 +115,7 @@ export function Home() {
           Seus produtos anunciados para venda
         </Text>
 
-        <AdsInfo mt={3} />
+        <AdsInfo mt={3} numberOfMyAds="1" />
 
         <Text mt={8}>Compre produtos variados</Text>
 
