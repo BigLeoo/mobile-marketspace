@@ -6,12 +6,14 @@ import {
   FlatList,
   HStack,
   Heading,
+  Spinner,
   Switch,
   Text,
   VStack,
   View,
   useDisclose,
   useTheme,
+  useToast,
 } from 'native-base'
 import { TouchableOpacity } from 'react-native'
 
@@ -26,63 +28,68 @@ import { MagnifyingGlass, Sliders, X } from 'phosphor-react-native'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { AppNavigatorRoutesProps } from '../routes/app.routes'
 import { api } from '../services/api'
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
+import { AppError } from '../utils/AppErros'
 
 const ProdutosVenda = [
-  {
-    name: 'Tenis Nike',
-    state: 'used',
-    price: '60,00',
-  },
-  {
-    name: 'Teclado',
-    state: 'new',
-    price: '100,00',
-  },
-  {
-    name: 'Mouse',
-    state: 'used',
-    price: '70,00',
-  },
-  {
-    name: 'Monitor',
-    state: 'used',
-    price: '4000,00',
-  },
-  {
-    name: 'Monitor',
-    state: 'used',
-    price: '4000,00',
-  },
-  {
-    name: 'Monitor',
-    state: 'new',
-    price: '4000,00',
-  },
-  {
-    name: 'Monitor',
-    state: 'used',
-    price: '4000,00',
-  },
-  {
-    name: 'Monitor',
-    state: 'used',
-    price: '4000,00',
-  },
-  {
-    name: 'Monitor',
-    state: 'used',
-    price: '4000,00',
-  },
+  // {
+  //   name: 'Tenis Nike',
+  //   state: 'used',
+  //   price: '60,00',
+  // },
+  // {
+  //   name: 'Teclado',
+  //   state: 'new',
+  //   price: '100,00',
+  // },
+  // {
+  //   name: 'Mouse',
+  //   state: 'used',
+  //   price: '70,00',
+  // },
+  // {
+  //   name: 'Monitor',
+  //   state: 'used',
+  //   price: '4000,00',
+  // },
+  // {
+  //   name: 'Monitor',
+  //   state: 'used',
+  //   price: '4000,00',
+  // },
+  // {
+  //   name: 'Monitor',
+  //   state: 'new',
+  //   price: '4000,00',
+  // },
+  // {
+  //   name: 'Monitor',
+  //   state: 'used',
+  //   price: '4000,00',
+  // },
+  // {
+  //   name: 'Monitor',
+  //   state: 'used',
+  //   price: '4000,00',
+  // },
+  // {
+  //   name: 'Monitor',
+  //   state: 'used',
+  //   price: '4000,00',
+  // },
 ]
 
 export function Home() {
+  const [isLoading, setIsLoading] = useState(false)
+
+  const toast = useToast()
+
   const { isOpen, onOpen, onClose } = useDisclose()
 
   const { colors } = useTheme()
 
-  const { user } = useAuth()
+  const { user, userToken } = useAuth()
 
   const navigation = useNavigation<AppNavigatorRoutesProps>()
 
@@ -91,13 +98,32 @@ export function Home() {
   }
 
   async function fetchMyAds() {
-    console.log(user)
+    try {
+      setIsLoading(true)
 
-    // const data = await api.get('/products', {
-    //   headers: `Bearer ${user.token}`,
-    // })
+      // console.log(user.avatar)
+      console.log(userToken)
 
-    // console.log(data)
+      const data = await api.get('/products', {
+        headers: { Authorization: `Bearer ${userToken}` },
+      })
+
+      console.log(data.data)
+    } catch (error) {
+      console.log(error.message)
+
+      // const isAppError = error instanceof AppError
+      // const title = isAppError
+      //   ? error.message
+      //   : 'Não foi possível carregar os produtos, tente novamente mais tarde.'
+      // toast.show({
+      //   title,
+      //   placement: 'top',
+      //   bgColor: 'red.500',
+      // })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   useFocusEffect(
@@ -109,7 +135,7 @@ export function Home() {
   return (
     <Center>
       <VStack px={6}>
-        <HeaderHome pt={8} />
+        <HeaderHome userName={user.name} userAvatar={user.avatar} pt={8} />
 
         <Text fontFamily={'body'} fontSize={'sm'} color={'gray.300'} mt={8}>
           Seus produtos anunciados para venda
@@ -265,24 +291,29 @@ export function Home() {
           </Actionsheet.Content>
         </Actionsheet>
       </VStack>
-
-      <FlatList
-        ml={5}
-        data={ProdutosVenda}
-        keyExtractor={(item) => item.name}
-        numColumns={2}
-        mt={6}
-        maxH={85}
-        minH={85}
-        showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => (
-          <View mr={4} mb={6}>
-            <TouchableOpacity onPress={handleAdDetail}>
-              <Ads name={item.name} price={item.price} state={item.state} />
-            </TouchableOpacity>
-          </View>
-        )}
-      />
+      {isLoading ? (
+        <Center mt={'180px'}>
+          <Spinner size={'lg'} color={colors.blue[700]} />
+        </Center>
+      ) : (
+        <FlatList
+          ml={5}
+          data={ProdutosVenda}
+          keyExtractor={(item) => item.name}
+          numColumns={2}
+          mt={6}
+          maxH={85}
+          minH={85}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <View mr={4} mb={6}>
+              <TouchableOpacity onPress={handleAdDetail}>
+                <Ads name={item.name} price={item.price} state={item.state} />
+              </TouchableOpacity>
+            </View>
+          )}
+        />
+      )}
     </Center>
   )
 }
