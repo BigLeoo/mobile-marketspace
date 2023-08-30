@@ -65,6 +65,7 @@ export function AppRoutes() {
         component={SignOut}
         options={{
           tabBarIcon: () => <SignOutIcon size={24} color={colors.red[600]} />,
+          tabBarStyle: { display: 'none' },
         }}
       />
 

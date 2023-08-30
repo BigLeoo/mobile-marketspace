@@ -4,12 +4,13 @@ import { ReactNode, useState, createContext, useEffect } from 'react'
 import { UserDTO } from '../dtos/userDTO'
 import { api } from '../services/api'
 import { storageUserGet, storageUserSave } from '../storage/storageUser'
-import { storageTokenRefreshTokenGet, storageTokenRefreshTokenSave } from '../storage/storageAuthToken'
+import { storageAuthTokenRemove, storageTokenRefreshTokenGet, storageTokenRefreshTokenSave } from '../storage/storageAuthToken'
 
 export type AuthContextDataProps = {
   user: UserDTO
   userToken: string
   signIn: (email: string, password: string) => void
+  signOut: () => void
 }
 
 type AuthContextProviderProps = {
@@ -28,15 +29,15 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     try {
       const {data} = await api.post('/sessions', { email, password })
 
-      // console.log(response.data)
+      // console.log('Refresh Token', data.refresh_token)
 
+      storageTokenRefreshTokenSave(
+       {token: data.token,
+        refreshToken: data.refresh_token}
+      )
       setUser(data.user)
       setUserToken(data.token)
       storageUserSave(data.user)
-      storageTokenRefreshTokenSave(
-        data.token,
-        data.refresh-token,
-      )
     } catch (error) {
       throw error
     }
@@ -56,16 +57,34 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     }
   }
 
+  async function signOut() {
+    try {
+      setUser({} as UserDTO)
+      await storageAuthTokenRemove()
+    } catch (error) {
+      throw error
+    }
+  }
+
   useEffect(() => {
     loadUserData()
   }, [])
+
+  useEffect(() => {
+    const subscribe = api.registerInterceptTokenManager(signOut)
+
+    return () => {
+      subscribe()
+    }
+  }, [signOut])
 
   return (
     <AuthContext.Provider
       value={{
         user,
         signIn,
-        userToken
+        userToken,
+        signOut
       }}
     >
       {children}

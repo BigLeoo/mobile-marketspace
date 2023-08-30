@@ -31,57 +31,11 @@ import { api } from '../services/api'
 import { useCallback, useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { AppError } from '../utils/AppErros'
-
-const ProdutosVenda = [
-  // {
-  //   name: 'Tenis Nike',
-  //   state: 'used',
-  //   price: '60,00',
-  // },
-  // {
-  //   name: 'Teclado',
-  //   state: 'new',
-  //   price: '100,00',
-  // },
-  // {
-  //   name: 'Mouse',
-  //   state: 'used',
-  //   price: '70,00',
-  // },
-  // {
-  //   name: 'Monitor',
-  //   state: 'used',
-  //   price: '4000,00',
-  // },
-  // {
-  //   name: 'Monitor',
-  //   state: 'used',
-  //   price: '4000,00',
-  // },
-  // {
-  //   name: 'Monitor',
-  //   state: 'new',
-  //   price: '4000,00',
-  // },
-  // {
-  //   name: 'Monitor',
-  //   state: 'used',
-  //   price: '4000,00',
-  // },
-  // {
-  //   name: 'Monitor',
-  //   state: 'used',
-  //   price: '4000,00',
-  // },
-  // {
-  //   name: 'Monitor',
-  //   state: 'used',
-  //   price: '4000,00',
-  // },
-]
+import { AddDTO } from '../dtos/addDTO'
 
 export function Home() {
   const [isLoading, setIsLoading] = useState(false)
+  const [activeUserAds, setActiveUserAds] = useState([])
 
   const toast = useToast()
 
@@ -101,7 +55,6 @@ export function Home() {
     try {
       setIsLoading(true)
 
-      // console.log(user.avatar)
       console.log(userToken)
 
       const data = await api.get('/products', {
@@ -112,15 +65,15 @@ export function Home() {
     } catch (error) {
       console.log(error.message)
 
-      // const isAppError = error instanceof AppError
-      // const title = isAppError
-      //   ? error.message
-      //   : 'Não foi possível carregar os produtos, tente novamente mais tarde.'
-      // toast.show({
-      //   title,
-      //   placement: 'top',
-      //   bgColor: 'red.500',
-      // })
+      const isAppError = error instanceof AppError
+      const title = isAppError
+        ? error.message
+        : 'Não foi possível carregar os produtos, tente novamente mais tarde.'
+      toast.show({
+        title,
+        placement: 'top',
+        bgColor: 'red.500',
+      })
     } finally {
       setIsLoading(false)
     }
@@ -141,7 +94,7 @@ export function Home() {
           Seus produtos anunciados para venda
         </Text>
 
-        <AdsInfo mt={3} numberOfMyAds="1" />
+        <AdsInfo mt={3} numberOfMyAds={activeUserAds.length} />
 
         <Text mt={8}>Compre produtos variados</Text>
 
@@ -298,7 +251,7 @@ export function Home() {
       ) : (
         <FlatList
           ml={5}
-          data={ProdutosVenda}
+          data={activeUserAds}
           keyExtractor={(item) => item.name}
           numColumns={2}
           mt={6}

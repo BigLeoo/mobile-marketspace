@@ -25,3 +25,7 @@ export async function storageTokenRefreshTokenGet() {
 
   return { token, refreshToken }
 }
+
+export async function storageAuthTokenRemove() {
+  await AsyncStorage.removeItem(USER_AUTHENTICATION)
+}
