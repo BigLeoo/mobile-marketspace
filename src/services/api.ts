@@ -1,3 +1,4 @@
+/* eslint-disable no-async-promise-executor */
 import axios, { AxiosError, AxiosInstance } from 'axios'
 
 import { AppError } from '../utils/AppErros'
@@ -5,6 +6,7 @@ import {
   storageTokenRefreshTokenGet,
   storageTokenRefreshTokenSave,
 } from '../storage/storageAuthToken'
+import { useAuth } from '../hooks/useAuth'
 
 type SignOut = () => void
 
@@ -21,17 +23,6 @@ const api = axios.create({
   baseURL: 'http://192.168.91.1:3333',
   timeout: 8000,
 }) as APIIntanceProps
-
-// api.interceptors.response.use(
-//   (response) => response,
-//   (error) => {
-//     if (error.response && error.response.data) {
-//       return Promise.reject(new AppError(error.response.data.message))
-//     } else {
-//       return Promise.reject(error)
-//     }
-//   },
-// )
 
 let failedQueue: PromiseType[] = []
 let isRefreshing = false
@@ -73,6 +64,8 @@ api.registerInterceptTokenManager = (signOut) => {
 
           return new Promise(async (resolve, reject) => {
             try {
+              const { updateToken } = useAuth()
+
               const { data } = await api.post('/sessions/refresh-token', {
                 refreshToken,
               })
@@ -81,6 +74,8 @@ api.registerInterceptTokenManager = (signOut) => {
                 token: data.token,
                 refreshToken: data.refresh_token,
               })
+
+              updateToken(data.token)
 
               if (originalRequestConfig.data) {
                 originalRequestConfig.data = JSON.parse(

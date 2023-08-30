@@ -55,16 +55,12 @@ export function Home() {
     try {
       setIsLoading(true)
 
-      console.log(userToken)
-
       const data = await api.get('/products', {
         headers: { Authorization: `Bearer ${userToken}` },
       })
 
       console.log(data.data)
     } catch (error) {
-      console.log(error.message)
-
       const isAppError = error instanceof AppError
       const title = isAppError
         ? error.message

@@ -9,8 +9,10 @@ import { storageAuthTokenRemove, storageTokenRefreshTokenGet, storageTokenRefres
 export type AuthContextDataProps = {
   user: UserDTO
   userToken: string
+  isLoadingUserStorageData: boolean
   signIn: (email: string, password: string) => void
   signOut: () => void
+  updateToken: (token: string) => void
 }
 
 type AuthContextProviderProps = {
@@ -25,26 +27,40 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const [user, setUser] = useState<UserDTO>({} as UserDTO)
   const [userToken, setUserToken] = useState<string>('')
 
+  const [isLoadingUserStorageData, setIsLoadingUserStorageData] = useState(true)
+
   async function signIn(email: string, password: string) {
     try {
       const {data} = await api.post('/sessions', { email, password })
 
       // console.log('Refresh Token', data.refresh_token)
 
-      storageTokenRefreshTokenSave(
-       {token: data.token,
-        refreshToken: data.refresh_token}
-      )
-      setUser(data.user)
-      setUserToken(data.token)
-      storageUserSave(data.user)
+      if(data.user && data.token && data.refresh_token) {
+
+        setIsLoadingUserStorageData(true)
+
+        await storageTokenRefreshTokenSave(
+         {token: data.token,
+          refreshToken: data.refresh_token}
+        )
+
+        await storageUserSave(data.user)
+        
+        setUser(data.user)
+        setUserToken(data.token)
+      }
+
     } catch (error) {
       throw error
+    } finally {
+      setIsLoadingUserStorageData(false)
     }
   }
 
   async function loadUserData() {
     try {
+      setIsLoadingUserStorageData(true)
+
       const userData = await storageUserGet()
 
       const tokenData = await storageTokenRefreshTokenGet()
@@ -54,6 +70,8 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
     } catch (error) {
       throw error
+    } finally {
+      setIsLoadingUserStorageData(false)
     }
   }
 
@@ -65,6 +83,11 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
       throw error
     }
   }
+
+  async function updateToken(token: string){
+    setUserToken(token)
+  }
+
 
   useEffect(() => {
     loadUserData()
@@ -84,7 +107,9 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         user,
         signIn,
         userToken,
-        signOut
+        signOut,
+        isLoadingUserStorageData,
+        updateToken
       }}
     >
       {children}

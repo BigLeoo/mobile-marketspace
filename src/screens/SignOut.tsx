@@ -1,13 +1,5 @@
-import {
-  Box,
-  Center,
-  HStack,
-  Heading,
-  Spinner,
-  VStack,
-  View,
-  useTheme,
-} from 'native-base'
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Box, Center, HStack, Spinner, useTheme } from 'native-base'
 import { useAuth } from '../hooks/useAuth'
 import { useFocusEffect } from '@react-navigation/native'
 import { useCallback } from 'react'
