@@ -21,6 +21,10 @@ import { Controller, useForm } from 'react-hook-form'
 
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { useNavigation } from '@react-navigation/native'
+import { api } from '../services/api'
+import { useAuth } from '../hooks/useAuth'
+import { useProducts } from '../hooks/useProducts'
 
 type paymant_methods = {
   paymants: 'boleto' | 'pix' | 'cash' | 'card' | 'deposit'
@@ -37,6 +41,11 @@ type FormDataProps = {
 
 export function CreateAd() {
   const [isLoading, setIsLoading] = useState(false)
+  const navigation = useNavigation()
+
+  const { postProducts } = useProducts()
+
+  const { userToken } = useAuth()
 
   const signUpSchema = yup
     .object({
@@ -44,8 +53,11 @@ export function CreateAd() {
       description: yup.string().required('Informe a descrição do produto'),
       is_new: yup.boolean().required('Informe o estado do produto'),
       price: yup.number().required('Informe preço do produto'),
-      accept_trade: yup.string().required('Informe se o anúncio aceita troca'),
-      paymant_methods: yup.array().required('Informe os métodos de pagamento'),
+      accept_trade: yup.boolean().required('Informe se o anúncio aceita troca'),
+      paymant_methods: yup
+        .array()
+        .min(1)
+        .required('Informe os métodos de pagamento'),
     })
     .required()
 
@@ -53,9 +65,10 @@ export function CreateAd() {
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<FormDataProps>({ resolver: yupResolver(signUpSchema) })
 
-  function handleSingUp({
+  async function handleCreateAdd({
     name,
     description,
     is_new,
@@ -71,6 +84,31 @@ export function CreateAd() {
       accept_trade,
       paymant_methods,
     })
+
+    // const paymantMethodsArray = [paymant_methods]
+    // console.log(paymantMethodsArray)
+
+    try {
+      setIsLoading(true)
+
+      await postProducts(
+        name,
+        description,
+        is_new,
+        price,
+        accept_trade,
+        paymant_methods,
+      )
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  function handleCancelForm() {
+    reset()
+    navigation.goBack()
   }
 
   return (
@@ -184,6 +222,7 @@ export function CreateAd() {
           render={({ field: { onChange, value } }) => (
             <Input
               onChangeText={onChange}
+              inputMode="numeric"
               value={value}
               leftElement={
                 <Text
@@ -302,9 +341,11 @@ export function CreateAd() {
       <BottomMenu
         buttonTitle1="Cancelar"
         varianButton1="gray-light"
+        buttonFunction1={handleCancelForm}
         buttonTitle2="Avançar"
         varianButton2="gray-dark"
-        buttonFunction2={handleSubmit(handleSingUp)}
+        buttonFunction2={handleSubmit(handleCreateAdd)}
+        isLoading2={isLoading}
         mt={'26.5px'}
       />
     </ScrollView>

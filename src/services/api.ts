@@ -24,6 +24,8 @@ const api = axios.create({
   timeout: 8000,
 }) as APIIntanceProps
 
+// api.defaults.headers['Content-type'] = 'application/json'
+
 let failedQueue: PromiseType[] = []
 let isRefreshing = false
 
