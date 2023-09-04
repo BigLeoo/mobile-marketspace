@@ -43,9 +43,7 @@ export function CreateAd() {
   const [isLoading, setIsLoading] = useState(false)
   const navigation = useNavigation()
 
-  const { postProducts } = useProducts()
-
-  const { userToken } = useAuth()
+  const { createProduct, createAdImage } = useProducts()
 
   const signUpSchema = yup
     .object({
@@ -76,28 +74,17 @@ export function CreateAd() {
     accept_trade,
     paymant_methods,
   }: FormDataProps) {
-    console.log({
-      name,
-      description,
-      is_new,
-      price,
-      accept_trade,
-      paymant_methods,
-    })
-
-    // const paymantMethodsArray = [paymant_methods]
-    // console.log(paymantMethodsArray)
-
     try {
       setIsLoading(true)
 
-      await postProducts(
+      await createProduct(
         name,
         description,
         is_new,
         price,
         accept_trade,
         paymant_methods,
+        createAdImage,
       )
     } catch (error) {
       console.log(error)

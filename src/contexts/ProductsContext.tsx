@@ -1,15 +1,17 @@
+/* eslint-disable prefer-const */
 /* eslint-disable no-useless-catch */
 /* eslint-disable camelcase */
 import { ReactNode, createContext, useState } from 'react'
 import { api } from '../services/api'
 import { useAuth } from '../hooks/useAuth'
+import { useToast } from 'native-base'
 
 type paymant_methods = {
   paymants: 'boleto' | 'pix' | 'cash' | 'card' | 'deposit'
 }
 
 export type ProductsContextDataProps = {
-  postProducts: (
+  createProduct: (
     name: string,
     description: string,
     is_new: boolean,
@@ -17,6 +19,10 @@ export type ProductsContextDataProps = {
     accept_trade: boolean,
     payment_methods: paymant_methods[],
   ) => void
+
+  setCreateAdImage: () => void
+
+  createAdImage: string[]
 }
 
 type ProductsContextProviderProps = {
@@ -30,33 +36,41 @@ export const ProductsContext = createContext<ProductsContextDataProps>(
 export function ProductsContextProvider({
   children,
 }: ProductsContextProviderProps) {
-  const [products, setProducts] = useState()
-
   const { userToken } = useAuth()
 
-  async function postProducts(
+  const [createAdImage, setCreateAdImage] = useState<string[]>([])
+
+  const toast = useToast()
+
+  async function createProduct(
     name: string,
     description: string,
     is_new: boolean,
     price: number,
     accept_trade: boolean,
-    payment_methods: paymant_methods[],
+    payment_methods: [paymant_methods],
+    createAdImage: string[],
   ) {
-    console.log(name, description, is_new, price, accept_trade, payment_methods)
-
     try {
-      console.log(userToken)
+      if (!createAdImage) {
+        toast.show({
+          title: 'Por favor, adicione pelo menos uma imagem do produto.',
+          placement: 'top',
+          bgColor: 'red.500',
+        })
+
+        return
+      }
 
       const { data } = await api.post(
         '/products',
         {
-          name: 'Luminária Pendente',
-          description:
-            'Essa é a melhor luminária do mundo. Você não vai se arrepender.',
-          is_new: true,
-          price: 45000,
-          accept_trade: true,
-          payment_methods: [['pix', 'card']],
+          name,
+          description,
+          is_new,
+          price,
+          accept_trade,
+          payment_methods,
         },
         {
           headers: {
@@ -64,17 +78,56 @@ export function ProductsContextProvider({
             'Content-Type': 'application/json',
           },
         },
-        // { headers: { token: userToken } },
       )
 
-      console.log(data)
+      await imageCreateProduct(data.id, createAdImage)
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async function imageCreateProduct(productId: string, adImages: string[]) {
+    try {
+      let createImagesForm: any = []
+
+      console.log(adImages)
+
+      await adImages.forEach((image) => {
+        const fileExtension = image.assets[0].uri.split('.').pop()
+
+        const photoFile = {
+          name: `${productId}-${Math.random}.${fileExtension}`.toLowerCase(),
+          uri: image.assets[0].uri,
+          type: `${image.assets[0].type}/${fileExtension}`,
+        }
+
+        console.log(photoFile)
+
+        createImagesForm.push(photoFile)
+      })
+
+      console.log(createImagesForm)
+
+      const productImageForm = new FormData()
+
+      productImageForm.append('product_id', productId)
+      productImageForm.append('images', createImagesForm)
+
+      await api.post('/products/images', productImageForm, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      })
     } catch (error) {
       throw error
     }
   }
 
   return (
-    <ProductsContext.Provider value={{ postProducts }}>
+    <ProductsContext.Provider
+      value={{ createProduct, setCreateAdImage, createAdImage }}
+    >
       {children}
     </ProductsContext.Provider>
   )
