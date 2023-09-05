@@ -7,7 +7,6 @@ import {
   ScrollView,
   Switch,
   Text,
-  TextArea,
   VStack,
 } from 'native-base'
 
@@ -22,9 +21,9 @@ import { Controller, useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useNavigation } from '@react-navigation/native'
-import { api } from '../services/api'
-import { useAuth } from '../hooks/useAuth'
+
 import { useProducts } from '../hooks/useProducts'
+import { TextArea } from '../components/TextArea'
 
 type paymant_methods = {
   paymants: 'boleto' | 'pix' | 'cash' | 'card' | 'deposit'
@@ -41,6 +40,7 @@ type FormDataProps = {
 
 export function CreateAd() {
   const [isLoading, setIsLoading] = useState(false)
+
   const navigation = useNavigation()
 
   const { createProduct, createAdImage } = useProducts()
@@ -64,7 +64,12 @@ export function CreateAd() {
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<FormDataProps>({ resolver: yupResolver(signUpSchema) })
+  } = useForm<FormDataProps>({
+    resolver: yupResolver(signUpSchema),
+    defaultValues: {
+      is_new: 'true',
+    },
+  })
 
   async function handleCreateAdd({
     name,
@@ -144,6 +149,7 @@ export function CreateAd() {
               inputMode="text"
               onChangeText={onChange}
               value={value}
+              errorMessage={errors.name?.message}
             />
           )}
         />
@@ -154,20 +160,19 @@ export function CreateAd() {
           render={({ field: { onChange, value } }) => (
             <TextArea
               mt={'16px'}
-              w={'full'}
-              placeholder="Descrição do produto"
-              autoCompleteType={false}
-              fontFamily={'body'}
-              color={'gray.200'}
-              fontSize={'16px'}
-              backgroundColor={'gray.700'}
-              py={'12px'}
               px={'16px'}
+              py={'12px'}
+              w={'full'}
+              fontFamily={'body'}
+              fontSize={'16px'}
+              color={'gray.200'}
+              placeholder="Descrição do produto"
+              backgroundColor={'gray.700'}
               borderRadius={'6px'}
               borderWidth={'0'}
-              mb={'16px'}
               onChangeText={onChange}
               value={value}
+              errorMessage={errors.description?.message}
             />
           )}
         />
@@ -175,13 +180,15 @@ export function CreateAd() {
         <Controller
           control={control}
           name="is_new"
-          render={({ field: { onChange } }) => (
+          render={({ field: { onChange, value } }) => (
             <Radio.Group
               name="is_new"
+              defaultValue={value}
+              value={value}
               accessibilityLabel="Define the state of the product"
               onChange={(val) => onChange(val)}
             >
-              <HStack space={'15px'}>
+              <HStack space={'15px'} mt={'16px'}>
                 <Radio value="true" size={'sm'}>
                   Produto novo
                 </Radio>
@@ -211,6 +218,7 @@ export function CreateAd() {
               onChangeText={onChange}
               inputMode="numeric"
               value={value}
+              errorMessage={errors.price?.message}
               leftElement={
                 <Text
                   fontFamily={'body'}

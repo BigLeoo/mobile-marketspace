@@ -52,7 +52,7 @@ export function ProductsContextProvider({
     createAdImage: string[],
   ) {
     try {
-      if (!createAdImage) {
+      if (createAdImage.length === 0) {
         toast.show({
           title: 'Por favor, adicione pelo menos uma imagem do produto.',
           placement: 'top',
@@ -88,30 +88,23 @@ export function ProductsContextProvider({
 
   async function imageCreateProduct(productId: string, adImages: string[]) {
     try {
-      let createImagesForm: any = []
+      const productImageForm = new FormData()
 
-      console.log(adImages)
+      productImageForm.append('product_id', productId)
 
-      await adImages.forEach((image) => {
+      adImages.forEach((image) => {
         const fileExtension = image.assets[0].uri.split('.').pop()
 
         const photoFile = {
-          name: `${productId}-${Math.random}.${fileExtension}`.toLowerCase(),
+          name: `${productId}-${Math.random()}.${fileExtension}`.toLowerCase(),
           uri: image.assets[0].uri,
           type: `${image.assets[0].type}/${fileExtension}`,
         }
 
-        console.log(photoFile)
-
-        createImagesForm.push(photoFile)
+        productImageForm.append('images', photoFile)
       })
 
-      console.log(createImagesForm)
-
-      const productImageForm = new FormData()
-
-      productImageForm.append('product_id', productId)
-      productImageForm.append('images', createImagesForm)
+      setCreateAdImage([])
 
       await api.post('/products/images', productImageForm, {
         headers: {

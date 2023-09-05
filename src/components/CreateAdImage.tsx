@@ -3,7 +3,7 @@ import { Plus, XCircle } from 'phosphor-react-native'
 import { TouchableOpacity } from 'react-native'
 
 import * as ImagePicker from 'expo-image-picker'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useProducts } from '../hooks/useProducts'
 
 export function CreateAdImage() {
@@ -12,8 +12,6 @@ export function CreateAdImage() {
   const { setCreateAdImage } = useProducts()
 
   const [adPhotos, setAdPhotos] = useState<string[]>([])
-
-  const [checkPhoto, setCheckPhoto] = useState()
 
   async function handleUserPhotoSelect() {
     const photoSelected = await ImagePicker.launchImageLibraryAsync({
@@ -34,10 +32,6 @@ export function CreateAdImage() {
 
     setCreateAdImage((prevState: string[]) => [...prevState, photoSelected])
   }
-
-  // useEffect(() => {
-  //   setCreateAdImage(adPhotos)
-  // }, [adPhotos])
 
   return (
     <Box>
