@@ -5,10 +5,9 @@ import { ReactNode, createContext, useState } from 'react'
 import { api } from '../services/api'
 import { useAuth } from '../hooks/useAuth'
 import { useToast } from 'native-base'
-
-type paymant_methods = {
-  paymants: 'boleto' | 'pix' | 'cash' | 'card' | 'deposit'
-}
+import { paymant_methods } from '../dtos/paymantMethodsDTO'
+import { userAddDTO } from '../dtos/userAddDTO'
+import { AddDTO } from '../dtos/addDTO'
 
 export type ProductsContextDataProps = {
   createProduct: (
@@ -18,9 +17,10 @@ export type ProductsContextDataProps = {
     price: number,
     accept_trade: boolean,
     payment_methods: paymant_methods[],
-  ) => void
-
-  setCreateAdImage: () => void
+  ) => Promise<void>
+  setCreateAdImage: () => Promise<void>
+  fetchUserAds: () => Promise<userAddDTO[]>
+  fetchAds: () => Promise<AddDTO[]>
 
   createAdImage: string[]
 }
@@ -117,9 +117,45 @@ export function ProductsContextProvider({
     }
   }
 
+  async function fetchUserAds() {
+    try {
+      const { data } = await api.get('/users/products', {
+        headers: { Authorization: `Bearer ${userToken}` },
+      })
+
+      console.log(data)
+
+      console.log(data[0].product_images)
+
+      return data
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async function fetchAddImage(path: string) {
+    const data = await api.get(`/images/${path}`)
+
+    return data
+  }
+
+  async function fetchAds() {
+    const { data } = await api.get('/products', {
+      headers: { Authorization: `Bearer ${userToken}` },
+    })
+
+    return data
+  }
+
   return (
     <ProductsContext.Provider
-      value={{ createProduct, setCreateAdImage, createAdImage }}
+      value={{
+        createProduct,
+        setCreateAdImage,
+        createAdImage,
+        fetchUserAds,
+        fetchAds,
+      }}
     >
       {children}
     </ProductsContext.Provider>

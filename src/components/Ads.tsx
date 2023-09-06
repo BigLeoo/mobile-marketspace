@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { Box, HStack, Heading, Image, Text, VStack, View } from 'native-base'
 
 import tenisPng from '../../assets/shoes.png'
@@ -8,12 +9,12 @@ import { ProductState } from './ProductState'
 
 type AdsProps = IVStackProps & {
   name: string
-  state: 'used' | 'new'
-  active: boolean
+  is_new: boolean
+  is_active: boolean
   price: number | string
 }
 
-export function Ads({ name, state, price, active = true, ...rest }: AdsProps) {
+export function Ads({ name, is_new, price, is_active, ...rest }: AdsProps) {
   return (
     <VStack {...rest} width={'162px'}>
       <View position={'relative'}>
@@ -25,7 +26,7 @@ export function Ads({ name, state, price, active = true, ...rest }: AdsProps) {
           borderRadius={6}
         />
 
-        {active ? (
+        {is_active ? (
           <Avatar
             imageSize={8}
             borderImageColor="white"
@@ -43,10 +44,10 @@ export function Ads({ name, state, price, active = true, ...rest }: AdsProps) {
           position={'absolute'}
           left={105}
           top={2}
-          ProductState={state}
+          is_new={is_new}
         />
 
-        {!active ? (
+        {!is_active ? (
           <View w={'full'} height={'100px'} position={'absolute'}>
             <Box
               w={'full'}
@@ -74,7 +75,7 @@ export function Ads({ name, state, price, active = true, ...rest }: AdsProps) {
 
       <VStack pl={'2px'}>
         <Text
-          color={active ? 'gray.200' : 'gray.400'}
+          color={is_active ? 'gray.200' : 'gray.400'}
           fontFamily={'body'}
           fontSize={'sm'}
         >
@@ -83,7 +84,7 @@ export function Ads({ name, state, price, active = true, ...rest }: AdsProps) {
 
         <HStack alignItems={'center'}>
           <Heading
-            color={active ? 'gray.200' : 'gray.400'}
+            color={is_active ? 'gray.200' : 'gray.400'}
             fontFamily={'heading'}
             fontSize={'xs'}
           >
@@ -92,7 +93,7 @@ export function Ads({ name, state, price, active = true, ...rest }: AdsProps) {
 
           <Heading
             fontFamily={'heading'}
-            color={active ? 'gray.100' : 'gray.400'}
+            color={is_active ? 'gray.100' : 'gray.400'}
             fontSize={'md'}
           >
             {price.toString()}

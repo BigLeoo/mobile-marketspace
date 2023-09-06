@@ -1,67 +1,70 @@
-import { FlatList, HStack, Select, Text, VStack, View } from 'native-base'
+import {
+  Center,
+  FlatList,
+  HStack,
+  Select,
+  Text,
+  VStack,
+  View,
+  useToast,
+} from 'native-base'
 import { Header } from '../components/Header'
 import { TouchableOpacity } from 'react-native'
 import { Ads } from '../components/Ads'
-import { useNavigation } from '@react-navigation/native'
+
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { AppNavigatorRoutesProps } from '../routes/app.routes'
 
-const ProdutosVenda = [
-  {
-    name: 'Tenis Nike',
-    state: 'used',
-    price: '60,00',
-    active: false,
-  },
-  {
-    name: 'Teclado',
-    state: 'new',
-    price: '100,00',
-  },
-  {
-    name: 'Mouse',
-    state: 'used',
-    price: '70,00',
-  },
-  {
-    name: 'Monitor',
-    state: 'used',
-    price: '4000,00',
-  },
-  {
-    name: 'Monitor',
-    state: 'used',
-    price: '4000,00',
-    active: false,
-  },
-  {
-    name: 'Monitor',
-    state: 'new',
-    price: '4000,00',
-  },
-  {
-    name: 'Monitor',
-    state: 'used',
-    price: '4000,00',
-  },
-  {
-    name: 'Monitor',
-    state: 'used',
-    price: '4000,00',
-    active: false,
-  },
-  {
-    name: 'Monitor Premium',
-    state: 'used',
-    price: '4000,00',
-  },
-]
+import { AppError } from '../utils/AppErros'
+
+import { useCallback, useState } from 'react'
+import { Loading } from '../components/Loading'
+
+import { useProducts } from '../hooks/useProducts'
+import { userAddDTO } from '../dtos/userAddDTO'
 
 export function MyAds() {
+  const [isLoading, setIsLoading] = useState(true)
+  const [userAds, setUserAds] = useState<userAddDTO[]>([])
+
   const navigation = useNavigation<AppNavigatorRoutesProps>()
+
+  const toast = useToast()
+
+  const { fetchUserAds } = useProducts()
+
+  async function fetchMyAds() {
+    try {
+      setIsLoading(true)
+
+      const data = await fetchUserAds()
+
+      setUserAds(data)
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const title = isAppError
+        ? error.message
+        : 'Não foi possível carregar os seus anúncios, tente novamente mais tarde.'
+
+      toast.show({
+        title,
+        placement: 'top',
+        bgColor: 'red.500',
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   function handleAdDetail() {
     navigation.navigate('adDetail')
   }
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchMyAds()
+    }, []),
+  )
 
   return (
     <VStack>
@@ -87,28 +90,34 @@ export function MyAds() {
           </Select>
         </HStack>
 
-        <FlatList
-          mt={4}
-          pt={2}
-          maxH={'550px'}
-          minH={'550px'}
-          w={'full'}
-          data={ProdutosVenda}
-          numColumns={2}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <View mr={5} mb={6}>
-              <TouchableOpacity onPress={handleAdDetail}>
-                <Ads
-                  name={item.name}
-                  price={item.price}
-                  state={item.state}
-                  active={item.active}
-                />
-              </TouchableOpacity>
-            </View>
-          )}
-        />
+        {!isLoading ? (
+          <FlatList
+            mt={4}
+            pt={2}
+            maxH={'550px'}
+            minH={'550px'}
+            w={'full'}
+            data={userAds}
+            numColumns={2}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item }) => (
+              <View mr={5} mb={6}>
+                <TouchableOpacity onPress={handleAdDetail}>
+                  <Ads
+                    name={item.name}
+                    price={item.price}
+                    is_new={item.is_new}
+                    is_active={item.is_active}
+                  />
+                </TouchableOpacity>
+              </View>
+            )}
+          />
+        ) : (
+          <Center mt={'70%'}>
+            <Loading />
+          </Center>
+        )}
       </VStack>
     </VStack>
   )

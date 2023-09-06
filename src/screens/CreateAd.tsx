@@ -8,6 +8,7 @@ import {
   Switch,
   Text,
   VStack,
+  useToast,
 } from 'native-base'
 
 import { Header } from '../components/Header'
@@ -41,6 +42,8 @@ type FormDataProps = {
 export function CreateAd() {
   const [isLoading, setIsLoading] = useState(false)
 
+  const toast = useToast()
+
   const navigation = useNavigation()
 
   const { createProduct, createAdImage } = useProducts()
@@ -54,7 +57,7 @@ export function CreateAd() {
       accept_trade: yup.boolean().required('Informe se o anúncio aceita troca'),
       paymant_methods: yup
         .array()
-        .min(1)
+        .min(1, 'Selecione ao menos um método de pagamento')
         .required('Informe os métodos de pagamento'),
     })
     .required()
@@ -91,6 +94,16 @@ export function CreateAd() {
         paymant_methods,
         createAdImage,
       )
+
+      reset()
+
+      toast.show({
+        title: 'Anúncio criado com sucesso',
+        placement: 'top',
+        bgColor: 'green.500',
+      })
+
+      navigation.goBack()
     } catch (error) {
       console.log(error)
     } finally {
@@ -332,6 +345,13 @@ export function CreateAd() {
             </Checkbox.Group>
           )}
         />
+        {errors.paymant_methods?.message ? (
+          <Text mt={'10px'} color={'red.500'}>
+            {errors.paymant_methods?.message}
+          </Text>
+        ) : (
+          <></>
+        )}
       </VStack>
       <BottomMenu
         buttonTitle1="Cancelar"

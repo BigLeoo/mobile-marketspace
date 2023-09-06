@@ -1,15 +1,16 @@
+/* eslint-disable camelcase */
 import { Heading, View } from 'native-base'
 import { IViewProps } from 'native-base/lib/typescript/components/basic/View/types'
 
 type ProductStateProps = IViewProps & {
-  ProductState: 'used' | 'new'
+  is_new: boolean
 }
 
-export function ProductState({ ProductState, ...rest }: ProductStateProps) {
+export function ProductState({ is_new, ...rest }: ProductStateProps) {
   return (
     <View
       {...rest}
-      backgroundColor={ProductState === 'used' ? 'gray.200' : 'blue.500'}
+      backgroundColor={!is_new ? 'gray.200' : 'blue.500'}
       justifyContent={'center'}
       alignItems={'center'}
       borderRadius={99}
@@ -18,7 +19,7 @@ export function ProductState({ ProductState, ...rest }: ProductStateProps) {
       display={'block'}
     >
       <Heading color={'gray.700'} fontFamily={'heading'} fontSize={'xxs'}>
-        {ProductState === 'used' ? 'USADO' : 'NOVO'}
+        {!is_new ? 'USADO' : 'NOVO'}
       </Heading>
     </View>
   )

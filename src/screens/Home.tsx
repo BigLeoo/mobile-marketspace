@@ -16,6 +16,7 @@ import {
   useToast,
 } from 'native-base'
 import { TouchableOpacity } from 'react-native'
+import { useCallback, useState } from 'react'
 
 import { HeaderHome } from '../components/HeaderHome'
 import { Input } from '../components/Input'
@@ -27,15 +28,17 @@ import { TagComponent } from '../components/TagComponent'
 import { MagnifyingGlass, Sliders, X } from 'phosphor-react-native'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { AppNavigatorRoutesProps } from '../routes/app.routes'
-import { api } from '../services/api'
-import { useCallback, useState } from 'react'
+
 import { useAuth } from '../hooks/useAuth'
+import { useProducts } from '../hooks/useProducts'
+
 import { AppError } from '../utils/AppErros'
-import { AddDTO } from '../dtos/addDTO'
 
 export function Home() {
   const [isLoading, setIsLoading] = useState(false)
   const [activeUserAds, setActiveUserAds] = useState([])
+
+  const { fetchAds } = useProducts()
 
   const toast = useToast()
 
@@ -43,7 +46,7 @@ export function Home() {
 
   const { colors } = useTheme()
 
-  const { user, userToken } = useAuth()
+  const { user } = useAuth()
 
   const navigation = useNavigation<AppNavigatorRoutesProps>()
 
@@ -51,20 +54,18 @@ export function Home() {
     navigation.navigate('adDetail')
   }
 
-  async function fetchMyAds() {
+  async function GetAds() {
     try {
       setIsLoading(true)
 
-      const data = await api.get('/products', {
-        headers: { Authorization: `Bearer ${userToken}` },
-      })
+      const data = await fetchAds()
 
-      console.log(data.data)
+      // console.log(data)
     } catch (error) {
       const isAppError = error instanceof AppError
       const title = isAppError
         ? error.message
-        : 'Não foi possível carregar os produtos, tente novamente mais tarde.'
+        : 'Não foi possível carregar os anúncios, tente novamente mais tarde.'
       toast.show({
         title,
         placement: 'top',
@@ -77,7 +78,7 @@ export function Home() {
 
   useFocusEffect(
     useCallback(() => {
-      fetchMyAds()
+      GetAds()
     }, []),
   )
 

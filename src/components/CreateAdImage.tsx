@@ -3,15 +3,13 @@ import { Plus, XCircle } from 'phosphor-react-native'
 import { TouchableOpacity } from 'react-native'
 
 import * as ImagePicker from 'expo-image-picker'
-import { useState } from 'react'
+
 import { useProducts } from '../hooks/useProducts'
 
 export function CreateAdImage() {
   const { colors } = useTheme()
 
-  const { setCreateAdImage } = useProducts()
-
-  const [adPhotos, setAdPhotos] = useState<string[]>([])
+  const { setCreateAdImage, createAdImage } = useProducts()
 
   async function handleUserPhotoSelect() {
     const photoSelected = await ImagePicker.launchImageLibraryAsync({
@@ -25,25 +23,20 @@ export function CreateAdImage() {
       return
     }
 
-    setAdPhotos((prevState: string[]) => [
-      ...prevState,
-      photoSelected.assets[0].uri,
-    ])
-
     setCreateAdImage((prevState: string[]) => [...prevState, photoSelected])
   }
 
   return (
     <Box>
-      {adPhotos.length < 3 ? (
+      {createAdImage.length < 3 ? (
         <HStack alignItems={'center'} justifyContent={'center'}>
           <FlatList
-            data={adPhotos}
+            data={createAdImage}
             horizontal
             renderItem={({ item }) => (
               <Box w={'100px'} h={'100px'} borderRadius={'6px'} mr={'8px'}>
                 <Image
-                  source={{ uri: item }}
+                  source={{ uri: item.assets[0].uri }}
                   alt="Product image"
                   w={'full'}
                   h={'full'}
@@ -52,9 +45,11 @@ export function CreateAdImage() {
                 <Box position={'absolute'} left={'80px'} top={'3px'}>
                   <TouchableOpacity
                     onPress={() =>
-                      setAdPhotos((prevState) =>
+                      setCreateAdImage((prevState) =>
                         prevState.filter(
-                          (productImageUri) => productImageUri !== item,
+                          (productImageUri) =>
+                            productImageUri.assets[0].uri !==
+                            item.assets[0].uri,
                         ),
                       )
                     }
@@ -82,12 +77,12 @@ export function CreateAdImage() {
       ) : (
         <HStack alignItems={'center'} justifyContent={'center'} space={'8px'}>
           <FlatList
-            data={adPhotos}
+            data={createAdImage}
             horizontal
             renderItem={({ item }) => (
               <Box w={'100px'} h={'100px'} borderRadius={'6px'} mr={'10px'}>
                 <Image
-                  src={item}
+                  src={item.assets[0].uri}
                   alt="Product image"
                   w={'full'}
                   h={'full'}
@@ -96,9 +91,11 @@ export function CreateAdImage() {
                 <Box position={'absolute'} left={'80px'} top={'3px'}>
                   <TouchableOpacity
                     onPress={() =>
-                      setAdPhotos((prevState) =>
+                      setCreateAdImage((prevState) =>
                         prevState.filter(
-                          (productImageUri) => productImageUri !== item,
+                          (productImageUri) =>
+                            productImageUri.assets[0].uri !==
+                            item.assets[0].uri,
                         ),
                       )
                     }
