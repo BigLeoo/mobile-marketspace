@@ -3,7 +3,7 @@ import { IHStackProps } from 'native-base/lib/typescript/components/primitives/S
 import { ArrowRight, Tag } from 'phosphor-react-native'
 
 type AdsInfoProps = IHStackProps & {
-  numberOfMyAds: string
+  numberOfMyAds: number
 }
 
 export function AdsInfo({ numberOfMyAds, ...rest }: AdsInfoProps) {

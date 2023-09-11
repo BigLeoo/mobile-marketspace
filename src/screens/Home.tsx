@@ -34,9 +34,11 @@ import { useProducts } from '../hooks/useProducts'
 
 import { AppError } from '../utils/AppErros'
 
+import { AddDTO } from '../dtos/addDTO'
+
 export function Home() {
   const [isLoading, setIsLoading] = useState(false)
-  const [activeUserAds, setActiveUserAds] = useState([])
+  const [activeAds, setActiveAds] = useState<AddDTO[]>([])
 
   const { fetchAds } = useProducts()
 
@@ -60,7 +62,7 @@ export function Home() {
 
       const data = await fetchAds()
 
-      // console.log(data)
+      setActiveAds(data)
     } catch (error) {
       const isAppError = error instanceof AppError
       const title = isAppError
@@ -91,7 +93,7 @@ export function Home() {
           Seus produtos anunciados para venda
         </Text>
 
-        <AdsInfo mt={3} numberOfMyAds={activeUserAds.length} />
+        <AdsInfo mt={3} numberOfMyAds={activeAds.length} />
 
         <Text mt={8}>Compre produtos variados</Text>
 
@@ -246,23 +248,32 @@ export function Home() {
           <Spinner size={'lg'} color={colors.blue[700]} />
         </Center>
       ) : (
-        <FlatList
-          ml={5}
-          data={activeUserAds}
-          keyExtractor={(item) => item.name}
-          numColumns={2}
-          mt={6}
-          maxH={85}
-          minH={85}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <View mr={4} mb={6}>
-              <TouchableOpacity onPress={handleAdDetail}>
-                <Ads name={item.name} price={item.price} state={item.state} />
-              </TouchableOpacity>
-            </View>
-          )}
-        />
+        <View w={'full'}>
+          <FlatList
+            ml={5}
+            data={activeAds}
+            keyExtractor={(item) => item.id}
+            numColumns={2}
+            mt={6}
+            maxH={85}
+            minH={85}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item }) => (
+              <View mr={4} mb={6}>
+                <TouchableOpacity onPress={handleAdDetail}>
+                  <Ads
+                    name={item.name}
+                    price={item.price}
+                    is_active={true}
+                    is_new={item.is_new}
+                    product_image={item.product_images}
+                    avatar={item.user.avatar}
+                  />
+                </TouchableOpacity>
+              </View>
+            )}
+          />
+        </View>
       )}
     </Center>
   )

@@ -8,6 +8,7 @@ import { useToast } from 'native-base'
 import { paymant_methods } from '../dtos/paymantMethodsDTO'
 import { userAddDTO } from '../dtos/userAddDTO'
 import { AddDTO } from '../dtos/addDTO'
+import { productImageDTO } from '../dtos/productImageDTO'
 
 export type ProductsContextDataProps = {
   createProduct: (
@@ -21,6 +22,7 @@ export type ProductsContextDataProps = {
   setCreateAdImage: () => Promise<void>
   fetchUserAds: () => Promise<userAddDTO[]>
   fetchAds: () => Promise<AddDTO[]>
+  fetchAdImage: (path: string) => Promise<productImageDTO>
 
   createAdImage: string[]
 }
@@ -123,9 +125,17 @@ export function ProductsContextProvider({
         headers: { Authorization: `Bearer ${userToken}` },
       })
 
-      console.log(data)
+      return data
+    } catch (error) {
+      throw error
+    }
+  }
 
-      console.log(data[0].product_images)
+  async function fetchAds() {
+    try {
+      const { data } = await api.get('/products', {
+        headers: { Authorization: `Bearer ${userToken}` },
+      })
 
       return data
     } catch (error) {
@@ -133,16 +143,8 @@ export function ProductsContextProvider({
     }
   }
 
-  async function fetchAddImage(path: string) {
+  async function fetchAdImage(path: string) {
     const data = await api.get(`/images/${path}`)
-
-    return data
-  }
-
-  async function fetchAds() {
-    const { data } = await api.get('/products', {
-      headers: { Authorization: `Bearer ${userToken}` },
-    })
 
     return data
   }
@@ -155,6 +157,7 @@ export function ProductsContextProvider({
         createAdImage,
         fetchUserAds,
         fetchAds,
+        fetchAdImage,
       }}
     >
       {children}

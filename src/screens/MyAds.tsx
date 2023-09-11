@@ -17,15 +17,20 @@ import { AppNavigatorRoutesProps } from '../routes/app.routes'
 
 import { AppError } from '../utils/AppErros'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Loading } from '../components/Loading'
 
 import { useProducts } from '../hooks/useProducts'
 import { userAddDTO } from '../dtos/userAddDTO'
+import { useAuth } from '../hooks/useAuth'
 
 export function MyAds() {
   const [isLoading, setIsLoading] = useState(true)
   const [userAds, setUserAds] = useState<userAddDTO[]>([])
+  const [filteredAds, setFilteredAds] = useState<userAddDTO[]>([])
+  const [selectFilter, setSelectFilter] = useState('Todos')
+
+  const { user } = useAuth()
 
   const navigation = useNavigation<AppNavigatorRoutesProps>()
 
@@ -65,6 +70,18 @@ export function MyAds() {
       fetchMyAds()
     }, []),
   )
+  useEffect(() => {
+    const filteredAds =
+      selectFilter === 'Novo'
+        ? userAds.filter((ad) => ad.is_new === true)
+        : selectFilter === 'Usado'
+        ? userAds.filter((ad) => ad.is_new === false)
+        : selectFilter === 'Desativado'
+        ? userAds.filter((ad) => ad.is_active === false)
+        : userAds
+
+    setFilteredAds(filteredAds)
+  }, [selectFilter, userAds])
 
   return (
     <VStack>
@@ -72,7 +89,7 @@ export function MyAds() {
 
       <VStack px={6} mt={8} pb={7}>
         <HStack justifyContent={'space-between'} alignItems={'center'}>
-          <Text>9 anúncios</Text>
+          <Text>{filteredAds.length} anúncios</Text>
           <Select
             width={'111px'}
             height={'34px'}
@@ -82,6 +99,7 @@ export function MyAds() {
             fontFamily={'body'}
             color={'gray.100'}
             fontSize={'sm'}
+            onValueChange={(filterItem) => setSelectFilter(filterItem)}
           >
             <Select.Item label="Todos" value="Todos" />
             <Select.Item label="Novo" value="Novo" />
@@ -97,9 +115,10 @@ export function MyAds() {
             maxH={'550px'}
             minH={'550px'}
             w={'full'}
-            data={userAds}
+            data={filteredAds}
             numColumns={2}
             showsVerticalScrollIndicator={false}
+            keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <View mr={5} mb={6}>
                 <TouchableOpacity onPress={handleAdDetail}>
@@ -108,6 +127,8 @@ export function MyAds() {
                     price={item.price}
                     is_new={item.is_new}
                     is_active={item.is_active}
+                    product_image={item.product_images}
+                    avatar={user.avatar}
                   />
                 </TouchableOpacity>
               </View>

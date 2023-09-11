@@ -25,6 +25,7 @@ import { useNavigation } from '@react-navigation/native'
 
 import { useProducts } from '../hooks/useProducts'
 import { TextArea } from '../components/TextArea'
+import { AppError } from '../utils/AppErros'
 
 type paymant_methods = {
   paymants: 'boleto' | 'pix' | 'cash' | 'card' | 'deposit'
@@ -105,7 +106,16 @@ export function CreateAd() {
 
       navigation.goBack()
     } catch (error) {
-      console.log(error)
+      const isAppError = error instanceof AppError
+      const title = isAppError
+        ? error.message
+        : 'Não foi possível criar o aúncio, tente novamente mais tarde.'
+
+      toast.show({
+        title,
+        placement: 'top',
+        bgColor: 'red.500',
+      })
     } finally {
       setIsLoading(false)
     }

@@ -1,25 +1,39 @@
 /* eslint-disable camelcase */
 import { Box, HStack, Heading, Image, Text, VStack, View } from 'native-base'
 
-import tenisPng from '../../assets/shoes.png'
-
 import { IVStackProps } from 'native-base/lib/typescript/components/primitives/Stack/VStack'
 import { Avatar } from './Avatar'
 import { ProductState } from './ProductState'
 
+import { productImageDTO } from '../dtos/productImageDTO'
+
+import { api } from '../services/api'
+
 type AdsProps = IVStackProps & {
   name: string
   is_new: boolean
-  is_active: boolean
+  is_active?: boolean
   price: number | string
+  product_image: productImageDTO[]
+  avatar: string
 }
 
-export function Ads({ name, is_new, price, is_active, ...rest }: AdsProps) {
+export function Ads({
+  name,
+  is_new,
+  price,
+  is_active,
+  product_image,
+  avatar,
+  ...rest
+}: AdsProps) {
   return (
     <VStack {...rest} width={'162px'}>
       <View position={'relative'}>
         <Image
-          source={tenisPng}
+          source={{
+            uri: `${api.defaults.baseURL}/images/${product_image[0].path}`,
+          }}
           alt="Anúncio do usuário"
           width={'162px'}
           height={'100px'}
@@ -30,7 +44,7 @@ export function Ads({ name, is_new, price, is_active, ...rest }: AdsProps) {
           <Avatar
             imageSize={8}
             borderImageColor="white"
-            avatarImage={'https://github.com/BigLeoo.png'}
+            source={{ uri: `${api.defaults.baseURL}/images/${avatar}` }}
             zIndex={12}
             top={-95}
             left={1}
