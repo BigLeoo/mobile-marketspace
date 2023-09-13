@@ -26,7 +26,7 @@ export function HeaderHome({ userName, userAvatar, ...rest }: headerHomeProps) {
       <HStack>
         <Avatar
           imageSize={46}
-          source={{ uri: `${api.defaults.baseURL}/images/${userAvatar}` }}
+          avatarImage={`${api.defaults.baseURL}/images/${userAvatar}`}
         />
 
         <VStack ml={3}>

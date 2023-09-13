@@ -26,6 +26,7 @@ import { useNavigation } from '@react-navigation/native'
 import { useProducts } from '../hooks/useProducts'
 import { TextArea } from '../components/TextArea'
 import { AppError } from '../utils/AppErros'
+import { AppNavigatorRoutesProps } from '../routes/app.routes'
 
 type paymant_methods = {
   paymants: 'boleto' | 'pix' | 'cash' | 'card' | 'deposit'
@@ -45,7 +46,7 @@ export function CreateAd() {
 
   const toast = useToast()
 
-  const navigation = useNavigation()
+  const navigation = useNavigation<AppNavigatorRoutesProps>()
 
   const { createProduct, createAdImage } = useProducts()
 
@@ -86,25 +87,36 @@ export function CreateAd() {
     try {
       setIsLoading(true)
 
-      await createProduct(
+      navigation.navigate('adDetail', {
+        active: false,
+        preAd: true,
         name,
         description,
         is_new,
         price,
         accept_trade,
         paymant_methods,
-        createAdImage,
-      )
-
-      reset()
-
-      toast.show({
-        title: 'Anúncio criado com sucesso',
-        placement: 'top',
-        bgColor: 'green.500',
       })
 
-      navigation.goBack()
+      // await createProduct(
+      // name,
+      // description,
+      // is_new,
+      // price,
+      // accept_trade,
+      // paymant_methods,
+      // createAdImage,
+      // )
+
+      // reset()
+
+      // toast.show({
+      //   title: 'Anúncio criado com sucesso',
+      //   placement: 'top',
+      //   bgColor: 'green.500',
+      // })
+
+      // navigation.goBack()
     } catch (error) {
       const isAppError = error instanceof AppError
       const title = isAppError
