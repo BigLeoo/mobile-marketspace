@@ -23,14 +23,11 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useNavigation } from '@react-navigation/native'
 
-import { useProducts } from '../hooks/useProducts'
 import { TextArea } from '../components/TextArea'
 import { AppError } from '../utils/AppErros'
 import { AppNavigatorRoutesProps } from '../routes/app.routes'
-
-type paymant_methods = {
-  paymants: 'boleto' | 'pix' | 'cash' | 'card' | 'deposit'
-}
+import { paymant_methods } from '../dtos/paymantMethodsDTO'
+import { useProducts } from '../hooks/useProducts'
 
 type FormDataProps = {
   name: string
@@ -44,11 +41,11 @@ type FormDataProps = {
 export function CreateAd() {
   const [isLoading, setIsLoading] = useState(false)
 
+  const { createAdImage } = useProducts()
+
   const toast = useToast()
 
   const navigation = useNavigation<AppNavigatorRoutesProps>()
-
-  const { createProduct, createAdImage } = useProducts()
 
   const signUpSchema = yup
     .object({
@@ -76,7 +73,7 @@ export function CreateAd() {
     },
   })
 
-  async function handleCreateAdd({
+  function handlePreAd({
     name,
     description,
     is_new,
@@ -86,6 +83,16 @@ export function CreateAd() {
   }: FormDataProps) {
     try {
       setIsLoading(true)
+
+      if (createAdImage.length === 0) {
+        toast.show({
+          title: 'Por favor, adicione pelo menos uma imagem do produto.',
+          placement: 'top',
+          bgColor: 'red.500',
+        })
+
+        return
+      }
 
       navigation.navigate('adDetail', {
         active: false,
@@ -381,7 +388,7 @@ export function CreateAd() {
         buttonFunction1={handleCancelForm}
         buttonTitle2="Avançar"
         varianButton2="gray-dark"
-        buttonFunction2={handleSubmit(handleCreateAdd)}
+        buttonFunction2={handleSubmit(handlePreAd)}
         isLoading2={isLoading}
         mt={'26.5px'}
       />

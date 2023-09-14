@@ -18,7 +18,7 @@ export function TagComponent({
   const { colors } = useTheme()
   return (
     <HStack
-      px={2}
+      px={title === 'novo' ? 2 : 1}
       py={'2px'}
       borderRadius={'9999px'}
       bg={selected ? 'blue.700' : 'gray.500'}

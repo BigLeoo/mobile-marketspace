@@ -51,19 +51,8 @@ export function ProductsContextProvider({
     price: number,
     accept_trade: boolean,
     payment_methods: [paymant_methods],
-    createAdImage: string[],
   ) {
     try {
-      if (createAdImage.length === 0) {
-        toast.show({
-          title: 'Por favor, adicione pelo menos uma imagem do produto.',
-          placement: 'top',
-          bgColor: 'red.500',
-        })
-
-        return
-      }
-
       const { data } = await api.post(
         '/products',
         {
@@ -95,6 +84,8 @@ export function ProductsContextProvider({
       productImageForm.append('product_id', productId)
 
       adImages.forEach((image) => {
+        console.log(image)
+
         const fileExtension = image.assets[0].uri.split('.').pop()
 
         const photoFile = {

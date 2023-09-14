@@ -8,6 +8,7 @@ import {
   VStack,
   View,
   useTheme,
+  useToast,
 } from 'native-base'
 import ProductImage from '../../assets/shoes.png'
 
@@ -19,12 +20,7 @@ import { Button } from '../components/Button'
 
 import {
   ArrowLeft,
-  Bank,
-  Barcode,
-  CreditCard,
-  Money,
   Power,
-  QrCode,
   TrashSimple,
   WhatsappLogo,
   Tag,
@@ -35,6 +31,10 @@ import { useNavigation, useRoute } from '@react-navigation/native'
 import { paymant_methods } from '../dtos/paymantMethodsDTO'
 import { useAuth } from '../hooks/useAuth'
 import { api } from '../services/api'
+import { useProducts } from '../hooks/useProducts'
+import { AppError } from '../utils/AppErros'
+import { useState } from 'react'
+import { AppNavigatorRoutesProps } from '../routes/app.routes'
 
 type RoutesParametersProps = {
   active: boolean
@@ -49,9 +49,13 @@ type RoutesParametersProps = {
 
 export function AdDetail() {
   const route = useRoute()
-  const navigation = useNavigation()
+  const navigation = useNavigation<AppNavigatorRoutesProps>()
 
   const { user } = useAuth()
+
+  const toast = useToast()
+
+  const { createProduct, createAdImage } = useProducts()
 
   const {
     active,
@@ -66,8 +70,46 @@ export function AdDetail() {
 
   const { colors } = useTheme()
 
+  const [isLoading, setIsLoading] = useState(false)
+
   function handleGoBack() {
-    navigation.goBack()
+    navigation.navigate('createAd')
+  }
+
+  async function handleCreateAd() {
+    try {
+      setIsLoading(true)
+
+      await createProduct(
+        name,
+        description,
+        is_new,
+        price,
+        accept_trade,
+        paymant_methods,
+      )
+
+      toast.show({
+        title: 'Anúncio criado com sucesso',
+        placement: 'top',
+        bgColor: 'green.500',
+      })
+
+      navigation.goBack()
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const title = isAppError
+        ? error.message
+        : 'Não foi possível criar o aúncio, tente novamente mais tarde.'
+
+      toast.show({
+        title,
+        placement: 'top',
+        bgColor: 'red.500',
+      })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -75,7 +117,7 @@ export function AdDetail() {
       {!preAd ? <Header backButton /> : <HeaderPreAd />}
 
       <Image
-        source={ProductImage}
+        source={{ uri: createAdImage[0].assets[0].uri }}
         height={72}
         width={'full'}
         alt="Product Image"
@@ -131,43 +173,11 @@ export function AdDetail() {
           Meios de pagamento:
         </Heading>
 
-        <View mt={2}>
-          {paymant_methods.map((paymantMethod) => {
-            paymantMethod === 'boleto' ? (
-              <PaymantChose title="Boleto" leftIcon={<Barcode size={18} />} />
-            ) : paymantMethod === 'pix' ? (
-              <PaymantChose
-                title="Pix"
-                leftIcon={<QrCode size={18} />}
-                mb={1}
-              />
-            ) : paymantMethod === 'cash' ? (
-              <PaymantChose title="Dinheiro" leftIcon={<Money size={18} />} />
-            ) : paymantMethod === 'card' ? (
-              <PaymantChose
-                title="Cartão de Crédito"
-                leftIcon={<CreditCard size={18} />}
-              />
-            ) : (
-              <PaymantChose
-                title="Depósito Bancário"
-                leftIcon={<Bank size={18} />}
-              />
-            )
-          })}
-
-          {/* <PaymantChose title="Boleto" leftIcon={<Barcode size={18} />} />
-          <PaymantChose title="Pix" leftIcon={<QrCode size={18} />} mb={1} />
-          <PaymantChose title="Dinheiro" leftIcon={<Money size={18} />} />
-          <PaymantChose
-            title="Cartão de Crédito"
-            leftIcon={<CreditCard size={18} />}
-          />
-          <PaymantChose
-            title="Depósito Bancário"
-            leftIcon={<Bank size={18} />}
-          /> */}
-        </View>
+        {paymant_methods.map((paymant) => (
+          <View mt={2} key={paymant}>
+            <PaymantChose paymant={paymant} key={paymant} />
+          </View>
+        ))}
       </VStack>
       {active ? (
         <HStack
@@ -207,6 +217,8 @@ export function AdDetail() {
             <ArrowLeft size={16} weight="bold" color={colors.gray[200]} />
           }
           buttonTitle2="Publicar"
+          buttonFunction2={handleCreateAd}
+          isLoading2={isLoading}
           varianButton2="blue-light"
           leftIcon2={<Tag size={16} weight="bold" color={colors.gray[600]} />}
         />

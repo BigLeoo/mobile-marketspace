@@ -124,8 +124,8 @@ export function MyAds() {
                 <TouchableOpacity onPress={handleAdDetail}>
                   <Ads
                     name={item.name}
-                    price={item.price}
                     is_new={item.is_new}
+                    price={item.price}
                     is_active={item.is_active}
                     product_image={item.product_images}
                     avatar={user.avatar}

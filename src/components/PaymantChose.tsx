@@ -1,17 +1,27 @@
 import { HStack, Text } from 'native-base'
 import { IHStackProps } from 'native-base/lib/typescript/components/primitives/Stack/HStack'
+import { Bank, Barcode, CreditCard, Money, QrCode } from 'phosphor-react-native'
 
 type PaymantChoseProps = IHStackProps & {
-  title: string
-  leftIcon: JSX.Element
+  paymant: 'boleto' | 'pix' | 'cash' | 'card' | 'deposit'
 }
 
-export function PaymantChose({ title, leftIcon, ...rest }: PaymantChoseProps) {
+export function PaymantChose({ paymant, ...rest }: PaymantChoseProps) {
   return (
     <HStack space={2} {...rest} mb={1}>
-      {leftIcon}
+      {paymant === 'boleto' ? (
+        <Barcode size={18} />
+      ) : paymant === 'pix' ? (
+        <QrCode size={18} />
+      ) : paymant === 'cash' ? (
+        <Money size={18} />
+      ) : paymant === 'card' ? (
+        <CreditCard size={18} />
+      ) : (
+        <Bank size={18} />
+      )}
       <Text color={'gray.200'} fontFamily={'body'} fontSize={'sm'}>
-        {title}
+        {paymant.charAt(0).toUpperCase() + paymant.slice(1)}
       </Text>
     </HStack>
   )

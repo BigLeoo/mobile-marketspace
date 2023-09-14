@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
 import { Home } from '../screens/Home'
@@ -10,12 +11,24 @@ import { useTheme } from 'native-base'
 import { SignOut } from '../screens/SignOut'
 import { AdDetail } from '../screens/AdDetail'
 import { CreateAd } from '../screens/CreateAd'
+import { paymant_methods } from '../dtos/paymantMethodsDTO'
+
+type adDetailProp = {
+  active: boolean
+  preAd: boolean
+  name: string
+  description: string
+  is_new: boolean
+  price: number
+  accept_trade: true
+  paymant_methods: paymant_methods[]
+}
 
 type AppRoutes = {
   home: undefined
   myAds: undefined
   logOut: undefined
-  adDetail: undefined
+  adDetail: adDetailProp
   createAd: undefined
 }
 

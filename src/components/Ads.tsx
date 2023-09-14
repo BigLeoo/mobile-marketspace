@@ -44,7 +44,7 @@ export function Ads({
           <Avatar
             imageSize={8}
             borderImageColor="white"
-            source={{ uri: `${api.defaults.baseURL}/images/${avatar}` }}
+            avatarImage={`${api.defaults.baseURL}/images/${avatar}`}
             zIndex={12}
             top={-95}
             left={1}
