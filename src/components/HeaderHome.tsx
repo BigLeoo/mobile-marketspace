@@ -8,6 +8,7 @@ import { IHStackProps } from 'native-base/lib/typescript/components/primitives/S
 import { useNavigation } from '@react-navigation/native'
 import { AppNavigatorRoutesProps } from '../routes/app.routes'
 import { api } from '../services/api'
+import { useProducts } from '../hooks/useProducts'
 
 type headerHomeProps = IHStackProps & {
   userName: string
@@ -17,7 +18,11 @@ type headerHomeProps = IHStackProps & {
 export function HeaderHome({ userName, userAvatar, ...rest }: headerHomeProps) {
   const navigation = useNavigation<AppNavigatorRoutesProps>()
 
+  const { setCreateAdImage } = useProducts()
+
   function handleCreateAd() {
+    setCreateAdImage([])
+
     navigation.navigate('createAd')
   }
 

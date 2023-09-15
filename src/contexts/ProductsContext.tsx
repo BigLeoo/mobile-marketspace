@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const */
 /* eslint-disable no-useless-catch */
 /* eslint-disable camelcase */
-import { ReactNode, createContext, useState } from 'react'
+import { ReactNode, createContext, useEffect, useState } from 'react'
 import { api } from '../services/api'
 import { useAuth } from '../hooks/useAuth'
 import { useToast } from 'native-base'
@@ -9,6 +9,7 @@ import { paymant_methods } from '../dtos/paymantMethodsDTO'
 import { userAddDTO } from '../dtos/userAddDTO'
 import { AddDTO } from '../dtos/addDTO'
 import { productImageDTO } from '../dtos/productImageDTO'
+import { adImageDTO } from '../dtos/adImageDTO'
 
 export type ProductsContextDataProps = {
   createProduct: (
@@ -24,7 +25,7 @@ export type ProductsContextDataProps = {
   fetchAds: () => Promise<AddDTO[]>
   fetchAdImage: (path: string) => Promise<productImageDTO>
 
-  createAdImage: string[]
+  createAdImage: adImageDTO[]
 }
 
 type ProductsContextProviderProps = {
@@ -40,7 +41,7 @@ export function ProductsContextProvider({
 }: ProductsContextProviderProps) {
   const { userToken } = useAuth()
 
-  const [createAdImage, setCreateAdImage] = useState<string[]>([])
+  const [createAdImage, setCreateAdImage] = useState<adImageDTO[]>([])
 
   const toast = useToast()
 
@@ -50,7 +51,7 @@ export function ProductsContextProvider({
     is_new: boolean,
     price: number,
     accept_trade: boolean,
-    payment_methods: [paymant_methods],
+    payment_methods: paymant_methods[],
   ) {
     try {
       const { data } = await api.post(
@@ -77,15 +78,13 @@ export function ProductsContextProvider({
     }
   }
 
-  async function imageCreateProduct(productId: string, adImages: string[]) {
+  async function imageCreateProduct(productId: string, adImages: adImageDTO[]) {
     try {
       const productImageForm = new FormData()
 
       productImageForm.append('product_id', productId)
 
       adImages.forEach((image) => {
-        console.log(image)
-
         const fileExtension = image.assets[0].uri.split('.').pop()
 
         const photoFile = {
@@ -96,8 +95,6 @@ export function ProductsContextProvider({
 
         productImageForm.append('images', photoFile)
       })
-
-      setCreateAdImage([])
 
       await api.post('/products/images', productImageForm, {
         headers: {
@@ -139,6 +136,10 @@ export function ProductsContextProvider({
 
     return data
   }
+
+  useEffect(() => {
+    console.log(createAdImage)
+  }, [createAdImage])
 
   return (
     <ProductsContext.Provider

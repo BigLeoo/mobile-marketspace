@@ -10,7 +10,6 @@ import {
   useTheme,
   useToast,
 } from 'native-base'
-import ProductImage from '../../assets/shoes.png'
 
 import { Header } from '../components/Header'
 import { Avatar } from '../components/Avatar'

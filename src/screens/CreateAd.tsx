@@ -104,26 +104,6 @@ export function CreateAd() {
         accept_trade,
         paymant_methods,
       })
-
-      // await createProduct(
-      // name,
-      // description,
-      // is_new,
-      // price,
-      // accept_trade,
-      // paymant_methods,
-      // createAdImage,
-      // )
-
-      // reset()
-
-      // toast.show({
-      //   title: 'Anúncio criado com sucesso',
-      //   placement: 'top',
-      //   bgColor: 'green.500',
-      // })
-
-      // navigation.goBack()
     } catch (error) {
       const isAppError = error instanceof AppError
       const title = isAppError

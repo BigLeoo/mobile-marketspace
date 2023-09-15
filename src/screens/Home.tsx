@@ -53,7 +53,7 @@ export function Home() {
   const navigation = useNavigation<AppNavigatorRoutesProps>()
 
   function handleAdDetail() {
-    navigation.navigate('adDetail')
+    navigation.navigate('adDetail', {})
   }
 
   async function GetAds() {
