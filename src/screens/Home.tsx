@@ -35,6 +35,7 @@ import { useProducts } from '../hooks/useProducts'
 import { AppError } from '../utils/AppErros'
 
 import { AddDTO } from '../dtos/addDTO'
+import { paymant_methods } from '../dtos/paymantMethodsDTO'
 
 export function Home() {
   const [isLoading, setIsLoading] = useState(false)
@@ -52,8 +53,12 @@ export function Home() {
 
   const navigation = useNavigation<AppNavigatorRoutesProps>()
 
-  function handleAdDetail() {
-    navigation.navigate('adDetail', {})
+  function handleAdDetail(id: string) {
+    navigation.navigate('adDetail', {
+      active: true,
+      preAd: false,
+      id
+    })
   }
 
   async function GetAds() {
@@ -61,6 +66,9 @@ export function Home() {
       setIsLoading(true)
 
       const data = await fetchAds()
+
+      console.log(data);
+      
 
       setActiveAds(data)
     } catch (error) {
@@ -260,7 +268,7 @@ export function Home() {
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => (
               <View mr={4} mb={6}>
-                <TouchableOpacity onPress={handleAdDetail}>
+                <TouchableOpacity onPress={() => handleAdDetail(item.id)}>
                   <Ads
                     name={item.name}
                     price={item.price}

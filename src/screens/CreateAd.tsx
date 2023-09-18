@@ -103,6 +103,7 @@ export function CreateAd() {
         price,
         accept_trade,
         paymant_methods,
+        resetForm: reset
       })
     } catch (error) {
       const isAppError = error instanceof AppError

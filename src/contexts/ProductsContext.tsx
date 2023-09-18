@@ -10,6 +10,7 @@ import { userAddDTO } from '../dtos/userAddDTO'
 import { AddDTO } from '../dtos/addDTO'
 import { productImageDTO } from '../dtos/productImageDTO'
 import { adImageDTO } from '../dtos/adImageDTO'
+import { addDetailDTO } from '../dtos/addDetailDTO'
 
 export type ProductsContextDataProps = {
   createProduct: (
@@ -24,6 +25,7 @@ export type ProductsContextDataProps = {
   fetchUserAds: () => Promise<userAddDTO[]>
   fetchAds: () => Promise<AddDTO[]>
   fetchAdImage: (path: string) => Promise<productImageDTO>
+  fetchAdDetail: (id: string) => Promise<addDetailDTO>
 
   createAdImage: adImageDTO[]
 }
@@ -131,15 +133,27 @@ export function ProductsContextProvider({
     }
   }
 
+  async function fetchAdDetail(id: string) {
+    try {
+      const { data } = await api.get(`/products/${id}`, {
+        headers: { Authorization: `Bearer ${userToken}` },
+      })
+
+      return data
+    } catch (error) {
+      throw error
+    }
+  }
+
   async function fetchAdImage(path: string) {
     const data = await api.get(`/images/${path}`)
 
     return data
   }
 
-  useEffect(() => {
-    console.log(createAdImage)
-  }, [createAdImage])
+  // useEffect(() => {
+  //   console.log(createAdImage)
+  // }, [createAdImage])
 
   return (
     <ProductsContext.Provider
@@ -150,6 +164,7 @@ export function ProductsContextProvider({
         fetchUserAds,
         fetchAds,
         fetchAdImage,
+        fetchAdDetail
       }}
     >
       {children}

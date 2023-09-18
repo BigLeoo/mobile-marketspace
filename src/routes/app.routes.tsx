@@ -13,15 +13,17 @@ import { AdDetail } from '../screens/AdDetail'
 import { CreateAd } from '../screens/CreateAd'
 import { paymant_methods } from '../dtos/paymantMethodsDTO'
 
-type adDetailProp = {
+export type adDetailProp = {
   active: boolean
   preAd: boolean
-  name: string
-  description: string
-  is_new: boolean
-  price: number
-  accept_trade: true
-  paymant_methods: paymant_methods[]
+  name?: string
+  description?: string
+  is_new?: boolean
+  price?: number
+  accept_trade?: boolean
+  paymant_methods?: paymant_methods[]
+  id?: string
+  resetForm?: () => void
 }
 
 type AppRoutes = {
