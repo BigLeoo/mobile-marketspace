@@ -13,16 +13,28 @@ import { AdDetail } from '../screens/AdDetail'
 import { CreateAd } from '../screens/CreateAd'
 import { paymant_methods } from '../dtos/paymantMethodsDTO'
 
+type productImages = {
+  id: string
+  path: string
+}
+
+type userAdDetail = {
+  avatar: string
+  name: string
+  tel: string
+}
+
 export type adDetailProp = {
   active: boolean
   preAd: boolean
-  name?: string
-  description?: string
-  is_new?: boolean
-  price?: number
-  accept_trade?: boolean
-  paymant_methods?: paymant_methods[]
-  id?: string
+  name: string
+  description: string
+  is_new: boolean
+  price: number
+  accept_trade: boolean
+  paymant_methods: paymant_methods[]
+  product_images?: productImages[]
+  userAdDetail?: userAdDetail
   resetForm?: () => void
 }
 

@@ -35,11 +35,12 @@ import { useProducts } from '../hooks/useProducts'
 import { AppError } from '../utils/AppErros'
 
 import { AddDTO } from '../dtos/addDTO'
-import { paymant_methods } from '../dtos/paymantMethodsDTO'
 
 export function Home() {
   const [isLoading, setIsLoading] = useState(false)
   const [activeAds, setActiveAds] = useState<AddDTO[]>([])
+  const [filterdAds, setFilteredAds] = useState<AddDTO[]>([])
+  const [filterAdName, setFilterAdName] = useState('')
 
   const { fetchAds } = useProducts()
 
@@ -51,14 +52,39 @@ export function Home() {
 
   const { user } = useAuth()
 
+  const { fetchAdDetail } = useProducts()
+
   const navigation = useNavigation<AppNavigatorRoutesProps>()
 
-  function handleAdDetail(id: string) {
-    navigation.navigate('adDetail', {
-      active: true,
-      preAd: false,
-      id
-    })
+  async function handleAdDetail(id: string) {
+    try {
+      const data = await fetchAdDetail(id)
+
+      console.log(data)
+
+      navigation.navigate('adDetail', {
+        active: true,
+        preAd: false,
+        name: data.name,
+        description: data.description,
+        is_new: data.is_new,
+        price: data.price,
+        accept_trade: data.accept_trade,
+        paymant_methods: data.payment_methods,
+        product_images: data.product_images,
+        userAdDetail: data.user,
+      })
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const title = isAppError
+        ? error.message
+        : 'Não foi possível carregar os dados do anúncio, tente novamente mais tarde.'
+      toast.show({
+        title,
+        placement: 'top',
+        bgColor: 'red.500',
+      })
+    }
   }
 
   async function GetAds() {
@@ -66,9 +92,6 @@ export function Home() {
       setIsLoading(true)
 
       const data = await fetchAds()
-
-      console.log(data);
-      
 
       setActiveAds(data)
     } catch (error) {
@@ -85,32 +108,56 @@ export function Home() {
       setIsLoading(false)
     }
   }
-
+  // const { userToken } = useAuth()
   useFocusEffect(
     useCallback(() => {
+      // console.log(userToken)
+
       GetAds()
     }, []),
   )
+
+  function handleFilterAdsBySearchBar(filterName: string) {
+    setIsLoading(true)
+
+    const filteredAds = activeAds.filter((ad) =>
+      ad.name.toLowerCase().includes(filterName),
+    )
+
+    setFilteredAds(filteredAds)
+
+    setIsLoading(false)
+  }
 
   return (
     <Center>
       <VStack px={6}>
         <HeaderHome userName={user.name} userAvatar={user.avatar} pt={8} />
-
         <Text fontFamily={'body'} fontSize={'sm'} color={'gray.300'} mt={8}>
           Seus produtos anunciados para venda
         </Text>
-
-        <AdsInfo mt={3} numberOfMyAds={activeAds.length} />
-
+        <AdsInfo
+          mt={3}
+          numberOfMyAds={
+            filterdAds.length > 0 ? filterdAds.length : activeAds.length
+          }
+        />
         <Text mt={8}>Compre produtos variados</Text>
-
         <Input
           w={'full'}
           placeholder="Buscar anúncio"
+          onChangeText={(value) => setFilterAdName(value)}
+          value={filterAdName}
+          onSubmitEditing={() =>
+            handleFilterAdsBySearchBar(filterAdName.toLowerCase())
+          }
           InputRightElement={
             <HStack alignItems={'center'}>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() =>
+                  handleFilterAdsBySearchBar(filterAdName.toLowerCase())
+                }
+              >
                 <View px={3}>
                   <MagnifyingGlass size={20} color="#3E3A40" />
                 </View>
@@ -128,7 +175,6 @@ export function Home() {
             </HStack>
           }
         />
-
         <Actionsheet isOpen={isOpen} onClose={onClose}>
           <Actionsheet.Content>
             <Box>
@@ -259,7 +305,7 @@ export function Home() {
         <View w={'full'}>
           <FlatList
             ml={5}
-            data={activeAds}
+            data={filterdAds.length > 0 ? filterdAds : activeAds}
             keyExtractor={(item) => item.id}
             numColumns={2}
             mt={6}

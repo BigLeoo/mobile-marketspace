@@ -1,14 +1,15 @@
-import { paymant_methods } from "./paymantMethodsDTO"
-import { productImageDTO } from "./productImageDTO"
+/* eslint-disable camelcase */
+import { paymant_methods } from './paymantMethodsDTO'
+import { productImageDTO } from './productImageDTO'
 
 type userType = {
-    avatar: string
-    name: string
-    tel: string
+  avatar: string
+  name: string
+  tel: string
 }
 
 export type addDetailDTO = {
-    accept_trade: boolean
+  accept_trade: boolean
   created_at: string
   description: string
   id: string

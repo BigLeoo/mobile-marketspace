@@ -36,6 +36,17 @@ import { AppError } from '../utils/AppErros'
 import { useEffect, useState } from 'react'
 import { AppNavigatorRoutesProps } from '../routes/app.routes'
 
+type productImageProps = {
+  id: string
+  path: string
+}
+
+type userAdDetail = {
+  avatar: string
+  name: string
+  tel: string
+}
+
 type RoutesParametersProps = {
   active: boolean
   preAd: boolean
@@ -45,8 +56,9 @@ type RoutesParametersProps = {
   price: number
   accept_trade: boolean
   paymant_methods: paymant_methods[]
-  id: string
-  resetForm: () => void
+  product_images: productImageProps[]
+  userAdDetail: userAdDetail
+  resetForm?: () => void
 }
 
 export function AdDetail() {
@@ -68,8 +80,9 @@ export function AdDetail() {
     price,
     accept_trade,
     paymant_methods,
-    id,
-    resetForm
+    product_images,
+    userAdDetail,
+    resetForm,
   } = route.params as RoutesParametersProps
 
   const { colors } = useTheme()
@@ -117,71 +130,60 @@ export function AdDetail() {
       setIsLoading(false)
     }
   }
-  
-  async function fetchAdData(id: string){
-    try {
-      setIsLoading(true)
 
-       const data = await fetchAdDetail(id)
-
-       console.log(data);
-
-      //  return data
-       
-    } catch (error) {
-      const isAppError = error instanceof AppError
-      const title = isAppError
-        ? error.message
-        : 'Não foi possível carregar os dados do anúncio, tente novamente mais tarde.'
-      toast.show({
-        title,
-        placement: 'top',
-        bgColor: 'red.500',
-      })
-
-      navigation.goBack()
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-useEffect(()=>{
-  if(!preAd){
-    fetchAdData(id)
-  }
-})
-
-  
+  useEffect(() => {
+    console.log(product_images)
+  })
 
   return (
     <ScrollView bg={'gray.600'}>
       {!preAd ? <Header backButton /> : <HeaderPreAd />}
 
-      {preAd ? <FlatList data={createAdImage}
-      keyExtractor={(image) => image.assets[0].uri}
-      w={'full'}
-       horizontal={true}
-
-        renderItem={({item}) => (
-
-          <Image
-          source={{ uri: item.assets[0].uri }}
-          height={72}
-          width={'400px'}
-          alt="Product Image"
+      {preAd ? (
+        <FlatList
+          data={createAdImage}
+          keyExtractor={(image) => image.assets[0].uri}
+          w={'full'}
+          horizontal={true}
+          renderItem={({ item }) => (
+            <Image
+              source={{ uri: item.assets[0].uri }}
+              height={72}
+              width={'400px'}
+              alt="Product Image"
+            />
+          )}
         />
-     
-       )} /> : <></>}
+      ) : (
+        <FlatList
+          data={product_images}
+          keyExtractor={(image) => image.id}
+          w={'full'}
+          horizontal={true}
+          renderItem={({ item }) => (
+            <Image
+              source={{ uri: `${api.defaults.baseURL}/images/${item.path}` }}
+              height={72}
+              width={'400px'}
+              alt="Product Image"
+            />
+          )}
+        />
+      )}
 
       <VStack px={6}>
         <HStack mt={5} space={2}>
           <Avatar
             variant="normal"
             imageSize={'28px'}
-            avatarImage={`${api.defaults.baseURL}/images/${user.avatar}`}
+            avatarImage={
+              preAd
+                ? `${api.defaults.baseURL}/images/${user.avatar}`
+                : `${api.defaults.baseURL}/images/${userAdDetail.avatar}`
+            }
           />
           <Text color={'gray.100'} fontSize={'sm'} fontFamily={'body'}>
-            {user.name}
+            {preAd ? user.name : userAdDetail.name}
           </Text>
         </HStack>
 
@@ -225,7 +227,10 @@ useEffect(()=>{
 
         {paymant_methods.map((paymant) => (
           <View mt={2} key={paymant}>
-            <PaymantChose paymant={paymant} key={paymant} />
+            <PaymantChose
+              paymant={preAd ? paymant : paymant.key}
+              key={preAd ? paymant : paymant.key}
+            />
           </View>
         ))}
       </VStack>
