@@ -27,6 +27,7 @@ type userAdDetail = {
 export type adDetailProp = {
   active: boolean
   preAd: boolean
+  userEditAd: boolean
   name: string
   description: string
   is_new: boolean
@@ -35,6 +36,7 @@ export type adDetailProp = {
   paymant_methods: paymant_methods[]
   product_images?: productImages[]
   userAdDetail?: userAdDetail
+  id?: string
   resetForm?: () => void
 }
 

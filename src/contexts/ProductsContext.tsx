@@ -11,6 +11,7 @@ import { AddDTO } from '../dtos/addDTO'
 import { productImageDTO } from '../dtos/productImageDTO'
 import { adImageDTO } from '../dtos/adImageDTO'
 import { addDetailDTO } from '../dtos/addDetailDTO'
+import axios from 'axios'
 
 export type ProductsContextDataProps = {
   createProduct: (
@@ -22,6 +23,7 @@ export type ProductsContextDataProps = {
     payment_methods: paymant_methods[],
   ) => Promise<void>
   setCreateAdImage: () => Promise<void>
+  desactiveAd: (id: string, is_active: boolean) => void
   fetchUserAds: () => Promise<userAddDTO[]>
   fetchAds: () => Promise<AddDTO[]>
   fetchAdImage: (path: string) => Promise<productImageDTO>
@@ -44,8 +46,6 @@ export function ProductsContextProvider({
   const { userToken } = useAuth()
 
   const [createAdImage, setCreateAdImage] = useState<adImageDTO[]>([])
-
-  const toast = useToast()
 
   async function createProduct(
     name: string,
@@ -109,6 +109,23 @@ export function ProductsContextProvider({
     }
   }
 
+  async function desactiveAd(id: string, is_active: boolean) {
+    try {
+      await api.patch(
+        `/products/${id}`,
+        { is_active },
+        {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+    } catch (error) {
+      throw error
+    }
+  }
+
   async function fetchUserAds() {
     try {
       const { data } = await api.get('/users/products', {
@@ -151,20 +168,17 @@ export function ProductsContextProvider({
     return data
   }
 
-  // useEffect(() => {
-  //   console.log(createAdImage)
-  // }, [createAdImage])
-
   return (
     <ProductsContext.Provider
       value={{
         createProduct,
         setCreateAdImage,
         createAdImage,
+        desactiveAd,
         fetchUserAds,
         fetchAds,
         fetchAdImage,
-        fetchAdDetail
+        fetchAdDetail,
       }}
     >
       {children}

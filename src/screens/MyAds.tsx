@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import {
   Center,
   FlatList,
@@ -22,7 +23,14 @@ import { Loading } from '../components/Loading'
 
 import { useProducts } from '../hooks/useProducts'
 import { userAddDTO } from '../dtos/userAddDTO'
+import { paymant_methods } from '../dtos/paymantMethodsDTO'
+
 import { useAuth } from '../hooks/useAuth'
+
+type productImageProps = {
+  id: string
+  path: string
+}
 
 export function MyAds() {
   const [isLoading, setIsLoading] = useState(true)
@@ -61,8 +69,31 @@ export function MyAds() {
     }
   }
 
-  function handleAdDetail() {
-    navigation.navigate('adDetail')
+  function handleAdDetail(
+    active: boolean,
+    name: string,
+    description: string,
+    is_new: boolean,
+    price: number,
+    accept_trade: boolean,
+    paymant_methods: paymant_methods[],
+    product_images: productImageProps[],
+    id: string,
+  ) {
+    navigation.navigate('adDetail', {
+      preAd: false,
+      active,
+      userEditAd: true,
+      name,
+      description,
+      is_new,
+      price,
+      accept_trade,
+      paymant_methods,
+      product_images,
+      userAdDetail: user,
+      id,
+    })
   }
 
   useFocusEffect(
@@ -121,7 +152,21 @@ export function MyAds() {
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <View mr={5} mb={6}>
-                <TouchableOpacity onPress={handleAdDetail}>
+                <TouchableOpacity
+                  onPress={() =>
+                    handleAdDetail(
+                      item.is_active,
+                      item.name,
+                      item.description,
+                      item.is_new,
+                      item.price,
+                      item.accept_trade,
+                      item.payment_methods,
+                      item.product_images,
+                      item.id,
+                    )
+                  }
+                >
                   <Ads
                     name={item.name}
                     is_new={item.is_new}

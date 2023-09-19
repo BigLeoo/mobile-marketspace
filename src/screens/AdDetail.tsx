@@ -17,6 +17,8 @@ import { Avatar } from '../components/Avatar'
 import { TagComponent } from '../components/TagComponent'
 import { PaymantChose } from '../components/PaymantChose'
 import { Button } from '../components/Button'
+import { HeaderPreAd } from '../components/HeaderPreAd'
+import { BottomMenu } from '../components/BottomMenu'
 
 import {
   ArrowLeft,
@@ -25,16 +27,20 @@ import {
   WhatsappLogo,
   Tag,
 } from 'phosphor-react-native'
-import { HeaderPreAd } from '../components/HeaderPreAd'
-import { BottomMenu } from '../components/BottomMenu'
+
 import { useNavigation, useRoute } from '@react-navigation/native'
-import { paymant_methods } from '../dtos/paymantMethodsDTO'
-import { useAuth } from '../hooks/useAuth'
-import { api } from '../services/api'
-import { useProducts } from '../hooks/useProducts'
-import { AppError } from '../utils/AppErros'
-import { useEffect, useState } from 'react'
 import { AppNavigatorRoutesProps } from '../routes/app.routes'
+
+import { useAuth } from '../hooks/useAuth'
+import { useProducts } from '../hooks/useProducts'
+
+import { api } from '../services/api'
+import { AppError } from '../utils/AppErros'
+
+import { useEffect, useState } from 'react'
+
+import { paymant_methods } from '../dtos/paymantMethodsDTO'
+import { boolean } from 'yup'
 
 type productImageProps = {
   id: string
@@ -47,21 +53,30 @@ type userAdDetail = {
   tel: string
 }
 
+type paymantMethodsProps = {
+  key: 'boleto' | 'pix' | 'cash' | 'card' | 'deposit'
+}
+
 type RoutesParametersProps = {
   active: boolean
   preAd: boolean
+  userEditAd: boolean
   name: string
   description: string
   is_new: boolean
   price: number
   accept_trade: boolean
-  paymant_methods: paymant_methods[]
+  paymant_methods: paymantMethodsProps[]
   product_images: productImageProps[]
   userAdDetail: userAdDetail
+  id: string
   resetForm?: () => void
 }
 
 export function AdDetail() {
+  const [isLoading, setIsLoading] = useState(false)
+  const [adActive, setAdActive] = useState<boolean>()
+
   const route = useRoute()
   const navigation = useNavigation<AppNavigatorRoutesProps>()
 
@@ -69,11 +84,12 @@ export function AdDetail() {
 
   const toast = useToast()
 
-  const { createProduct, createAdImage, fetchAdDetail } = useProducts()
+  const { createProduct, createAdImage, desactiveAd } = useProducts()
 
   const {
     active,
     preAd,
+    userEditAd,
     name,
     description,
     is_new,
@@ -82,12 +98,11 @@ export function AdDetail() {
     paymant_methods,
     product_images,
     userAdDetail,
+    id,
     resetForm,
   } = route.params as RoutesParametersProps
 
   const { colors } = useTheme()
-
-  const [isLoading, setIsLoading] = useState(false)
 
   function handleGoBack() {
     navigation.navigate('createAd')
@@ -131,13 +146,50 @@ export function AdDetail() {
     }
   }
 
+  async function handleDesactiveAd(id: string, is_active: boolean) {
+    try {
+      setIsLoading(true)
+
+      await desactiveAd(id, is_active)
+
+      setAdActive(is_active)
+
+      toast.show({
+        title: `Anúncio ${is_active ? 'Ativado' : 'Desativado'}`,
+        placement: 'top',
+        bgColor: 'green.500',
+      })
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const title = isAppError
+        ? error.message
+        : `Não foi possível ${
+            is_new ? 'desativar' : 'ativar'
+          } o aúncio, tente novamente mais tarde.`
+
+      toast.show({
+        title,
+        placement: 'top',
+        bgColor: 'red.500',
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   useEffect(() => {
-    console.log(product_images)
-  })
+    setAdActive(active)
+  }, [])
 
   return (
     <ScrollView bg={'gray.600'}>
-      {!preAd ? <Header backButton /> : <HeaderPreAd />}
+      {preAd ? (
+        <HeaderPreAd />
+      ) : userEditAd ? (
+        <Header iconRight="pencil" backButton />
+      ) : (
+        <Header backButton />
+      )}
 
       {preAd ? (
         <FlatList
@@ -226,7 +278,7 @@ export function AdDetail() {
         </Heading>
 
         {paymant_methods.map((paymant) => (
-          <View mt={2} key={paymant}>
+          <View mt={2} key={paymant.key}>
             <PaymantChose
               paymant={preAd ? paymant : paymant.key}
               key={preAd ? paymant : paymant.key}
@@ -234,7 +286,37 @@ export function AdDetail() {
           </View>
         ))}
       </VStack>
-      {active ? (
+      {preAd ? (
+        <BottomMenu
+          mt={'10px'}
+          buttonTitle1="Voltar e editar"
+          buttonFunction1={handleGoBack}
+          varianButton1="gray-light"
+          leftIcon1={
+            <ArrowLeft size={16} weight="bold" color={colors.gray[200]} />
+          }
+          buttonTitle2="Publicar"
+          buttonFunction2={handleCreateAd}
+          isLoading2={isLoading}
+          varianButton2="blue-light"
+          leftIcon2={<Tag size={16} weight="bold" color={colors.gray[600]} />}
+        />
+      ) : userEditAd ? (
+        <VStack px={6} mt={'32px'} pb={'30px'} space={'8px'}>
+          <Button
+            title={adActive ? 'Desativar anúncio' : 'Reativar anúncio'}
+            isLoading={isLoading}
+            variant={'blue-light'}
+            leftIcon={<Power size={16} color={colors.gray[700]} />}
+            onPress={() => handleDesactiveAd(id, !adActive)}
+          />
+          <Button
+            title="Excluir anúncio"
+            variant={'gray-light'}
+            leftIcon={<TrashSimple size={16} color={colors.gray[200]} />}
+          />
+        </VStack>
+      ) : (
         <HStack
           bg={'gray.700'}
           justifyContent={'space-between'}
@@ -262,34 +344,6 @@ export function AdDetail() {
             buttonSize={'169px'}
           />
         </HStack>
-      ) : preAd ? (
-        <BottomMenu
-          mt={'10px'}
-          buttonTitle1="Voltar e editar"
-          buttonFunction1={handleGoBack}
-          varianButton1="gray-light"
-          leftIcon1={
-            <ArrowLeft size={16} weight="bold" color={colors.gray[200]} />
-          }
-          buttonTitle2="Publicar"
-          buttonFunction2={handleCreateAd}
-          isLoading2={isLoading}
-          varianButton2="blue-light"
-          leftIcon2={<Tag size={16} weight="bold" color={colors.gray[600]} />}
-        />
-      ) : (
-        <VStack px={6} mt={'32px'} pb={'30px'} space={'8px'}>
-          <Button
-            title="Reativar anúncio"
-            variant={'blue-light'}
-            leftIcon={<Power size={16} color={colors.gray[700]} />}
-          />
-          <Button
-            title="Excluir anúncio"
-            variant={'gray-light'}
-            leftIcon={<TrashSimple size={16} color={colors.gray[200]} />}
-          />
-        </VStack>
       )}
     </ScrollView>
   )

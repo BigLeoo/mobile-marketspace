@@ -20,6 +20,10 @@ export function Header({ title, backButton, iconRight }: HeaderProps) {
     navigation.goBack()
   }
 
+  function handleCreateAd() {
+    navigation.navigate('createAd')
+  }
+
   return (
     <View px={6} pt={5} pb={2} position={'relative'} alignItems={'center'}>
       {backButton ? (
@@ -45,7 +49,7 @@ export function Header({ title, backButton, iconRight }: HeaderProps) {
       )}
 
       {iconRight === 'plus' ? (
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleCreateAd}>
           <View position={'absolute'} bottom={'0px'} left={'145px'}>
             <Plus size={24} weight="bold" color={colors.gray[100]} />
           </View>

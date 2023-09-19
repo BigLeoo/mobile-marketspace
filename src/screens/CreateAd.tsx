@@ -97,13 +97,14 @@ export function CreateAd() {
       navigation.navigate('adDetail', {
         active: false,
         preAd: true,
+        userEditAd: false,
         name,
         description,
         is_new,
         price,
         accept_trade,
         paymant_methods,
-        resetForm: reset
+        resetForm: reset,
       })
     } catch (error) {
       const isAppError = error instanceof AppError

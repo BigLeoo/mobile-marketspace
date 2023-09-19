@@ -7,9 +7,9 @@ type ButtonProps = IButtonProps & {
 }
 
 export function Button({
-  buttonSize = 'full',
   title,
   variant,
+  buttonSize = 'full',
   ...rest
 }: ButtonProps) {
   return (
