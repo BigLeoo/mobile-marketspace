@@ -356,6 +356,7 @@ export function CreateAd() {
             </Checkbox.Group>
           )}
         />
+
         {errors.paymant_methods?.message ? (
           <Text mt={'10px'} color={'red.500'}>
             {errors.paymant_methods?.message}

@@ -1,17 +1,18 @@
 /* eslint-disable prefer-const */
 /* eslint-disable no-useless-catch */
 /* eslint-disable camelcase */
-import { ReactNode, createContext, useEffect, useState } from 'react'
-import { api } from '../services/api'
+import { ReactNode, createContext, useState } from 'react'
+
 import { useAuth } from '../hooks/useAuth'
-import { useToast } from 'native-base'
+
+import { api } from '../services/api'
+
 import { paymant_methods } from '../dtos/paymantMethodsDTO'
 import { userAddDTO } from '../dtos/userAddDTO'
 import { AddDTO } from '../dtos/addDTO'
 import { productImageDTO } from '../dtos/productImageDTO'
 import { adImageDTO } from '../dtos/adImageDTO'
 import { addDetailDTO } from '../dtos/addDetailDTO'
-import axios from 'axios'
 
 export type ProductsContextDataProps = {
   createProduct: (
@@ -22,9 +23,12 @@ export type ProductsContextDataProps = {
     accept_trade: boolean,
     payment_methods: paymant_methods[],
   ) => Promise<void>
-  setCreateAdImage: () => Promise<void>
+  setCreateAdImage: () => Promise<adImageDTO[]>
   desactiveAd: (id: string, is_active: boolean) => void
+  deleteAd: (id: string) => void
+
   fetchUserAds: () => Promise<userAddDTO[]>
+
   fetchAds: () => Promise<AddDTO[]>
   fetchAdImage: (path: string) => Promise<productImageDTO>
   fetchAdDetail: (id: string) => Promise<addDetailDTO>
@@ -126,6 +130,19 @@ export function ProductsContextProvider({
     }
   }
 
+  async function deleteAd(id: string) {
+    try {
+      await api.delete(`products/${id}`, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          'Content-Type': 'application/json',
+        },
+      })
+    } catch (error) {
+      throw error
+    }
+  }
+
   async function fetchUserAds() {
     try {
       const { data } = await api.get('/users/products', {
@@ -179,6 +196,7 @@ export function ProductsContextProvider({
         fetchAds,
         fetchAdImage,
         fetchAdDetail,
+        deleteAd,
       }}
     >
       {children}

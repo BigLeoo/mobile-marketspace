@@ -39,9 +39,6 @@ import { AppError } from '../utils/AppErros'
 
 import { useEffect, useState } from 'react'
 
-import { paymant_methods } from '../dtos/paymantMethodsDTO'
-import { boolean } from 'yup'
-
 type productImageProps = {
   id: string
   path: string
@@ -84,7 +81,7 @@ export function AdDetail() {
 
   const toast = useToast()
 
-  const { createProduct, createAdImage, desactiveAd } = useProducts()
+  const { createProduct, createAdImage, desactiveAd, deleteAd } = useProducts()
 
   const {
     active,
@@ -166,6 +163,34 @@ export function AdDetail() {
         : `Não foi possível ${
             is_new ? 'desativar' : 'ativar'
           } o aúncio, tente novamente mais tarde.`
+
+      toast.show({
+        title,
+        placement: 'top',
+        bgColor: 'red.500',
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  async function handleDeleteAd(id: string) {
+    try {
+      setIsLoading(true)
+      await deleteAd(id)
+
+      navigation.goBack()
+
+      toast.show({
+        title: `Anúncio deletado com sucesso.`,
+        placement: 'top',
+        bgColor: 'green.500',
+      })
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const title = isAppError
+        ? error.message
+        : `Não foi possível deletar o aúncio, tente novamente mais tarde.`
 
       toast.show({
         title,
@@ -312,6 +337,8 @@ export function AdDetail() {
           />
           <Button
             title="Excluir anúncio"
+            isLoading={isLoading}
+            onPress={() => handleDeleteAd(id)}
             variant={'gray-light'}
             leftIcon={<TrashSimple size={16} color={colors.gray[200]} />}
           />
