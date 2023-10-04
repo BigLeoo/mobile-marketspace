@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import { paymant_methods } from './paymantMethodsDTO'
+import { paymantMethodsDTO } from './paymantMethodsDTO'
 import { productImageDTO } from './productImageDTO'
 
 export type userAddDTO = {
@@ -10,7 +10,7 @@ export type userAddDTO = {
   is_active: boolean
   is_new: boolean
   name: string
-  payment_methods: paymant_methods[] // Você pode definir um tipo específico para payment_methods se souber a estrutura
+  payment_methods: paymantMethodsDTO[] // Você pode definir um tipo específico para payment_methods se souber a estrutura
   price: number
   product_images: productImageDTO[] // Você pode definir um tipo específico para product_images se souber a estrutura
   updated_at: string

@@ -30,8 +30,12 @@ export function Header({
     navigation.navigate('myAds')
   }
 
+  function handleEditAd() {
+    navigation.navigate('createAd', { isEditingAd: true })
+  }
+
   function handleCreateAd() {
-    navigation.navigate('createAd')
+    navigation.navigate('createAd', { isEditingAd: false })
   }
 
   return (
@@ -75,7 +79,7 @@ export function Header({
       )}
 
       {iconRight === 'pencil' ? (
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleEditAd}>
           <View position={'absolute'} bottom={'0px'} left={'145px'}>
             <PencilSimpleLine
               size={24}

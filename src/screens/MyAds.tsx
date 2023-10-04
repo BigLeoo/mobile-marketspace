@@ -23,7 +23,7 @@ import { Loading } from '../components/Loading'
 
 import { useProducts } from '../hooks/useProducts'
 import { userAddDTO } from '../dtos/userAddDTO'
-import { paymant_methods } from '../dtos/paymantMethodsDTO'
+import { paymantMethodsDTO } from '../dtos/paymantMethodsDTO'
 
 import { useAuth } from '../hooks/useAuth'
 
@@ -76,7 +76,7 @@ export function MyAds() {
     is_new: boolean,
     price: number,
     accept_trade: boolean,
-    paymant_methods: paymant_methods[],
+    paymant_methods: paymantMethodsDTO[],
     product_images: productImageProps[],
     id: string,
   ) {

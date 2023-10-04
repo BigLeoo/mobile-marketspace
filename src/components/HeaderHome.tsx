@@ -23,7 +23,7 @@ export function HeaderHome({ userName, userAvatar, ...rest }: headerHomeProps) {
   function handleCreateAd() {
     setCreateAdImage([])
 
-    navigation.navigate('createAd')
+    navigation.navigate('createAd', { isEditingAd: false })
   }
 
   return (

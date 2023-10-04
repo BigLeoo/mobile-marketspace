@@ -7,7 +7,7 @@ import { useAuth } from '../hooks/useAuth'
 
 import { api } from '../services/api'
 
-import { paymant_methods } from '../dtos/paymantMethodsDTO'
+import { paymantMethodsDTO } from '../dtos/paymantMethodsDTO'
 import { userAddDTO } from '../dtos/userAddDTO'
 import { AddDTO } from '../dtos/addDTO'
 import { productImageDTO } from '../dtos/productImageDTO'
@@ -21,9 +21,18 @@ export type ProductsContextDataProps = {
     is_new: boolean,
     price: number,
     accept_trade: boolean,
-    payment_methods: paymant_methods[],
+    payment_methods: paymantMethodsDTO[],
   ) => Promise<void>
   setCreateAdImage: () => Promise<adImageDTO[]>
+  editAd: (
+    id: string,
+    name: string,
+    description: string,
+    is_new: boolean,
+    price: number,
+    accept_trade: boolean,
+    payment_methods: paymantMethodsDTO[],
+  ) => void
   changeAdStatus: (id: string, is_active: boolean) => void
   deleteAd: (id: string) => void
 
@@ -33,6 +42,16 @@ export type ProductsContextDataProps = {
   fetchAdImage: (path: string) => Promise<productImageDTO>
   fetchAdDetail: (id: string) => Promise<addDetailDTO>
 
+  editAdData: addDetailDTO
+  setEditAdData: ({
+    id,
+    name,
+    description,
+    is_new,
+    price,
+    accept_trade,
+    payment_methods,
+  }: addDetailDTO) => void
   createAdImage: adImageDTO[]
 }
 
@@ -51,13 +70,15 @@ export function ProductsContextProvider({
 
   const [createAdImage, setCreateAdImage] = useState<adImageDTO[]>([])
 
+  const [editAdData, setEditAdData] = useState<addDetailDTO>({} as addDetailDTO)
+
   async function createProduct(
     name: string,
     description: string,
     is_new: boolean,
     price: number,
     accept_trade: boolean,
-    payment_methods: paymant_methods[],
+    payment_methods: paymantMethodsDTO[],
   ) {
     try {
       const { data } = await api.post(
@@ -130,6 +151,40 @@ export function ProductsContextProvider({
     }
   }
 
+  async function editAd(
+    id: string,
+    name: string,
+    description: string,
+    is_new: boolean,
+    price: number,
+    accept_trade: boolean,
+    payment_methods: paymantMethodsDTO[],
+  ) {
+    try {
+      api.put(
+        `products/${id}`,
+        {
+          name,
+          description,
+          is_new,
+          price,
+          accept_trade,
+          payment_methods,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+
+      await imageCreateProduct(id, createAdImage)
+    } catch (error) {
+      throw error
+    }
+  }
+
   async function deleteAd(id: string) {
     try {
       await api.delete(`products/${id}`, {
@@ -189,14 +244,19 @@ export function ProductsContextProvider({
     <ProductsContext.Provider
       value={{
         createProduct,
-        setCreateAdImage,
         createAdImage,
+        setCreateAdImage,
+
+        editAd,
         changeAdStatus,
+        deleteAd,
+        editAdData,
+        setEditAdData,
+
         fetchUserAds,
         fetchAds,
         fetchAdImage,
         fetchAdDetail,
-        deleteAd,
       }}
     >
       {children}

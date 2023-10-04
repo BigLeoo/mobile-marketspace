@@ -1,3 +1,3 @@
-export type paymant_methods = {
+export type paymantMethodsDTO = {
   paymants: 'boleto' | 'pix' | 'cash' | 'card' | 'deposit'
 }

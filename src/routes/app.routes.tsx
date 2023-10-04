@@ -11,7 +11,7 @@ import { useTheme } from 'native-base'
 import { SignOut } from '../screens/SignOut'
 import { AdDetail } from '../screens/AdDetail'
 import { CreateAd } from '../screens/CreateAd'
-import { paymant_methods } from '../dtos/paymantMethodsDTO'
+import { paymantMethodsDTO } from '../dtos/paymantMethodsDTO'
 
 type productImages = {
   id: string
@@ -33,7 +33,7 @@ export type adDetailProp = {
   is_new: boolean
   price: number
   accept_trade: boolean
-  paymant_methods: paymant_methods[]
+  paymant_methods: paymantMethodsDTO[]
   setGroupValue?: React.Dispatch<React.SetStateAction<string[]>>
   product_images?: productImages[]
   userAdDetail?: userAdDetail
@@ -41,12 +41,16 @@ export type adDetailProp = {
   resetForm?: () => void
 }
 
+export type createAdRouteParameters = {
+  isEditingAd: boolean
+}
+
 type AppRoutes = {
   home: undefined
   myAds: undefined
   logOut: undefined
   adDetail: adDetailProp
-  createAd: undefined
+  createAd: createAdRouteParameters
 }
 
 export type AppNavigatorRoutesProps = NativeStackNavigationProp<AppRoutes>

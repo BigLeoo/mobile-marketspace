@@ -28,7 +28,11 @@ import {
   Tag,
 } from 'phosphor-react-native'
 
-import { useNavigation, useRoute } from '@react-navigation/native'
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native'
 import { AppNavigatorRoutesProps } from '../routes/app.routes'
 
 import { useAuth } from '../hooks/useAuth'
@@ -37,7 +41,7 @@ import { useProducts } from '../hooks/useProducts'
 import { api } from '../services/api'
 import { AppError } from '../utils/AppErros'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 type productImageProps = {
   id: string
@@ -82,8 +86,14 @@ export function AdDetail() {
 
   const toast = useToast()
 
-  const { createProduct, createAdImage, changeAdStatus, deleteAd } =
-    useProducts()
+  const {
+    createProduct,
+    createAdImage,
+    changeAdStatus,
+    deleteAd,
+    setEditAdData,
+    editAdData,
+  } = useProducts()
 
   const {
     active,
@@ -105,7 +115,7 @@ export function AdDetail() {
   const { colors } = useTheme()
 
   function handleGoBack() {
-    navigation.navigate('createAd')
+    navigation.navigate('createAd', { isEditingAd: false })
   }
 
   async function handleCreateAd() {
@@ -209,6 +219,23 @@ export function AdDetail() {
   useEffect(() => {
     setIsAdActive(active)
   }, [])
+
+  useFocusEffect(
+    useCallback(() => {
+      try {
+        setEditAdData({
+          id,
+          name,
+          description,
+          is_new,
+          price,
+          accept_trade,
+          paymant_methods,
+        })
+        console.log(editAdData)
+      } catch (error) {}
+    }, [id, name, description, is_new, price, accept_trade, paymant_methods]),
+  )
 
   return (
     <ScrollView bg={'gray.600'}>

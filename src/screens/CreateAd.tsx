@@ -16,17 +16,20 @@ import { CreateAdImage } from '../components/CreateAdImage'
 import { Input } from '../components/Input'
 import { BottomMenu } from '../components/BottomMenu'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useRoute } from '@react-navigation/native'
 
 import { TextArea } from '../components/TextArea'
 import { AppError } from '../utils/AppErros'
-import { AppNavigatorRoutesProps } from '../routes/app.routes'
-import { paymant_methods } from '../dtos/paymantMethodsDTO'
+import {
+  AppNavigatorRoutesProps,
+  createAdRouteParameters,
+} from '../routes/app.routes'
+import { paymantMethodsDTO } from '../dtos/paymantMethodsDTO'
 import { useProducts } from '../hooks/useProducts'
 
 type FormDataProps = {
@@ -34,8 +37,8 @@ type FormDataProps = {
   description: string
   is_new: string
   price: number
-  accept_trade: true
-  paymant_methods: paymant_methods[]
+  accept_trade: boolean
+  paymant_methods: paymantMethodsDTO[]
 }
 
 export function CreateAd() {
@@ -43,7 +46,11 @@ export function CreateAd() {
   const [checkBoxPaymantMethodsValues, setCheckBoxPaymantMethodsValues] =
     useState([])
 
-  const { createAdImage } = useProducts()
+  const route = useRoute()
+
+  const { isEditingAd = false } = route.params as createAdRouteParameters
+
+  const { createAdImage, editAdData, setEditAdData } = useProducts()
 
   const toast = useToast()
 
@@ -71,7 +78,11 @@ export function CreateAd() {
   } = useForm<FormDataProps>({
     resolver: yupResolver(signUpSchema),
     defaultValues: {
-      is_new: 'true',
+      name: editAdData ? editAdData.name : undefined,
+      description: editAdData ? editAdData.description : undefined,
+      is_new: editAdData ? editAdData.is_new : 'true',
+      price: editAdData ? editAdData.price : undefined,
+      accept_trade: editAdData ? editAdData.accept_trade : undefined,
     },
   })
 
@@ -131,9 +142,23 @@ export function CreateAd() {
     navigation.goBack()
   }
 
+  useEffect(() => {
+    if (editAdData.payment_methods) {
+      editAdData.payment_methods.forEach((paymant) => {
+        setCheckBoxPaymantMethodsValues((prevState) => [
+          ...prevState,
+          paymant.key,
+        ])
+      })
+    }
+  }, [])
+
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
-      <Header title="Criar anúncio" backToHomeButton />
+      <Header
+        title={isEditingAd ? 'Editar Anúncio' : 'Criar anúncio'}
+        backToHomeButton
+      />
 
       <VStack px={'24px'}>
         <Heading
@@ -245,7 +270,7 @@ export function CreateAd() {
             <Input
               onChangeText={onChange}
               inputMode="numeric"
-              value={value.toString()}
+              value={value}
               errorMessage={errors.price?.message}
               leftElement={
                 <Text
