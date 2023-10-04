@@ -7,17 +7,27 @@ import { AppNavigatorRoutesProps } from '../routes/app.routes'
 
 type HeaderProps = IViewProps & {
   title?: string
-  backButton?: boolean
+  backToHomeButton?: boolean
+  backToMyAdsButton?: boolean
   iconRight?: 'plus' | 'pencil'
 }
 
-export function Header({ title, backButton, iconRight }: HeaderProps) {
+export function Header({
+  title,
+  backToHomeButton,
+  backToMyAdsButton,
+  iconRight,
+}: HeaderProps) {
   const { colors } = useTheme()
 
   const navigation = useNavigation<AppNavigatorRoutesProps>()
 
-  function handleGoBack() {
+  function handleGoBackToHome() {
     navigation.goBack()
+  }
+
+  function handleGoBackToMyAds() {
+    navigation.navigate('myAds')
   }
 
   function handleCreateAd() {
@@ -26,8 +36,14 @@ export function Header({ title, backButton, iconRight }: HeaderProps) {
 
   return (
     <View px={6} pt={5} pb={2} position={'relative'} alignItems={'center'}>
-      {backButton ? (
-        <TouchableOpacity onPress={handleGoBack}>
+      {backToMyAdsButton ? (
+        <TouchableOpacity onPress={handleGoBackToMyAds}>
+          <View position={'absolute'} right={'145px'} top={'0px'}>
+            <ArrowLeft size={24} weight="bold" />
+          </View>
+        </TouchableOpacity>
+      ) : backToHomeButton ? (
+        <TouchableOpacity onPress={handleGoBackToHome}>
           <View position={'absolute'} right={'145px'} top={'0px'}>
             <ArrowLeft size={24} weight="bold" />
           </View>

@@ -27,13 +27,14 @@ type userAdDetail = {
 export type adDetailProp = {
   active: boolean
   preAd: boolean
-  userEditAd: boolean
+  userEditAd?: boolean
   name: string
   description: string
   is_new: boolean
   price: number
   accept_trade: boolean
   paymant_methods: paymant_methods[]
+  setGroupValue?: React.Dispatch<React.SetStateAction<string[]>>
   product_images?: productImages[]
   userAdDetail?: userAdDetail
   id?: string

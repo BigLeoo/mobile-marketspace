@@ -64,6 +64,7 @@ type RoutesParametersProps = {
   price: number
   accept_trade: boolean
   paymant_methods: paymantMethodsProps[]
+  setGroupValue?: React.Dispatch<React.SetStateAction<string[]>>
   product_images: productImageProps[]
   userAdDetail: userAdDetail
   id: string
@@ -72,7 +73,7 @@ type RoutesParametersProps = {
 
 export function AdDetail() {
   const [isLoading, setIsLoading] = useState(false)
-  const [adActive, setAdActive] = useState<boolean>()
+  const [isAdActive, setIsAdActive] = useState<boolean>()
 
   const route = useRoute()
   const navigation = useNavigation<AppNavigatorRoutesProps>()
@@ -81,7 +82,8 @@ export function AdDetail() {
 
   const toast = useToast()
 
-  const { createProduct, createAdImage, desactiveAd, deleteAd } = useProducts()
+  const { createProduct, createAdImage, changeAdStatus, deleteAd } =
+    useProducts()
 
   const {
     active,
@@ -93,6 +95,7 @@ export function AdDetail() {
     price,
     accept_trade,
     paymant_methods,
+    setGroupValue,
     product_images,
     userAdDetail,
     id,
@@ -124,6 +127,7 @@ export function AdDetail() {
         bgColor: 'green.500',
       })
 
+      setGroupValue([])
       resetForm()
 
       navigation.goBack()
@@ -143,13 +147,13 @@ export function AdDetail() {
     }
   }
 
-  async function handleDesactiveAd(id: string, is_active: boolean) {
+  async function handleChangeAdStatus(id: string, is_active: boolean) {
     try {
       setIsLoading(true)
 
-      await desactiveAd(id, is_active)
+      await changeAdStatus(id, is_active)
 
-      setAdActive(is_active)
+      setIsAdActive(is_active)
 
       toast.show({
         title: `Anúncio ${is_active ? 'Ativado' : 'Desativado'}`,
@@ -203,7 +207,7 @@ export function AdDetail() {
   }
 
   useEffect(() => {
-    setAdActive(active)
+    setIsAdActive(active)
   }, [])
 
   return (
@@ -211,9 +215,9 @@ export function AdDetail() {
       {preAd ? (
         <HeaderPreAd />
       ) : userEditAd ? (
-        <Header iconRight="pencil" backButton />
+        <Header iconRight="pencil" backToMyAdsButton />
       ) : (
-        <Header backButton />
+        <Header backToHomeButton />
       )}
 
       {preAd ? (
@@ -329,11 +333,11 @@ export function AdDetail() {
       ) : userEditAd ? (
         <VStack px={6} mt={'32px'} pb={'30px'} space={'8px'}>
           <Button
-            title={adActive ? 'Desativar anúncio' : 'Reativar anúncio'}
+            title={isAdActive ? 'Desativar anúncio' : 'Reativar anúncio'}
             isLoading={isLoading}
             variant={'blue-light'}
             leftIcon={<Power size={16} color={colors.gray[700]} />}
-            onPress={() => handleDesactiveAd(id, !adActive)}
+            onPress={() => handleChangeAdStatus(id, !isAdActive)}
           />
           <Button
             title="Excluir anúncio"

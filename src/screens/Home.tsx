@@ -60,8 +60,6 @@ export function Home() {
     try {
       const data = await fetchAdDetail(id)
 
-      console.log(data)
-
       navigation.navigate('adDetail', {
         active: true,
         preAd: false,

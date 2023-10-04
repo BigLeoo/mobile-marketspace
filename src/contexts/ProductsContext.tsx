@@ -24,7 +24,7 @@ export type ProductsContextDataProps = {
     payment_methods: paymant_methods[],
   ) => Promise<void>
   setCreateAdImage: () => Promise<adImageDTO[]>
-  desactiveAd: (id: string, is_active: boolean) => void
+  changeAdStatus: (id: string, is_active: boolean) => void
   deleteAd: (id: string) => void
 
   fetchUserAds: () => Promise<userAddDTO[]>
@@ -113,7 +113,7 @@ export function ProductsContextProvider({
     }
   }
 
-  async function desactiveAd(id: string, is_active: boolean) {
+  async function changeAdStatus(id: string, is_active: boolean) {
     try {
       await api.patch(
         `/products/${id}`,
@@ -191,7 +191,7 @@ export function ProductsContextProvider({
         createProduct,
         setCreateAdImage,
         createAdImage,
-        desactiveAd,
+        changeAdStatus,
         fetchUserAds,
         fetchAds,
         fetchAdImage,

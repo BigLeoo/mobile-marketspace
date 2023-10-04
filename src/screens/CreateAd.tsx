@@ -32,7 +32,7 @@ import { useProducts } from '../hooks/useProducts'
 type FormDataProps = {
   name: string
   description: string
-  is_new: boolean
+  is_new: string
   price: number
   accept_trade: true
   paymant_methods: paymant_methods[]
@@ -40,6 +40,8 @@ type FormDataProps = {
 
 export function CreateAd() {
   const [isLoading, setIsLoading] = useState(false)
+  const [checkBoxPaymantMethodsValues, setCheckBoxPaymantMethodsValues] =
+    useState([])
 
   const { createAdImage } = useProducts()
 
@@ -104,6 +106,7 @@ export function CreateAd() {
         price,
         accept_trade,
         paymant_methods,
+        setCheckBoxPaymantMethodsValues,
         resetForm: reset,
       })
     } catch (error) {
@@ -123,13 +126,14 @@ export function CreateAd() {
   }
 
   function handleCancelForm() {
+    setCheckBoxPaymantMethodsValues([])
     reset()
     navigation.goBack()
   }
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
-      <Header title="Criar anúncio" backButton />
+      <Header title="Criar anúncio" backToHomeButton />
 
       <VStack px={'24px'}>
         <Heading
@@ -241,7 +245,7 @@ export function CreateAd() {
             <Input
               onChangeText={onChange}
               inputMode="numeric"
-              value={value}
+              value={value.toString()}
               errorMessage={errors.price?.message}
               leftElement={
                 <Text
@@ -270,10 +274,11 @@ export function CreateAd() {
         <Controller
           control={control}
           name="accept_trade"
-          defaultValue={false}
+          // defaultValue={false}
           render={({ field: { onChange, value } }) => (
             <Switch
               alignSelf={'flex-start'}
+              defaultIsChecked={false}
               size={'lg'}
               onTrackColor={'blue.700'}
               onToggle={(val: boolean) => onChange(val)}
@@ -294,10 +299,13 @@ export function CreateAd() {
         <Controller
           control={control}
           name="paymant_methods"
-          defaultValue={[]}
+          defaultValue={checkBoxPaymantMethodsValues}
           render={({ field: { onChange } }) => (
             <Checkbox.Group
+              defaultValue={checkBoxPaymantMethodsValues}
+              value={checkBoxPaymantMethodsValues}
               onChange={(values) => {
+                setCheckBoxPaymantMethodsValues(values || [])
                 onChange(values)
               }}
             >
