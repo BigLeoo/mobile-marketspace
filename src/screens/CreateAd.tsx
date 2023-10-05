@@ -70,6 +70,18 @@ export function CreateAd() {
     })
     .required()
 
+  const defaulFormValues = {
+    name: editAdData.name ? editAdData.name : undefined,
+    description: editAdData.description ? editAdData.description : undefined,
+    is_new:
+      editAdData.is_new === undefined ? 'true' : editAdData.is_new.toString(),
+    price: editAdData.price ? editAdData.price.toString() : undefined,
+    accept_trade:
+      editAdData.accept_trade === undefined
+        ? undefined
+        : editAdData.accept_trade,
+  }
+
   const {
     control,
     handleSubmit,
@@ -77,13 +89,7 @@ export function CreateAd() {
     reset,
   } = useForm<FormDataProps>({
     resolver: yupResolver(signUpSchema),
-    defaultValues: {
-      name: editAdData ? editAdData.name : undefined,
-      description: editAdData ? editAdData.description : undefined,
-      is_new: editAdData ? editAdData.is_new : 'true',
-      price: editAdData ? editAdData.price : undefined,
-      accept_trade: editAdData ? editAdData.accept_trade : undefined,
-    },
+    defaultValues: defaulFormValues,
   })
 
   function handlePreAd({
@@ -143,6 +149,10 @@ export function CreateAd() {
   }
 
   useEffect(() => {
+    reset(defaulFormValues)
+  }, [editAdData])
+
+  useEffect(() => {
     if (editAdData.payment_methods) {
       editAdData.payment_methods.forEach((paymant) => {
         setCheckBoxPaymantMethodsValues((prevState) => [
@@ -151,13 +161,16 @@ export function CreateAd() {
         ])
       })
     }
-  }, [])
+
+    console.log(checkBoxPaymantMethodsValues)
+  }, [editAdData])
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <Header
         title={isEditingAd ? 'Editar Anúncio' : 'Criar anúncio'}
         backToHomeButton
+        reset={reset}
       />
 
       <VStack px={'24px'}>
@@ -233,10 +246,11 @@ export function CreateAd() {
         <Controller
           control={control}
           name="is_new"
+          // defaultValue={defaulFormValues.is_new.toString()}
           render={({ field: { onChange, value } }) => (
             <Radio.Group
               name="is_new"
-              defaultValue={value}
+              // defaultValue={value.toString()}
               value={value}
               accessibilityLabel="Define the state of the product"
               onChange={(val) => onChange(val)}
@@ -270,7 +284,7 @@ export function CreateAd() {
             <Input
               onChangeText={onChange}
               inputMode="numeric"
-              value={value}
+              value={value.toString()}
               errorMessage={errors.price?.message}
               leftElement={
                 <Text
@@ -299,11 +313,10 @@ export function CreateAd() {
         <Controller
           control={control}
           name="accept_trade"
-          // defaultValue={false}
+          defaultValue={false}
           render={({ field: { onChange, value } }) => (
             <Switch
               alignSelf={'flex-start'}
-              defaultIsChecked={false}
               size={'lg'}
               onTrackColor={'blue.700'}
               onToggle={(val: boolean) => onChange(val)}

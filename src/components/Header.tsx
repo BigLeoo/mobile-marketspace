@@ -4,6 +4,7 @@ import { IViewProps } from 'native-base/lib/typescript/components/basic/View/typ
 import { ArrowLeft, PencilSimpleLine, Plus } from 'phosphor-react-native'
 import { TouchableOpacity } from 'react-native'
 import { AppNavigatorRoutesProps } from '../routes/app.routes'
+import { useProducts } from '../hooks/useProducts'
 
 type HeaderProps = IViewProps & {
   title?: string
@@ -20,9 +21,12 @@ export function Header({
 }: HeaderProps) {
   const { colors } = useTheme()
 
+  const { setEditAdData } = useProducts()
+
   const navigation = useNavigation<AppNavigatorRoutesProps>()
 
   function handleGoBackToHome() {
+    setEditAdData({})
     navigation.goBack()
   }
 

@@ -232,7 +232,6 @@ export function AdDetail() {
           accept_trade,
           paymant_methods,
         })
-        console.log(editAdData)
       } catch (error) {}
     }, [id, name, description, is_new, price, accept_trade, paymant_methods]),
   )

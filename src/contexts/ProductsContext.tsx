@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const */
 /* eslint-disable no-useless-catch */
 /* eslint-disable camelcase */
-import { ReactNode, createContext, useState } from 'react'
+import { ReactNode, createContext, useEffect, useState } from 'react'
 
 import { useAuth } from '../hooks/useAuth'
 
@@ -239,6 +239,14 @@ export function ProductsContextProvider({
 
     return data
   }
+
+  useEffect(() => {
+    console.log('EDIT DATA =>', editAdData)
+
+    if (!editAdData.name) {
+      console.log('NADA NO EDITADDATA')
+    }
+  }, [editAdData])
 
   return (
     <ProductsContext.Provider
