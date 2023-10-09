@@ -12,7 +12,7 @@ import {
 } from 'native-base'
 
 import { Header } from '../components/Header'
-import { CreateAdImage } from '../components/CreateAdImage'
+import { AdImageSelector } from '../components/AdImageSelector'
 import { Input } from '../components/Input'
 import { BottomMenu } from '../components/BottomMenu'
 
@@ -71,15 +71,13 @@ export function CreateAd() {
     .required()
 
   const defaulFormValues = {
-    name: editAdData.name ? editAdData.name : undefined,
-    description: editAdData.description ? editAdData.description : undefined,
+    name: editAdData.name ? editAdData.name : null,
+    description: editAdData.description ? editAdData.description : null,
     is_new:
       editAdData.is_new === undefined ? 'true' : editAdData.is_new.toString(),
-    price: editAdData.price ? editAdData.price.toString() : undefined,
+    price: editAdData.price ? editAdData.price.toString() : null,
     accept_trade:
-      editAdData.accept_trade === undefined
-        ? undefined
-        : editAdData.accept_trade,
+      editAdData.accept_trade === undefined ? null : editAdData.accept_trade,
   }
 
   const {
@@ -144,7 +142,8 @@ export function CreateAd() {
 
   function handleCancelForm() {
     setCheckBoxPaymantMethodsValues([])
-    reset()
+    setEditAdData({})
+    reset(defaulFormValues)
     navigation.goBack()
   }
 
@@ -154,15 +153,8 @@ export function CreateAd() {
 
   useEffect(() => {
     if (editAdData.payment_methods) {
-      editAdData.payment_methods.forEach((paymant) => {
-        setCheckBoxPaymantMethodsValues((prevState) => [
-          ...prevState,
-          paymant.key,
-        ])
-      })
+      setCheckBoxPaymantMethodsValues(editAdData.payment_methods)
     }
-
-    console.log(checkBoxPaymantMethodsValues)
   }, [editAdData])
 
   return (
@@ -170,7 +162,6 @@ export function CreateAd() {
       <Header
         title={isEditingAd ? 'Editar Anúncio' : 'Criar anúncio'}
         backToHomeButton
-        reset={reset}
       />
 
       <VStack px={'24px'}>
@@ -193,7 +184,7 @@ export function CreateAd() {
         </Text>
 
         <HStack>
-          <CreateAdImage />
+          <AdImageSelector />
         </HStack>
 
         <Heading
@@ -284,7 +275,7 @@ export function CreateAd() {
             <Input
               onChangeText={onChange}
               inputMode="numeric"
-              value={value.toString()}
+              value={value}
               errorMessage={errors.price?.message}
               leftElement={
                 <Text

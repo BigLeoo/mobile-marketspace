@@ -43,10 +43,7 @@ import { AppError } from '../utils/AppErros'
 
 import { useCallback, useEffect, useState } from 'react'
 
-type productImageProps = {
-  id: string
-  path: string
-}
+import { productImageDTO } from '../dtos/productImageDTO'
 
 type userAdDetail = {
   avatar: string
@@ -69,7 +66,7 @@ type RoutesParametersProps = {
   accept_trade: boolean
   paymant_methods: paymantMethodsProps[]
   setGroupValue?: React.Dispatch<React.SetStateAction<string[]>>
-  product_images: productImageProps[]
+  product_images: productImageDTO[]
   userAdDetail: userAdDetail
   id: string
   resetForm?: () => void
@@ -92,7 +89,6 @@ export function AdDetail() {
     changeAdStatus,
     deleteAd,
     setEditAdData,
-    editAdData,
   } = useProducts()
 
   const {
@@ -223,6 +219,10 @@ export function AdDetail() {
   useFocusEffect(
     useCallback(() => {
       try {
+        const paymentMethodsArray = paymant_methods.map(
+          (paymant) => paymant.key,
+        )
+
         setEditAdData({
           id,
           name,
@@ -230,7 +230,8 @@ export function AdDetail() {
           is_new,
           price,
           accept_trade,
-          paymant_methods,
+          payment_methods: paymentMethodsArray,
+          images: product_images,
         })
       } catch (error) {}
     }, [id, name, description, is_new, price, accept_trade, paymant_methods]),

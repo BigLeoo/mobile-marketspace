@@ -14,6 +14,17 @@ import { productImageDTO } from '../dtos/productImageDTO'
 import { adImageDTO } from '../dtos/adImageDTO'
 import { addDetailDTO } from '../dtos/addDetailDTO'
 
+type editAdDataType = {
+  id: string
+  name: string
+  description: string
+  is_new: boolean
+  price: number
+  accept_trade: boolean
+  payment_methods: ('boleto' | 'pix' | 'cash' | 'card' | 'deposit')[]
+  images: productImageDTO[]
+}
+
 export type ProductsContextDataProps = {
   createProduct: (
     name: string,
@@ -42,7 +53,7 @@ export type ProductsContextDataProps = {
   fetchAdImage: (path: string) => Promise<productImageDTO>
   fetchAdDetail: (id: string) => Promise<addDetailDTO>
 
-  editAdData: addDetailDTO
+  editAdData: editAdDataType
   setEditAdData: ({
     id,
     name,
@@ -51,7 +62,8 @@ export type ProductsContextDataProps = {
     price,
     accept_trade,
     payment_methods,
-  }: addDetailDTO) => void
+    images,
+  }: editAdDataType) => void
   createAdImage: adImageDTO[]
 }
 
@@ -70,7 +82,9 @@ export function ProductsContextProvider({
 
   const [createAdImage, setCreateAdImage] = useState<adImageDTO[]>([])
 
-  const [editAdData, setEditAdData] = useState<addDetailDTO>({} as addDetailDTO)
+  const [editAdData, setEditAdData] = useState<editAdDataType>(
+    {} as editAdDataType,
+  )
 
   async function createProduct(
     name: string,
@@ -242,10 +256,6 @@ export function ProductsContextProvider({
 
   useEffect(() => {
     console.log('EDIT DATA =>', editAdData)
-
-    if (!editAdData.name) {
-      console.log('NADA NO EDITADDATA')
-    }
   }, [editAdData])
 
   return (

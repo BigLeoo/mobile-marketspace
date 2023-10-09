@@ -31,6 +31,7 @@ export function Header({
   }
 
   function handleGoBackToMyAds() {
+    setEditAdData({})
     navigation.navigate('myAds')
   }
 
