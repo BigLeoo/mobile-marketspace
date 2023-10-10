@@ -8,6 +8,26 @@ import { useProducts } from '../hooks/useProducts'
 import { useEffect, useState } from 'react'
 import { api } from '../services/api'
 
+type Assets = {
+  assetId: string | null
+  base64: string | null
+  duration: number | null
+  exif: any | null
+  height: number
+  rotation: number | null
+  type: string
+  uri: string
+  width: number
+}
+
+type imagesType = {
+  id?: string
+  path?: string
+  assets?: Assets[]
+  canceled?: boolean
+  cancelled?: boolean
+}
+
 export function AdImageSelector() {
   const { colors } = useTheme()
 
@@ -15,6 +35,8 @@ export function AdImageSelector() {
     useProducts()
 
   const [isEditingAdImage, setIsEditingAdImage] = useState(false)
+
+  const [images, setImages] = useState<imagesType>([])
 
   async function handleUserPhotoSelect() {
     const photoSelected = await ImagePicker.launchImageLibraryAsync({
@@ -28,31 +50,38 @@ export function AdImageSelector() {
       return
     }
 
-    setCreateAdImage((prevState: string[]) => [...prevState, photoSelected])
+    // setCreateAdImage((prevState: string[]) => [...prevState, photoSelected])
+
+    setImages((prevState) => [...prevState, photoSelected])
   }
 
   useEffect(() => {
-    if (editAdData) {
+    if (editAdData.images) {
       setIsEditingAdImage(true)
+      setImages(editAdData.images)
     } else {
+      setImages(createAdImage)
       setIsEditingAdImage(false)
     }
+  }, [createAdImage, editAdData])
 
-    console.log(editAdData.images.length)
-  })
+  useEffect(() => {
+    console.log('IMAGES => ', images)
+    console.log(images.length)
+  }, [images])
 
   return (
     <Box>
-      {editAdData.images.length < 3 && createAdImage.length < 3 ? (
+      {images.length < 3 ? (
         <HStack alignItems={'center'} justifyContent={'center'}>
           <FlatList
-            data={isEditingAdImage ? editAdData.images : createAdImage}
+            data={images}
             horizontal
             renderItem={({ item }) => (
               <Box w={'100px'} h={'100px'} borderRadius={'6px'} mr={'8px'}>
                 <Image
                   source={
-                    isEditingAdImage
+                    item.path
                       ? { uri: `${api.defaults.baseURL}/images/${item.path}` }
                       : { uri: item.assets[0].uri }
                   }
@@ -62,41 +91,22 @@ export function AdImageSelector() {
                   borderRadius={'6px'}
                 />
                 <Box position={'absolute'} left={'80px'} top={'3px'}>
-                  {isEditingAdImage ? (
-                    <TouchableOpacity
-                      onPress={() =>
-                        setEditAdData((prevState) =>
-                          prevState.images.filter(
-                            (image) => image.path !== item.path,
-                          ),
-                        )
-                      }
-                    >
-                      <XCircle
-                        size={16}
-                        weight="fill"
-                        color={colors.gray[200]}
-                      />
-                    </TouchableOpacity>
-                  ) : (
-                    <TouchableOpacity
-                      onPress={() =>
-                        setCreateAdImage((prevState) =>
-                          prevState.filter(
-                            (productImageUri) =>
-                              productImageUri.assets[0].uri !==
-                              item.assets[0].uri,
-                          ),
-                        )
-                      }
-                    >
-                      <XCircle
-                        size={16}
-                        weight="fill"
-                        color={colors.gray[200]}
-                      />
-                    </TouchableOpacity>
-                  )}
+                  <TouchableOpacity
+                    onPress={() =>
+                      setImages((prevState) =>
+                        prevState.filter((image) => {
+                          if (image.path) {
+                            return image.path !== item?.path
+                          }
+                          if (image.assets[0]) {
+                            return image.assets[0].uri !== item?.assets[0].uri
+                          }
+                        }),
+                      )
+                    }
+                  >
+                    <XCircle size={16} weight="fill" color={colors.gray[200]} />
+                  </TouchableOpacity>
                 </Box>
               </Box>
             )}
@@ -118,13 +128,13 @@ export function AdImageSelector() {
       ) : (
         <HStack alignItems={'center'} justifyContent={'center'} space={'8px'}>
           <FlatList
-            data={isEditingAdImage ? editAdData.images : createAdImage}
+            data={images}
             horizontal
             renderItem={({ item }) => (
               <Box w={'100px'} h={'100px'} borderRadius={'6px'} mr={'10px'}>
                 <Image
                   source={
-                    isEditingAdImage
+                    item.path
                       ? { uri: `${api.defaults.baseURL}/images/${item.path}` }
                       : { uri: item.assets[0].uri }
                   }
@@ -134,43 +144,22 @@ export function AdImageSelector() {
                   borderRadius={'6px'}
                 />
                 <Box position={'absolute'} left={'80px'} top={'3px'}>
-                  {isEditingAdImage ? (
-                    <TouchableOpacity
-                      onPress={() =>
-                        setCreateAdImage((prevState) =>
-                          prevState.filter(
-                            (productImageUri) =>
-                              productImageUri.assets[0].uri !==
-                              item.assets[0].uri,
-                          ),
-                        )
-                      }
-                    >
-                      <XCircle
-                        size={16}
-                        weight="fill"
-                        color={colors.gray[200]}
-                      />
-                    </TouchableOpacity>
-                  ) : (
-                    <TouchableOpacity
-                      onPress={() =>
-                        setCreateAdImage((prevState) =>
-                          prevState.filter(
-                            (productImageUri) =>
-                              productImageUri.assets[0].uri !==
-                              item.assets[0].uri,
-                          ),
-                        )
-                      }
-                    >
-                      <XCircle
-                        size={16}
-                        weight="fill"
-                        color={colors.gray[200]}
-                      />
-                    </TouchableOpacity>
-                  )}
+                  <TouchableOpacity
+                    onPress={() =>
+                      setImages((prevState) =>
+                        prevState.filter((image) => {
+                          if (image.path) {
+                            return image.path !== item?.path
+                          }
+                          if (image.assets[0]) {
+                            return image.assets[0].uri !== item?.assets[0].uri
+                          }
+                        }),
+                      )
+                    }
+                  >
+                    <XCircle size={16} weight="fill" color={colors.gray[200]} />
+                  </TouchableOpacity>
                 </Box>
               </Box>
             )}
