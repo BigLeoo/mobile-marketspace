@@ -16,12 +16,16 @@ import { AdImageSelector } from '../components/AdImageSelector'
 import { Input } from '../components/Input'
 import { BottomMenu } from '../components/BottomMenu'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useNavigation, useRoute } from '@react-navigation/native'
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native'
 
 import { TextArea } from '../components/TextArea'
 import { AppError } from '../utils/AppErros'
@@ -44,7 +48,7 @@ type FormDataProps = {
 export function CreateAd() {
   const [isLoading, setIsLoading] = useState(false)
   const [checkBoxPaymantMethodsValues, setCheckBoxPaymantMethodsValues] =
-    useState([])
+    useState<paymantMethodsDTO[]>([])
 
   const route = useRoute()
 
@@ -149,13 +153,21 @@ export function CreateAd() {
 
   useEffect(() => {
     reset(defaulFormValues)
+    setCheckBoxPaymantMethodsValues([])
   }, [editAdData])
 
-  useEffect(() => {
-    if (editAdData.payment_methods) {
-      setCheckBoxPaymantMethodsValues(editAdData.payment_methods)
-    }
-  }, [editAdData])
+  useFocusEffect(
+    useCallback(() => {
+      if (editAdData.payment_methods) {
+        setCheckBoxPaymantMethodsValues(editAdData.payment_methods)
+      }
+
+      console.log(
+        'checkBoxPaymantMethodsValues => ',
+        checkBoxPaymantMethodsValues,
+      )
+    }, [editAdData]),
+  )
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>

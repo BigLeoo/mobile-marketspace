@@ -50,7 +50,7 @@ export function AdImageSelector() {
       return
     }
 
-    // setCreateAdImage((prevState: string[]) => [...prevState, photoSelected])
+    setCreateAdImage((prevState: string[]) => [...prevState, photoSelected])
 
     setImages((prevState) => [...prevState, photoSelected])
   }
@@ -64,11 +64,6 @@ export function AdImageSelector() {
       setIsEditingAdImage(false)
     }
   }, [createAdImage, editAdData])
-
-  useEffect(() => {
-    console.log('IMAGES => ', images)
-    console.log(images.length)
-  }, [images])
 
   return (
     <Box>

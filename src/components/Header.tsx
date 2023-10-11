@@ -5,12 +5,14 @@ import { ArrowLeft, PencilSimpleLine, Plus } from 'phosphor-react-native'
 import { TouchableOpacity } from 'react-native'
 import { AppNavigatorRoutesProps } from '../routes/app.routes'
 import { useProducts } from '../hooks/useProducts'
+import { paymantMethodsDTO } from '../dtos/paymantMethodsDTO'
 
 type HeaderProps = IViewProps & {
   title?: string
   backToHomeButton?: boolean
   backToMyAdsButton?: boolean
   iconRight?: 'plus' | 'pencil'
+  setCheckBoxPaymantMethodsValues?: paymantMethodsDTO[]
 }
 
 export function Header({
