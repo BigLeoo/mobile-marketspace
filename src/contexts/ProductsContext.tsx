@@ -193,7 +193,7 @@ export function ProductsContextProvider({
         },
       )
 
-      await imageCreateProduct(id, createAdImage)
+      // await imageCreateProduct(id, createAdImage)
     } catch (error) {
       throw error
     }

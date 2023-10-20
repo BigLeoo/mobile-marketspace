@@ -5,8 +5,9 @@ import { TouchableOpacity } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 
 import { useProducts } from '../hooks/useProducts'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { api } from '../services/api'
+import { useFocusEffect } from '@react-navigation/native'
 
 type Assets = {
   assetId: string | null
@@ -55,15 +56,24 @@ export function AdImageSelector() {
     setImages((prevState) => [...prevState, photoSelected])
   }
 
+  useFocusEffect(
+    useCallback(() => {
+      console.log('useFocusEffect is working')
+      if (editAdData.images) {
+        console.log('Setting images for editing')
+        // setIsEditingAdImage(true)
+        setImages(editAdData.images)
+      } else {
+        console.log('Setting images for creating')
+        setImages(createAdImage)
+        // setIsEditingAdImage(false)
+      }
+    }, []),
+  )
+
   useEffect(() => {
-    if (editAdData.images) {
-      setIsEditingAdImage(true)
-      setImages(editAdData.images)
-    } else {
-      setImages(createAdImage)
-      setIsEditingAdImage(false)
-    }
-  }, [createAdImage, editAdData])
+    console.log('Images =>', images)
+  }, [images])
 
   return (
     <Box>

@@ -48,13 +48,14 @@ type FormDataProps = {
 export function CreateAd() {
   const [isLoading, setIsLoading] = useState(false)
   const [checkBoxPaymantMethodsValues, setCheckBoxPaymantMethodsValues] =
-    useState<paymantMethodsDTO[]>([])
+    useState([])
 
   const route = useRoute()
 
-  const { isEditingAd = false } = route.params as createAdRouteParameters
+  // const { isEditingAd = false } = route.params as createAdRouteParameters
+  const { isEditingAd } = route.params as createAdRouteParameters
 
-  const { createAdImage, editAdData, setEditAdData } = useProducts()
+  const { createAdImage, editAdData, setEditAdData, editAd } = useProducts()
 
   const toast = useToast()
 
@@ -82,6 +83,7 @@ export function CreateAd() {
     price: editAdData.price ? editAdData.price.toString() : null,
     accept_trade:
       editAdData.accept_trade === undefined ? null : editAdData.accept_trade,
+    paymant_methods: checkBoxPaymantMethodsValues,
   }
 
   const {
@@ -90,8 +92,8 @@ export function CreateAd() {
     formState: { errors },
     reset,
   } = useForm<FormDataProps>({
-    resolver: yupResolver(signUpSchema),
     defaultValues: defaulFormValues,
+    resolver: yupResolver(signUpSchema),
   })
 
   function handlePreAd({
@@ -144,6 +146,42 @@ export function CreateAd() {
     }
   }
 
+  async function handleEditAd({
+    name,
+    description,
+    is_new,
+    price,
+    accept_trade,
+    paymant_methods: checkBoxPaymantMethodsValues,
+  }: FormDataProps) {
+    try {
+      setIsLoading(true)
+
+      await editAd(
+        editAdData.id,
+        name,
+        description,
+        is_new,
+        price,
+        accept_trade,
+        checkBoxPaymantMethodsValues,
+      )
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const title = isAppError
+        ? error.message
+        : 'Não foi possível editar o aúncio, tente novamente mais tarde.'
+
+      toast.show({
+        title,
+        placement: 'top',
+        bgColor: 'red.500',
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   function handleCancelForm() {
     setCheckBoxPaymantMethodsValues([])
     setEditAdData({})
@@ -161,13 +199,15 @@ export function CreateAd() {
       if (editAdData.payment_methods) {
         setCheckBoxPaymantMethodsValues(editAdData.payment_methods)
       }
-
-      console.log(
-        'checkBoxPaymantMethodsValues => ',
-        checkBoxPaymantMethodsValues,
-      )
     }, [editAdData]),
   )
+
+  useEffect(() => {
+    console.log(
+      'checkBoxPaymantMethodsValues => ',
+      checkBoxPaymantMethodsValues,
+    )
+  }, [checkBoxPaymantMethodsValues])
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
@@ -344,7 +384,6 @@ export function CreateAd() {
           render={({ field: { onChange } }) => (
             <Checkbox.Group
               defaultValue={checkBoxPaymantMethodsValues}
-              value={checkBoxPaymantMethodsValues}
               onChange={(values) => {
                 setCheckBoxPaymantMethodsValues(values || [])
                 onChange(values)
@@ -414,16 +453,29 @@ export function CreateAd() {
           <></>
         )}
       </VStack>
-      <BottomMenu
-        buttonTitle1="Cancelar"
-        varianButton1="gray-light"
-        buttonFunction1={handleCancelForm}
-        buttonTitle2="Avançar"
-        varianButton2="gray-dark"
-        buttonFunction2={handleSubmit(handlePreAd)}
-        isLoading2={isLoading}
-        mt={'26.5px'}
-      />
+      {!isEditingAd ? (
+        <BottomMenu
+          buttonTitle1="Cancelar"
+          varianButton1="gray-light"
+          buttonFunction1={handleCancelForm}
+          buttonTitle2="Avançar"
+          varianButton2="gray-dark"
+          buttonFunction2={handleSubmit(handlePreAd)}
+          isLoading2={isLoading}
+          mt={'26.5px'}
+        />
+      ) : (
+        <BottomMenu
+          buttonTitle1="Cancelar"
+          varianButton1="gray-light"
+          buttonFunction1={handleCancelForm}
+          buttonTitle2="Editar"
+          varianButton2="gray-dark"
+          buttonFunction2={handleSubmit(handleEditAd)}
+          isLoading2={isLoading}
+          mt={'26.5px'}
+        />
+      )}
     </ScrollView>
   )
 }
