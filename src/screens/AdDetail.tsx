@@ -101,7 +101,6 @@ export function AdDetail() {
     price,
     accept_trade,
     paymant_methods,
-    setGroupValue,
     product_images,
     userAdDetail,
     id,
@@ -133,7 +132,6 @@ export function AdDetail() {
         bgColor: 'green.500',
       })
 
-      setGroupValue([])
       resetForm()
 
       navigation.goBack()

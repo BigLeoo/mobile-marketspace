@@ -1,6 +1,5 @@
 /* eslint-disable camelcase */
 import {
-  Checkbox,
   HStack,
   Heading,
   Radio,
@@ -15,6 +14,8 @@ import { Header } from '../components/Header'
 import { AdImageSelector } from '../components/AdImageSelector'
 import { Input } from '../components/Input'
 import { BottomMenu } from '../components/BottomMenu'
+import { TextArea } from '../components/TextArea'
+import { CheckBox } from '../components/CheckBox'
 
 import { useState, useEffect, useCallback } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -27,7 +28,6 @@ import {
   useRoute,
 } from '@react-navigation/native'
 
-import { TextArea } from '../components/TextArea'
 import { AppError } from '../utils/AppErros'
 import {
   AppNavigatorRoutesProps,
@@ -47,8 +47,6 @@ type FormDataProps = {
 
 export function CreateAd() {
   const [isLoading, setIsLoading] = useState(false)
-  const [checkBoxPaymantMethodsValues, setCheckBoxPaymantMethodsValues] =
-    useState([])
 
   const route = useRoute()
 
@@ -83,7 +81,7 @@ export function CreateAd() {
     price: editAdData.price ? editAdData.price.toString() : null,
     accept_trade:
       editAdData.accept_trade === undefined ? null : editAdData.accept_trade,
-    paymant_methods: checkBoxPaymantMethodsValues,
+    paymant_methods: ['boleto'],
   }
 
   const {
@@ -91,11 +89,12 @@ export function CreateAd() {
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
+    getValues,
   } = useForm<FormDataProps>({
     defaultValues: defaulFormValues,
     resolver: yupResolver(signUpSchema),
   })
-
   function handlePreAd({
     name,
     description,
@@ -128,7 +127,7 @@ export function CreateAd() {
         accept_trade,
         paymant_methods,
         setCheckBoxPaymantMethodsValues,
-        resetForm: reset,
+        resetForm: () => reset(defaulFormValues),
       })
     } catch (error) {
       const isAppError = error instanceof AppError
@@ -183,7 +182,7 @@ export function CreateAd() {
   }
 
   function handleCancelForm() {
-    setCheckBoxPaymantMethodsValues([])
+    setCheckBoxPaymantMethodsValues(defaultValuePaymantMethod)
     setEditAdData({})
     reset(defaulFormValues)
     navigation.goBack()
@@ -191,23 +190,16 @@ export function CreateAd() {
 
   useEffect(() => {
     reset(defaulFormValues)
-    setCheckBoxPaymantMethodsValues([])
+    // setCheckBoxPaymantMethodsValues(defaultValuePaymantMethod)
   }, [editAdData])
 
   useFocusEffect(
     useCallback(() => {
       if (editAdData.payment_methods) {
-        setCheckBoxPaymantMethodsValues(editAdData.payment_methods)
+        // setCheckBoxPaymantMethodsValues(editAdData.payment_methods)
       }
     }, [editAdData]),
   )
-
-  useEffect(() => {
-    console.log(
-      'checkBoxPaymantMethodsValues => ',
-      checkBoxPaymantMethodsValues,
-    )
-  }, [checkBoxPaymantMethodsValues])
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
@@ -377,77 +369,61 @@ export function CreateAd() {
           Meios de pagamentos aceitos
         </Heading>
 
+        {/* <Controller
+          control={control}
+          // defaultValue={[]}
+          name="paymant_methods"
+          render={({ field: { onChange } }) => (
+            <MyCheckBox
+              checkBox={checkBoxPaymantMethodsValues}
+              setCheckBox={setCheckBoxPaymantMethodsValues}
+              onChange={onChange}
+            />
+          )}
+        /> */}
+
         <Controller
           control={control}
           name="paymant_methods"
-          defaultValue={checkBoxPaymantMethodsValues}
           render={({ field: { onChange } }) => (
-            <Checkbox.Group
-              defaultValue={checkBoxPaymantMethodsValues}
-              onChange={(values) => {
-                setCheckBoxPaymantMethodsValues(values || [])
-                onChange(values)
-              }}
-            >
-              <Checkbox
+            <VStack space={'8px'}>
+              <CheckBox
+                title="Boleto"
                 value="boleto"
-                fontFamily={'heading'}
-                color={'gray.200'}
-                mb={'8px'}
-                fontSize={'16px'}
-                _checked={{
-                  backgroundColor: 'blue.700',
-                  borderColor: 'blue.700',
-                }}
-              >
-                Boleto
-              </Checkbox>
-              <Checkbox
+                setValue={setValue}
+                getValues={getValues}
+              />
+              <CheckBox
+                title="Pix"
                 value="pix"
-                mb={'8px'}
-                _checked={{
-                  backgroundColor: 'blue.700',
-                  borderColor: 'blue.700',
-                }}
-              >
-                Pix
-              </Checkbox>
-              <Checkbox
+                setValue={setValue}
+                getValues={getValues}
+              />
+              <CheckBox
+                title="Dinheiro"
                 value="cash"
-                mb={'8px'}
-                _checked={{
-                  backgroundColor: 'blue.700',
-                  borderColor: 'blue.700',
-                }}
-              >
-                Dinheiro
-              </Checkbox>
-              <Checkbox
+                setValue={setValue}
+                getValues={getValues}
+              />
+              <CheckBox
+                title="Cartão de Crédito"
                 value="card"
-                mb={'8px'}
-                _checked={{
-                  backgroundColor: 'blue.700',
-                  borderColor: 'blue.700',
-                }}
-              >
-                Cartão de crédito
-              </Checkbox>
-              <Checkbox
+                setValue={setValue}
+                getValues={getValues}
+              />
+              <CheckBox
+                title="Depósito"
                 value="deposit"
-                _checked={{
-                  backgroundColor: 'blue.700',
-                  borderColor: 'blue.700',
-                }}
-              >
-                Depósito bancário
-              </Checkbox>
-            </Checkbox.Group>
+                setValue={setValue}
+                getValues={getValues}
+              />
+            </VStack>
           )}
         />
 
         {errors.paymant_methods?.message ? (
           <Text mt={'10px'} color={'red.500'}>
-            {errors.paymant_methods?.message}
+            {errors.paymant_methods.message}
           </Text>
         ) : (
           <></>
