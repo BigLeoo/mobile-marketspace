@@ -81,7 +81,10 @@ export function CreateAd() {
     price: editAdData.price ? editAdData.price.toString() : null,
     accept_trade:
       editAdData.accept_trade === undefined ? null : editAdData.accept_trade,
-    paymant_methods: ['boleto'],
+    paymant_methods:
+      editAdData.payment_methods === undefined
+        ? []
+        : editAdData.payment_methods,
   }
 
   const {
@@ -91,10 +94,14 @@ export function CreateAd() {
     reset,
     setValue,
     getValues,
+    watch,
   } = useForm<FormDataProps>({
     defaultValues: defaulFormValues,
     resolver: yupResolver(signUpSchema),
   })
+
+  const formData = watch('paymant_methods')
+
   function handlePreAd({
     name,
     description,
@@ -126,7 +133,6 @@ export function CreateAd() {
         price,
         accept_trade,
         paymant_methods,
-        setCheckBoxPaymantMethodsValues,
         resetForm: () => reset(defaulFormValues),
       })
     } catch (error) {
@@ -182,7 +188,6 @@ export function CreateAd() {
   }
 
   function handleCancelForm() {
-    setCheckBoxPaymantMethodsValues(defaultValuePaymantMethod)
     setEditAdData({})
     reset(defaulFormValues)
     navigation.goBack()
@@ -190,13 +195,11 @@ export function CreateAd() {
 
   useEffect(() => {
     reset(defaulFormValues)
-    // setCheckBoxPaymantMethodsValues(defaultValuePaymantMethod)
   }, [editAdData])
 
   useFocusEffect(
     useCallback(() => {
       if (editAdData.payment_methods) {
-        // setCheckBoxPaymantMethodsValues(editAdData.payment_methods)
       }
     }, [editAdData]),
   )
@@ -392,30 +395,35 @@ export function CreateAd() {
                 value="boleto"
                 setValue={setValue}
                 getValues={getValues}
+                formData={formData}
               />
               <CheckBox
                 title="Pix"
                 value="pix"
                 setValue={setValue}
                 getValues={getValues}
+                formData={formData}
               />
               <CheckBox
                 title="Dinheiro"
                 value="cash"
                 setValue={setValue}
                 getValues={getValues}
+                formData={formData}
               />
               <CheckBox
                 title="Cartão de Crédito"
                 value="card"
                 setValue={setValue}
                 getValues={getValues}
+                formData={formData}
               />
               <CheckBox
                 title="Depósito"
                 value="deposit"
                 setValue={setValue}
                 getValues={getValues}
+                formData={formData}
               />
             </VStack>
           )}

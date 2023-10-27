@@ -12,7 +12,6 @@ type HeaderProps = IViewProps & {
   backToHomeButton?: boolean
   backToMyAdsButton?: boolean
   iconRight?: 'plus' | 'pencil'
-  setCheckBoxPaymantMethodsValues?: paymantMethodsDTO[]
 }
 
 export function Header({
