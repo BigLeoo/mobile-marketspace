@@ -166,7 +166,7 @@ export function CreateAd() {
     })
 
     const paymentMethods = [...filterPaymantDuplicates.values()]
-    console.log(name, description, is_new, price, accept_trade, paymentMethods)
+
     try {
       setIsLoading(true)
 
@@ -177,8 +177,16 @@ export function CreateAd() {
         is_new,
         price,
         accept_trade,
-        (paymant_methods = paymentMethods),
+        paymentMethods,
       )
+
+      navigation.navigate('myAds')
+
+      toast.show({
+        title: 'Anúncio editado com sucesso.',
+        placement: 'top',
+        bgColor: 'green.500',
+      })
     } catch (error) {
       const isAppError = error instanceof AppError
       const title = isAppError
