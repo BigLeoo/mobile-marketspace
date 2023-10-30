@@ -1,17 +1,16 @@
 import { TouchableOpacity } from 'react-native'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Box, HStack, Text, useTheme } from 'native-base'
 import { Check } from 'phosphor-react-native'
 import { UseFormSetValue } from 'react-hook-form'
-import { useFocusEffect } from '@react-navigation/native'
 
 type checkBoxProps = {
   title: string
   value: string
   setValue: UseFormSetValue<FormDataProps>
   getValues: (method: string) => void
-  formData: FormData
+  watchFormData: FormData
 }
 
 export function CheckBox({
@@ -19,7 +18,7 @@ export function CheckBox({
   value,
   setValue,
   getValues,
-  formData,
+  watchFormData,
 }: checkBoxProps) {
   const [isActive, setIsActive] = useState<boolean>(false)
 
@@ -30,49 +29,47 @@ export function CheckBox({
   }
 
   useEffect(() => {
-    const paymantMethods = getValues('paymant_methods')
+    const paymentMethodsFromFormData = getValues('paymant_methods')
+
+    const filterPaymantDuplicates = new Set()
+
+    paymentMethodsFromFormData.forEach((item) => {
+      filterPaymantDuplicates.add(item)
+    })
+
+    const paymentMethods = [...filterPaymantDuplicates.values()]
+
+    setValue('paymant_methods', paymentMethods)
 
     if (isActive) {
-      setValue('paymant_methods', [...paymantMethods, value], {
+      setValue('paymant_methods', [...paymentMethods, value], {
         shouldValidate: true,
       })
     } else {
       setValue(
         'paymant_methods',
-        paymantMethods.filter((item) => item !== value),
+        paymentMethods.filter((item) => item !== value),
       )
     }
   }, [isActive])
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     const paymentMethods = getValues('payment_methods') // Corrigi a variável paymentMethods e a chave 'payment_methods'
-
-  //     paymentMethods?.forEach((item) => {
-  //       if (item === value) {
-  //         setIsActive((prevState) => !prevState)
-  //       }
-  //     })
-  //   }, []),
-  // )
-
   useEffect(() => {
-    // console.log('teste!!!!')
+    const paymentMethodsFromFormData = getValues('paymant_methods')
 
-    const paymentMethods = getValues('payment_methods') // Corrigi a variável paymentMethods e a chave 'payment_methods'
+    console.log(
+      `paymentMethods => ${paymentMethodsFromFormData} e value => ${value}`,
+    )
 
-    console.log(paymentMethods)
-
-    if (paymentMethods === undefined) {
+    if (paymentMethodsFromFormData.length === 0) {
       setIsActive(false)
+    } else {
+      paymentMethodsFromFormData?.forEach((item) => {
+        if (item === value) {
+          setIsActive(true)
+        }
+      })
     }
-
-    paymentMethods?.forEach((item) => {
-      if (item === value) {
-        setIsActive((prevState) => !prevState)
-      }
-    })
-  }, [formData])
+  }, [watchFormData])
 
   return (
     <TouchableOpacity onPress={handleCheckTheBox}>

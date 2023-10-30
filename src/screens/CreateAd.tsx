@@ -100,7 +100,7 @@ export function CreateAd() {
     resolver: yupResolver(signUpSchema),
   })
 
-  const formData = watch('paymant_methods')
+  const WatchformData = watch('paymant_methods')
 
   function handlePreAd({
     name,
@@ -388,42 +388,42 @@ export function CreateAd() {
         <Controller
           control={control}
           name="paymant_methods"
-          render={({ field: { onChange } }) => (
+          render={() => (
             <VStack space={'8px'}>
               <CheckBox
                 title="Boleto"
                 value="boleto"
                 setValue={setValue}
                 getValues={getValues}
-                formData={formData}
+                watchFormData={WatchformData}
               />
               <CheckBox
                 title="Pix"
                 value="pix"
                 setValue={setValue}
                 getValues={getValues}
-                formData={formData}
+                watchFormData={WatchformData}
               />
               <CheckBox
                 title="Dinheiro"
                 value="cash"
                 setValue={setValue}
                 getValues={getValues}
-                formData={formData}
+                watchFormData={WatchformData}
               />
               <CheckBox
                 title="Cartão de Crédito"
                 value="card"
                 setValue={setValue}
                 getValues={getValues}
-                formData={formData}
+                watchFormData={WatchformData}
               />
               <CheckBox
                 title="Depósito"
                 value="deposit"
                 setValue={setValue}
                 getValues={getValues}
-                formData={formData}
+                watchFormData={WatchformData}
               />
             </VStack>
           )}
