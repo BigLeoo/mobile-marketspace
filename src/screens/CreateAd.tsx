@@ -157,8 +157,16 @@ export function CreateAd() {
     is_new,
     price,
     accept_trade,
-    paymant_methods: checkBoxPaymantMethodsValues,
+    paymant_methods,
   }: FormDataProps) {
+    const filterPaymantDuplicates = new Set()
+
+    paymant_methods.forEach((item) => {
+      filterPaymantDuplicates.add(item)
+    })
+
+    const paymentMethods = [...filterPaymantDuplicates.values()]
+    console.log(name, description, is_new, price, accept_trade, paymentMethods)
     try {
       setIsLoading(true)
 
@@ -169,7 +177,7 @@ export function CreateAd() {
         is_new,
         price,
         accept_trade,
-        checkBoxPaymantMethodsValues,
+        (paymant_methods = paymentMethods),
       )
     } catch (error) {
       const isAppError = error instanceof AppError

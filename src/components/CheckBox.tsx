@@ -56,10 +56,6 @@ export function CheckBox({
   useEffect(() => {
     const paymentMethodsFromFormData = getValues('paymant_methods')
 
-    console.log(
-      `paymentMethods => ${paymentMethodsFromFormData} e value => ${value}`,
-    )
-
     if (paymentMethodsFromFormData.length === 0) {
       setIsActive(false)
     } else {
