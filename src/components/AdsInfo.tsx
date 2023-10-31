@@ -1,12 +1,22 @@
 import { HStack, Heading, Text, VStack } from 'native-base'
+import { TouchableOpacity } from 'react-native'
+
 import { IHStackProps } from 'native-base/lib/typescript/components/primitives/Stack/HStack'
 import { ArrowRight, Tag } from 'phosphor-react-native'
+import { useNavigation } from '@react-navigation/native'
+import { AppNavigatorRoutesProps } from '../routes/app.routes'
 
 type AdsInfoProps = IHStackProps & {
   numberOfMyAds: number
 }
 
 export function AdsInfo({ numberOfMyAds, ...rest }: AdsInfoProps) {
+  const navigation = useNavigation<AppNavigatorRoutesProps>()
+
+  function handleGoToMyAds() {
+    navigation.navigate('myAds')
+  }
+
   return (
     <HStack
       {...rest}
@@ -31,13 +41,20 @@ export function AdsInfo({ numberOfMyAds, ...rest }: AdsInfoProps) {
         </VStack>
       </HStack>
 
-      <HStack>
-        <Text fontFamily={'heading'} fontSize={'xs'} color={'blue.500'} mr={2}>
-          Meus anúncios
-        </Text>
+      <TouchableOpacity onPress={handleGoToMyAds}>
+        <HStack>
+          <Text
+            fontFamily={'heading'}
+            fontSize={'xs'}
+            color={'blue.500'}
+            mr={2}
+          >
+            Meus anúncios
+          </Text>
 
-        <ArrowRight size={16} color="#364D9D" />
-      </HStack>
+          <ArrowRight size={16} color="#364D9D" />
+        </HStack>
+      </TouchableOpacity>
     </HStack>
   )
 }

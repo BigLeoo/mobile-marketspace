@@ -73,7 +73,8 @@ type RoutesParametersProps = {
 }
 
 export function AdDetail() {
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingButton1, setIsLoadingButton1] = useState<boolean>(false)
+  const [isLoadingButton2, setIsLoadingButton2] = useState<boolean>(false)
   const [isAdActive, setIsAdActive] = useState<boolean>()
 
   const route = useRoute()
@@ -115,7 +116,7 @@ export function AdDetail() {
 
   async function handleCreateAd() {
     try {
-      setIsLoading(true)
+      setIsLoadingButton1(true)
 
       await createProduct(
         name,
@@ -147,13 +148,13 @@ export function AdDetail() {
         bgColor: 'red.500',
       })
     } finally {
-      setIsLoading(false)
+      setIsLoadingButton1(false)
     }
   }
 
   async function handleChangeAdStatus(id: string, is_active: boolean) {
     try {
-      setIsLoading(true)
+      setIsLoadingButton1(true)
 
       await changeAdStatus(id, is_active)
 
@@ -178,13 +179,13 @@ export function AdDetail() {
         bgColor: 'red.500',
       })
     } finally {
-      setIsLoading(false)
+      setIsLoadingButton1(false)
     }
   }
 
   async function handleDeleteAd(id: string) {
     try {
-      setIsLoading(true)
+      setIsLoadingButton2(true)
       await deleteAd(id)
 
       navigation.goBack()
@@ -206,7 +207,7 @@ export function AdDetail() {
         bgColor: 'red.500',
       })
     } finally {
-      setIsLoading(false)
+      setIsLoadingButton2(false)
     }
   }
 
@@ -351,7 +352,7 @@ export function AdDetail() {
           }
           buttonTitle2="Publicar"
           buttonFunction2={handleCreateAd}
-          isLoading2={isLoading}
+          isLoading2={isLoadingButton1}
           varianButton2="blue-light"
           leftIcon2={<Tag size={16} weight="bold" color={colors.gray[600]} />}
         />
@@ -359,14 +360,14 @@ export function AdDetail() {
         <VStack px={6} mt={'32px'} pb={'30px'} space={'8px'}>
           <Button
             title={isAdActive ? 'Desativar anúncio' : 'Reativar anúncio'}
-            isLoading={isLoading}
+            isLoading={isLoadingButton1}
             variant={'blue-light'}
             leftIcon={<Power size={16} color={colors.gray[700]} />}
             onPress={() => handleChangeAdStatus(id, !isAdActive)}
           />
           <Button
             title="Excluir anúncio"
-            isLoading={isLoading}
+            isLoading={isLoadingButton2}
             onPress={() => handleDeleteAd(id)}
             variant={'gray-light'}
             leftIcon={<TrashSimple size={16} color={colors.gray[200]} />}

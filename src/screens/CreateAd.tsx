@@ -388,19 +388,6 @@ export function CreateAd() {
           Meios de pagamentos aceitos
         </Heading>
 
-        {/* <Controller
-          control={control}
-          // defaultValue={[]}
-          name="paymant_methods"
-          render={({ field: { onChange } }) => (
-            <MyCheckBox
-              checkBox={checkBoxPaymantMethodsValues}
-              setCheckBox={setCheckBoxPaymantMethodsValues}
-              onChange={onChange}
-            />
-          )}
-        /> */}
-
         <Controller
           control={control}
           name="paymant_methods"

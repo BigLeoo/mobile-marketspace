@@ -56,6 +56,22 @@ export function AdImageSelector() {
     setImages((prevState) => [...prevState, photoSelected])
   }
 
+  function handleDeleteImage(item) {
+    setImages((prevState) =>
+      prevState.filter((image) => {
+        console.log('ITEM => ', item)
+        console.log('IMAGE => ', image)
+
+        if (image.path) {
+          return image.path !== item?.path
+        }
+        if (image.assets[0]) {
+          return image.assets[0].uri !== item?.assets[0].uri
+        }
+      }),
+    )
+  }
+
   useFocusEffect(
     useCallback(() => {
       console.log('useFocusEffect is working')
@@ -96,20 +112,7 @@ export function AdImageSelector() {
                   borderRadius={'6px'}
                 />
                 <Box position={'absolute'} left={'80px'} top={'3px'}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      setImages((prevState) =>
-                        prevState.filter((image) => {
-                          if (image.path) {
-                            return image.path !== item?.path
-                          }
-                          if (image.assets[0]) {
-                            return image.assets[0].uri !== item?.assets[0].uri
-                          }
-                        }),
-                      )
-                    }
-                  >
+                  <TouchableOpacity onPress={() => handleDeleteImage(item)}>
                     <XCircle size={16} weight="fill" color={colors.gray[200]} />
                   </TouchableOpacity>
                 </Box>
@@ -149,20 +152,7 @@ export function AdImageSelector() {
                   borderRadius={'6px'}
                 />
                 <Box position={'absolute'} left={'80px'} top={'3px'}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      setImages((prevState) =>
-                        prevState.filter((image) => {
-                          if (image.path) {
-                            return image.path !== item?.path
-                          }
-                          if (image.assets[0]) {
-                            return image.assets[0].uri !== item?.assets[0].uri
-                          }
-                        }),
-                      )
-                    }
-                  >
+                  <TouchableOpacity onPress={() => handleDeleteImage(item)}>
                     <XCircle size={16} weight="fill" color={colors.gray[200]} />
                   </TouchableOpacity>
                 </Box>

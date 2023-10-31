@@ -20,9 +20,19 @@ export function PaymantChose({ paymant, ...rest }: PaymantChoseProps) {
       ) : (
         <Bank size={18} />
       )}
-      <Text color={'gray.200'} fontFamily={'body'} fontSize={'sm'}>
-        {paymant.charAt(0).toUpperCase() + paymant.slice(1)}
-      </Text>
+      {
+        <Text color={'gray.200'} fontFamily={'body'} fontSize={'sm'}>
+          {paymant === 'boleto'
+            ? 'Boleto'
+            : paymant === 'pix'
+            ? 'Pix'
+            : paymant === 'cash'
+            ? 'Dinheiro'
+            : paymant === 'card'
+            ? 'Cartão de Crédito'
+            : 'Depósito Bancário'}
+        </Text>
+      }
     </HStack>
   )
 }
