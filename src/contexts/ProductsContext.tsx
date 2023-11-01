@@ -148,6 +148,16 @@ export function ProductsContextProvider({
     }
   }
 
+  // async function deleteImage(idImage: string[]) {
+  //   try {
+  //     api.delete(`/products/images`, {
+  //       idImage,
+  //     }, {
+  //       headers:
+  //     })
+  //   } catch (error) {}
+  // }
+
   async function changeAdStatus(id: string, is_active: boolean) {
     try {
       await api.patch(

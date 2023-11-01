@@ -59,13 +59,14 @@ export function AdImageSelector() {
   function handleDeleteImage(item) {
     setImages((prevState) =>
       prevState.filter((image) => {
-        console.log('ITEM => ', item)
-        console.log('IMAGE => ', image)
-
         if (image.path) {
           return image.path !== item?.path
         }
         if (image.assets[0]) {
+          if (item?.path) {
+            return true
+          }
+
           return image.assets[0].uri !== item?.assets[0].uri
         }
       }),
