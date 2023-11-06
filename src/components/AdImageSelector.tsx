@@ -32,10 +32,8 @@ type imagesType = {
 export function AdImageSelector() {
   const { colors } = useTheme()
 
-  const { setCreateAdImage, createAdImage, editAdData, setEditAdData } =
+  const { setCreateAdImage, createAdImage, editAdData, setImagesToDelete } =
     useProducts()
-
-  const [isEditingAdImage, setIsEditingAdImage] = useState(false)
 
   const [images, setImages] = useState<imagesType>([])
 
@@ -57,6 +55,10 @@ export function AdImageSelector() {
   }
 
   function handleDeleteImage(item) {
+    if (item.path) {
+      setImagesToDelete((prevState) => [...prevState, item.id])
+    }
+
     setImages((prevState) =>
       prevState.filter((image) => {
         if (image.path) {

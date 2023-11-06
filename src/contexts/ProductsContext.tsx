@@ -25,6 +25,11 @@ type editAdDataType = {
   images: productImageDTO[]
 }
 
+type imagesToDelete = {
+  id: string
+  path: string
+}
+
 export type ProductsContextDataProps = {
   createProduct: (
     name: string,
@@ -46,6 +51,7 @@ export type ProductsContextDataProps = {
   ) => void
   changeAdStatus: (id: string, is_active: boolean) => void
   deleteAd: (id: string) => void
+  deleteImage: (imageId: string[]) => void
 
   fetchUserAds: () => Promise<userAddDTO[]>
 
@@ -65,6 +71,9 @@ export type ProductsContextDataProps = {
     images,
   }: editAdDataType) => void
   createAdImage: adImageDTO[]
+
+  imagesToDelete: imagesToDelete[]
+  setImagesToDelete: (imagesToDelete: imagesToDelete[]) => void
 }
 
 type ProductsContextProviderProps = {
@@ -81,6 +90,8 @@ export function ProductsContextProvider({
   const { userToken } = useAuth()
 
   const [createAdImage, setCreateAdImage] = useState<adImageDTO[]>([])
+
+  const [imagesToDelete, setImagesToDelete] = useState<imagesToDelete[]>([])
 
   const [editAdData, setEditAdData] = useState<editAdDataType>(
     {} as editAdDataType,
@@ -148,15 +159,23 @@ export function ProductsContextProvider({
     }
   }
 
-  // async function deleteImage(idImage: string[]) {
-  //   try {
-  //     api.delete(`/products/images`, {
-  //       idImage,
-  //     }, {
-  //       headers:
-  //     })
-  //   } catch (error) {}
-  // }
+  async function deleteImage(imageIds: string[]) {
+    try {
+      console.log(imageIds)
+
+      api.delete(`/products/images`, {
+        imageIds,
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          'Content-Type': 'application/json',
+        },
+      })
+
+      setImagesToDelete([])
+    } catch (error) {
+      throw error
+    }
+  }
 
   async function changeAdStatus(id: string, is_active: boolean) {
     try {
@@ -202,6 +221,8 @@ export function ProductsContextProvider({
           },
         },
       )
+
+      imageCreateProduct(editAdData.id, createAdImage)
 
       // await imageCreateProduct(id, createAdImage)
     } catch (error) {
@@ -280,11 +301,15 @@ export function ProductsContextProvider({
         deleteAd,
         editAdData,
         setEditAdData,
+        deleteImage,
 
         fetchUserAds,
         fetchAds,
         fetchAdImage,
         fetchAdDetail,
+
+        imagesToDelete,
+        setImagesToDelete,
       }}
     >
       {children}

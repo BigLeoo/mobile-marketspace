@@ -20,13 +20,9 @@ import { CheckBox } from '../components/CheckBox'
 import { useState, useEffect, useCallback } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
-import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import {
-  useFocusEffect,
-  useNavigation,
-  useRoute,
-} from '@react-navigation/native'
+import { useNavigation, useRoute } from '@react-navigation/native'
+import { signUpSchema } from '../form/CreateAdFormValidation'
 
 import { AppError } from '../utils/AppErros'
 import {
@@ -35,7 +31,7 @@ import {
 } from '../routes/app.routes'
 import { paymantMethodsDTO } from '../dtos/paymantMethodsDTO'
 import { useProducts } from '../hooks/useProducts'
-import { CheckBox2 } from '../components/CheckBox2'
+// import { CheckBox2 } from '../components/CheckBox2'
 
 type FormDataProps = {
   name: string
@@ -43,42 +39,16 @@ type FormDataProps = {
   is_new: string
   price: number
   accept_trade: boolean
-  // paymant_methods: paymantMethodsDTO[]
-  paymant_methods2: {
-    pix?: boolean
-    boleto?: boolean
-    card?: boolean
-    deposit?: boolean
-    cash?: boolean
-  }
-  paymant_methods3: string[]
+  paymant_methods: paymantMethodsDTO[]
+  // paymant_methods2: {
+  //   pix?: boolean
+  //   boleto?: boolean
+  //   card?: boolean
+  //   deposit?: boolean
+  //   cash?: boolean
+  // }
+  // paymant_methods3: string[]
 }
-
-const paymantMethodsOptions: {
-  value: keyof FormDataProps['paymant_methods2']
-  title: string
-}[] = [
-  {
-    value: 'pix',
-    title: 'Pix',
-  },
-  {
-    value: 'boleto',
-    title: 'Boleto',
-  },
-  {
-    value: 'card',
-    title: 'Cartão de crédito',
-  },
-  {
-    value: 'deposit',
-    title: 'Depósito Bancário',
-  },
-  {
-    value: 'cash',
-    title: 'Dinheiro',
-  },
-]
 
 export function CreateAd() {
   const [isLoading, setIsLoading] = useState(false)
@@ -88,33 +58,18 @@ export function CreateAd() {
   // const { isEditingAd = false } = route.params as createAdRouteParameters
   const { isEditingAd } = route.params as createAdRouteParameters
 
-  const { createAdImage, editAdData, setEditAdData, editAd } = useProducts()
+  const {
+    createAdImage,
+    editAdData,
+    setEditAdData,
+    editAd,
+    deleteImage,
+    imagesToDelete,
+  } = useProducts()
 
   const toast = useToast()
 
   const navigation = useNavigation<AppNavigatorRoutesProps>()
-
-  const signUpSchema = yup
-    .object({
-      name: yup.string().required('Informe o título do produto'),
-      description: yup.string().required('Informe a descrição do produto'),
-      is_new: yup.boolean().required('Informe o estado do produto'),
-      price: yup.number().required('Informe preço do produto'),
-      accept_trade: yup.boolean().required('Informe se o anúncio aceita troca'),
-      // paymant_methods: yup
-      //   .array()
-      //   .min(1, 'Selecione ao menos um método de pagamento')
-      //   .required('Informe os métodos de pagamento'),
-      paymant_methods2: yup.object({
-        pix: yup.boolean().optional(),
-        boleto: yup.boolean().optional(),
-        card: yup.boolean().optional(),
-        deposit: yup.boolean().optional(),
-        cash: yup.boolean().optional(),
-      }),
-      paymant_methods3: yup.array().min(1, 'Leo gostoso'),
-    })
-    .required()
 
   const defaulFormValues = {
     name: editAdData.name ? editAdData.name : null,
@@ -128,9 +83,9 @@ export function CreateAd() {
       editAdData.payment_methods === undefined
         ? []
         : editAdData.payment_methods,
-    paymant_methods2: {
-      pix: true,
-    },
+    // paymant_methods2: {
+    //   // pix: true,
+    // },
   }
 
   const {
@@ -146,7 +101,7 @@ export function CreateAd() {
     resolver: yupResolver(signUpSchema),
   })
 
-  console.log(errors, 'ERROR')
+  // console.log(errors, 'ERROR')
 
   const WatchformData = watch('paymant_methods')
 
@@ -156,18 +111,8 @@ export function CreateAd() {
     is_new,
     price,
     accept_trade,
-    paymant_methods2,
-    paymant_methods3,
+    paymant_methods, // paymant_methods2,
   }: FormDataProps) {
-    console.log({
-      name,
-      description,
-      is_new,
-      price,
-      accept_trade,
-      paymant_methods2,
-      paymant_methods3,
-    })
     try {
       setIsLoading(true)
 
@@ -228,7 +173,13 @@ export function CreateAd() {
     try {
       setIsLoading(true)
 
-      await editAd(
+      console.log(imagesToDelete)
+
+      if (imagesToDelete.length > 0) {
+        await deleteImage(imagesToDelete)
+      }
+
+      await await editAd(
         editAdData.id,
         name,
         description,
@@ -270,13 +221,6 @@ export function CreateAd() {
   useEffect(() => {
     reset(defaulFormValues)
   }, [editAdData])
-
-  useFocusEffect(
-    useCallback(() => {
-      if (editAdData.payment_methods) {
-      }
-    }, [editAdData]),
-  )
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
@@ -446,7 +390,7 @@ export function CreateAd() {
           Meios de pagamentos aceitos
         </Heading>
 
-        {/* <Controller
+        <Controller
           control={control}
           name="paymant_methods"
           render={() => (
@@ -488,24 +432,23 @@ export function CreateAd() {
               />
             </VStack>
           )}
-        /> */}
-
-        {/* {paymantMethodsOptions.map((payment) => (
-          <Controller
-            key={payment.value}
-            control={control}
-            name={`paymant_methods2.${payment.value}`}
-            render={({ field: { onChange, value } }) => (
-              <VStack space={'8px'}>
+        />
+        {/* <VStack space={'8px'}>
+          {paymantMethodsOptions.map((payment) => (
+            <Controller
+              key={payment.value}
+              control={control}
+              name={`paymant_methods2.${payment.value}`}
+              render={({ field: { onChange, value } }) => (
                 <CheckBox2
                   title={payment.title}
                   value={value}
                   onChangeCheckbox={onChange}
                 />
-              </VStack>
-            )}
-          />
-        ))} */}
+              )}
+            />
+          ))}
+        </VStack> */}
 
         {errors.paymant_methods?.message ? (
           <Text mt={'10px'} color={'red.500'}>

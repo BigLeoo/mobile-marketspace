@@ -1,9 +1,8 @@
 import { TouchableOpacity } from 'react-native'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import { Box, HStack, Text, useTheme } from 'native-base'
 import { Check } from 'phosphor-react-native'
-import { UseFormSetValue } from 'react-hook-form'
 
 type checkBoxProps = {
   title: string
@@ -12,13 +11,13 @@ type checkBoxProps = {
 }
 
 export function CheckBox2({ title, value, onChangeCheckbox }: checkBoxProps) {
-  const [isActive, setIsActive] = useState<boolean>(false)
+  const [isActive, setIsActive] = useState<boolean>(value)
   const { colors } = useTheme()
 
   const handleCheckTheBox = (value: any) => {
     setIsActive((prevState) => !prevState)
     if (onChangeCheckbox) {
-      onChangeCheckbox(value)
+      onChangeCheckbox(isActive)
     }
   }
 
