@@ -17,7 +17,7 @@ import { BottomMenu } from '../components/BottomMenu'
 import { TextArea } from '../components/TextArea'
 import { CheckBox } from '../components/CheckBox'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -59,6 +59,7 @@ export function CreateAd() {
   const { isEditingAd } = route.params as createAdRouteParameters
 
   const {
+    setCreateAdImage,
     createAdImage,
     editAdData,
     setEditAdData,
@@ -100,8 +101,6 @@ export function CreateAd() {
     defaultValues: defaulFormValues,
     resolver: yupResolver(signUpSchema),
   })
-
-  // console.log(errors, 'ERROR')
 
   const WatchformData = watch('paymant_methods')
 
@@ -190,6 +189,10 @@ export function CreateAd() {
       )
 
       navigation.navigate('myAds')
+
+      setEditAdData({})
+
+      setCreateAdImage([])
 
       toast.show({
         title: 'Anúncio editado com sucesso.',

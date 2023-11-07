@@ -52,7 +52,7 @@ export function Home() {
 
   const { user } = useAuth()
 
-  const { fetchAdDetail } = useProducts()
+  const { fetchAdDetail, setEditAdData } = useProducts()
 
   const navigation = useNavigation<AppNavigatorRoutesProps>()
 
@@ -110,8 +110,8 @@ export function Home() {
   useFocusEffect(
     useCallback(() => {
       // console.log(userToken)
-
       GetAds()
+      setEditAdData({})
     }, []),
   )
 

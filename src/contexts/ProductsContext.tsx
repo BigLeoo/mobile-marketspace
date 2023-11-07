@@ -161,10 +161,12 @@ export function ProductsContextProvider({
 
   async function deleteImage(imageIds: string[]) {
     try {
-      console.log(imageIds)
+      const imagesToDelete = { productImagesIds: imageIds }
 
-      api.delete(`/products/images`, {
-        imageIds,
+      console.log('imageToDelete => ', imagesToDelete)
+
+      api.delete(`/products/images/`, {
+        data: imagesToDelete,
         headers: {
           Authorization: `Bearer ${userToken}`,
           'Content-Type': 'application/json',
@@ -173,6 +175,8 @@ export function ProductsContextProvider({
 
       setImagesToDelete([])
     } catch (error) {
+      console.log('Erro deleteImage => ', error)
+
       throw error
     }
   }
@@ -222,7 +226,9 @@ export function ProductsContextProvider({
         },
       )
 
-      imageCreateProduct(editAdData.id, createAdImage)
+      if (createAdImage.length > 0) {
+        await imageCreateProduct(editAdData.id, createAdImage)
+      }
 
       // await imageCreateProduct(id, createAdImage)
     } catch (error) {
@@ -285,9 +291,9 @@ export function ProductsContextProvider({
     return data
   }
 
-  useEffect(() => {
-    console.log('EDIT DATA =>', editAdData)
-  }, [editAdData])
+  // useEffect(() => {
+  //   console.log('EDIT DATA =>', editAdData)
+  // }, [editAdData])
 
   return (
     <ProductsContext.Provider

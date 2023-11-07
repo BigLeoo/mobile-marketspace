@@ -30,12 +30,11 @@ type imagesType = {
 }
 
 export function AdImageSelector() {
+  const [images, setImages] = useState<imagesType>([])
   const { colors } = useTheme()
 
   const { setCreateAdImage, createAdImage, editAdData, setImagesToDelete } =
     useProducts()
-
-  const [images, setImages] = useState<imagesType>([])
 
   async function handleUserPhotoSelect() {
     const photoSelected = await ImagePicker.launchImageLibraryAsync({
@@ -77,18 +76,23 @@ export function AdImageSelector() {
 
   useFocusEffect(
     useCallback(() => {
-      console.log('useFocusEffect is working')
+      console.log(editAdData)
+
       if (editAdData.images) {
-        console.log('Setting images for editing')
-        // setIsEditingAdImage(true)
         setImages(editAdData.images)
       } else {
-        console.log('Setting images for creating')
         setImages(createAdImage)
-        // setIsEditingAdImage(false)
       }
-    }, []),
+    }, [editAdData]),
   )
+
+  // useEffect(() => {
+  //   if (editAdData.images) {
+  //     setImages(editAdData.images)
+  //   } else {
+  //     setImages(createAdImage)
+  //   }
+  // }, [editAdData])
 
   useEffect(() => {
     console.log('Images =>', images)
