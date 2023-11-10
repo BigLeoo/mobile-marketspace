@@ -193,7 +193,7 @@ export function Home() {
             </HStack>
           }
         />
-        {/* <Actionsheet isOpen={isOpen} onClose={onClose}>
+        <Actionsheet isOpen={isOpen} onClose={onClose}>
           <Actionsheet.Content>
             <Box>
               <HStack>
@@ -234,11 +234,18 @@ export function Home() {
               >
                 Aceita troca?
               </Text>
-
-              <Switch
-                alignSelf={'flex-start'}
-                size={'lg'}
-                onTrackColor={'blue.700'}
+              <Controller
+                control={control}
+                name="accept_trade"
+                render={({ field: { onChange, value } }) => (
+                  <Switch
+                    alignSelf={'flex-start'}
+                    size={'lg'}
+                    onTrackColor={'blue.700'}
+                    isChecked={value}
+                    onToggle={(val: boolean) => onChange(val)}
+                  />
+                )}
               />
 
               <Text
@@ -308,7 +315,7 @@ export function Home() {
               </HStack>
             </Box>
           </Actionsheet.Content>
-        </Actionsheet> */}
+        </Actionsheet>
       </VStack>
       {isLoading ? (
         <Center mt={'180px'}>

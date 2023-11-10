@@ -10,7 +10,12 @@ const signUpSchema = yup
   .required()
 
 const defaultHomeFilter = {
+  is_new: false,
+  is_used: false,
+  accept_trade: false,
   paymant_methods: [],
 }
+
+function handleSubmit() {}
 
 export { signUpSchema, defaultHomeFilter }
