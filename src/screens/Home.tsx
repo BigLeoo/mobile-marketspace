@@ -88,7 +88,7 @@ export function Home() {
         is_new: data.is_new,
         price: data.price,
         accept_trade: data.accept_trade,
-        paymant_methods: data.paymant_methods,
+        paymant_methods: data.payment_methods,
         product_images: data.product_images,
         userAdDetail: data.user,
       })
