@@ -8,6 +8,7 @@ import { UseFormSetValue } from 'react-hook-form'
 type checkBoxProps = {
   title: string
   value: string
+  nameGroup: string
   setValue: UseFormSetValue<FormDataProps>
   getValues: (method: string) => void
   watchFormData: FormData
@@ -16,6 +17,7 @@ type checkBoxProps = {
 export function CheckBox({
   title,
   value,
+  nameGroup,
   setValue,
   getValues,
   watchFormData,
@@ -29,7 +31,7 @@ export function CheckBox({
   }
 
   useEffect(() => {
-    const paymentMethodsFromFormData = getValues('paymant_methods')
+    const paymentMethodsFromFormData = getValues(nameGroup)
 
     const filterPaymantDuplicates = new Set()
 
@@ -39,22 +41,22 @@ export function CheckBox({
 
     const paymentMethods = [...filterPaymantDuplicates.values()]
 
-    setValue('paymant_methods', paymentMethods)
+    setValue(nameGroup, paymentMethods)
 
     if (isActive) {
-      setValue('paymant_methods', [...paymentMethods, value], {
+      setValue(nameGroup, [...paymentMethods, value], {
         shouldValidate: true,
       })
     } else {
       setValue(
-        'paymant_methods',
+        nameGroup,
         paymentMethods.filter((item) => item !== value),
       )
     }
   }, [isActive])
 
   useEffect(() => {
-    const paymentMethodsFromFormData = getValues('paymant_methods')
+    const paymentMethodsFromFormData = getValues(nameGroup)
 
     if (paymentMethodsFromFormData.length === 0) {
       setIsActive(false)

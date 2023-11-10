@@ -401,6 +401,7 @@ export function CreateAd() {
               <CheckBox
                 title="Boleto"
                 value="boleto"
+                nameGroup="paymant_methods"
                 setValue={setValue}
                 getValues={getValues}
                 watchFormData={WatchformData}
@@ -408,6 +409,7 @@ export function CreateAd() {
               <CheckBox
                 title="Pix"
                 value="pix"
+                nameGroup="paymant_methods"
                 setValue={setValue}
                 getValues={getValues}
                 watchFormData={WatchformData}
@@ -415,6 +417,7 @@ export function CreateAd() {
               <CheckBox
                 title="Dinheiro"
                 value="cash"
+                nameGroup="paymant_methods"
                 setValue={setValue}
                 getValues={getValues}
                 watchFormData={WatchformData}
@@ -422,6 +425,7 @@ export function CreateAd() {
               <CheckBox
                 title="Cartão de Crédito"
                 value="card"
+                nameGroup="paymant_methods"
                 setValue={setValue}
                 getValues={getValues}
                 watchFormData={WatchformData}
@@ -429,6 +433,7 @@ export function CreateAd() {
               <CheckBox
                 title="Depósito"
                 value="deposit"
+                nameGroup="paymant_methods"
                 setValue={setValue}
                 getValues={getValues}
                 watchFormData={WatchformData}

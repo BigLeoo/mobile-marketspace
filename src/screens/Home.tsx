@@ -2,7 +2,6 @@ import {
   Actionsheet,
   Box,
   Center,
-  Checkbox,
   FlatList,
   HStack,
   Heading,
@@ -35,6 +34,12 @@ import { useProducts } from '../hooks/useProducts'
 import { AppError } from '../utils/AppErros'
 
 import { AddDTO } from '../dtos/addDTO'
+import { CheckBox } from '../components/CheckBox'
+
+import { Controller, useForm } from 'react-hook-form'
+import * as yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { defaultHomeFilter, signUpSchema } from '../form/homeFilter'
 
 export function Home() {
   const [isLoading, setIsLoading] = useState(false)
@@ -56,6 +61,21 @@ export function Home() {
 
   const navigation = useNavigation<AppNavigatorRoutesProps>()
 
+  type FormDataProps = {
+    is_new: boolean
+    is_used: boolean
+    accept_trade: boolean
+    paymant_methods: string[]
+  }
+
+  const { control, handleSubmit, setValue, getValues, watch } =
+    useForm<FormDataProps>({
+      defaultValues: defaultHomeFilter,
+      resolver: yupResolver(signUpSchema),
+    })
+
+  const watchPaymentMethods = watch('paymant_methods')
+
   async function handleAdDetail(id: string) {
     try {
       const data = await fetchAdDetail(id)
@@ -68,7 +88,7 @@ export function Home() {
         is_new: data.is_new,
         price: data.price,
         accept_trade: data.accept_trade,
-        paymant_methods: data.payment_methods,
+        paymant_methods: data.paymant_methods,
         product_images: data.product_images,
         userAdDetail: data.user,
       })
@@ -173,7 +193,7 @@ export function Home() {
             </HStack>
           }
         />
-        <Actionsheet isOpen={isOpen} onClose={onClose}>
+        {/* <Actionsheet isOpen={isOpen} onClose={onClose}>
           <Actionsheet.Content>
             <Box>
               <HStack>
@@ -231,51 +251,46 @@ export function Home() {
               </Text>
 
               <VStack space={2}>
-                <Checkbox
+                <CheckBox
+                  title="Boleto"
                   value="boleto"
-                  _checked={{
-                    backgroundColor: 'blue.700',
-                    borderColor: 'blue.700',
-                  }}
-                >
-                  Boleto
-                </Checkbox>
-                <Checkbox
-                  value="Pix"
-                  _checked={{
-                    backgroundColor: 'blue.700',
-                    borderColor: 'blue.700',
-                  }}
-                >
-                  Pix
-                </Checkbox>
-                <Checkbox
-                  value="Dinheiro"
-                  _checked={{
-                    backgroundColor: 'blue.700',
-                    borderColor: 'blue.700',
-                  }}
-                >
-                  Dinheiro
-                </Checkbox>
-                <Checkbox
-                  value="Cartão de Crédito"
-                  _checked={{
-                    backgroundColor: 'blue.700',
-                    borderColor: 'blue.700',
-                  }}
-                >
-                  Cartão de Crédito
-                </Checkbox>
-                <Checkbox
-                  value="Depósito Bancário"
-                  _checked={{
-                    backgroundColor: 'blue.700',
-                    borderColor: 'blue.700',
-                  }}
-                >
-                  Cartão de Débito
-                </Checkbox>
+                  nameGroup="paymant_methods"
+                  setValue={setValue}
+                  getValues={getValues}
+                  watchFormData={watchPaymentMethods}
+                />
+                <CheckBox
+                  title="Pix"
+                  value="pix"
+                  nameGroup="paymant_methods"
+                  setValue={setValue}
+                  getValues={getValues}
+                  watchFormData={watchPaymentMethods}
+                />
+                <CheckBox
+                  title="Dinheiro"
+                  value="cash"
+                  nameGroup="paymant_methods"
+                  setValue={setValue}
+                  getValues={getValues}
+                  watchFormData={watchPaymentMethods}
+                />
+                <CheckBox
+                  title="Cartão de Crédito"
+                  value="card"
+                  nameGroup="paymant_methods"
+                  setValue={setValue}
+                  getValues={getValues}
+                  watchFormData={watchPaymentMethods}
+                />
+                <CheckBox
+                  title="Depósito"
+                  value="deposit"
+                  nameGroup="paymant_methods"
+                  setValue={setValue}
+                  getValues={getValues}
+                  watchFormData={watchPaymentMethods}
+                />
               </VStack>
 
               <HStack mt={16} mb={8} space={3}>
@@ -293,7 +308,7 @@ export function Home() {
               </HStack>
             </Box>
           </Actionsheet.Content>
-        </Actionsheet>
+        </Actionsheet> */}
       </VStack>
       {isLoading ? (
         <Center mt={'180px'}>

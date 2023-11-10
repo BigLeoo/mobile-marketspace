@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const */
 /* eslint-disable no-useless-catch */
 /* eslint-disable camelcase */
-import { ReactNode, createContext, useEffect, useState } from 'react'
+import { ReactNode, createContext, useState } from 'react'
 
 import { useAuth } from '../hooks/useAuth'
 
