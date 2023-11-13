@@ -68,13 +68,81 @@ export function Home() {
     paymant_methods: string[]
   }
 
-  const { control, handleSubmit, setValue, getValues, watch } =
+  const { control, handleSubmit, setValue, getValues, watch, reset } =
     useForm<FormDataProps>({
       defaultValues: defaultHomeFilter,
       resolver: yupResolver(signUpSchema),
     })
 
   const watchPaymentMethods = watch('paymant_methods')
+
+  function handleFilterAdsByConditions({
+    is_new,
+    is_used,
+    accept_trade,
+    paymant_methods,
+  }: FormDataProps) {
+    console.log(is_new, is_used, accept_trade, paymant_methods)
+
+    if (is_new === true && is_used === true) {
+      const filteredAds = activeAds.filter((ad) => {
+        if (ad.accept_trade === accept_trade) {
+          return ad.payment_methods.some((item) =>
+            paymant_methods.includes(item.key),
+          )
+        }
+      })
+
+      if (filteredAds.length === 0) {
+        toast.show({
+          title: 'Não foi encontrado nenhum anúncio com esse filtro',
+          placement: 'top',
+          bgColor: 'red.500',
+        })
+      } else {
+        toast.show({
+          title: 'Filtros aplicado com sucesso.',
+          placement: 'top',
+          bgColor: 'green.500',
+        })
+
+        onClose()
+      }
+
+      setFilteredAds(filteredAds)
+    } else {
+      const filteredAds = activeAds.filter((ad) => {
+        if (ad.is_new === is_new && ad.accept_trade === accept_trade) {
+          return ad.payment_methods.some((item) =>
+            paymant_methods.includes(item.key),
+          )
+        }
+      })
+
+      if (filteredAds.length === 0) {
+        toast.show({
+          title: 'Não foi encontrado nenhum anúncio com esse filtro',
+          placement: 'top',
+          bgColor: 'red.500',
+        })
+      } else {
+        toast.show({
+          title: 'Filtros aplicado com sucesso.',
+          placement: 'top',
+          bgColor: 'green.500',
+        })
+
+        onClose()
+      }
+
+      setFilteredAds(filteredAds)
+    }
+  }
+
+  function handleResetFilter() {
+    setFilteredAds([])
+    reset(defaultHomeFilter)
+  }
 
   async function handleAdDetail(id: string) {
     try {
@@ -221,9 +289,30 @@ export function Home() {
                 Condição
               </Text>
 
-              <HStack>
-                <TagComponent title="NOVO" selected />
-                <TagComponent title="USADO" marginLeft={2} selected={false} />
+              <HStack space={2}>
+                <Controller
+                  control={control}
+                  name="is_new"
+                  render={({ field: { value, onChange } }) => (
+                    <TagComponent
+                      title="NOVO"
+                      value={value}
+                      onChange={onChange}
+                    />
+                  )}
+                />
+
+                <Controller
+                  control={control}
+                  name="is_used"
+                  render={({ field: { value, onChange } }) => (
+                    <TagComponent
+                      title="USADO"
+                      value={value}
+                      onChange={onChange}
+                    />
+                  )}
+                />
               </HStack>
 
               <Text
@@ -303,12 +392,13 @@ export function Home() {
               <HStack mt={16} mb={8} space={3}>
                 <Button
                   title="Resetar filtros"
+                  onPress={handleResetFilter}
                   variant={'gray-light'}
                   buttonSize={40}
                 />
                 <Button
                   title="Aplicar filtros"
-                  onPress={onClose}
+                  onPress={handleSubmit(handleFilterAdsByConditions)}
                   variant={'gray-dark'}
                   buttonSize={40}
                 />

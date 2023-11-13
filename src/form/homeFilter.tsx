@@ -5,7 +5,7 @@ const signUpSchema = yup
     is_new: yup.boolean().optional(),
     is_used: yup.boolean().optional(),
     accept_trade: yup.boolean().optional(),
-    paymant_methods: yup.array().optional(),
+    paymant_methods: yup.array().min(1).required(),
   })
   .required()
 
@@ -15,7 +15,5 @@ const defaultHomeFilter = {
   accept_trade: false,
   paymant_methods: [],
 }
-
-function handleSubmit() {}
 
 export { signUpSchema, defaultHomeFilter }
