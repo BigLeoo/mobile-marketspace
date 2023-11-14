@@ -72,6 +72,16 @@ export function AdImageSelector() {
         }
       }),
     )
+
+    if (item?.assets[0]) {
+      // console.log(item.assets[0])
+
+      setCreateAdImage((prevState: any) => {
+        return prevState.filter(
+          (image: any) => item.assets[0].uri !== image.assets[0].uri,
+        )
+      })
+    }
   }
 
   useFocusEffect(
@@ -86,17 +96,9 @@ export function AdImageSelector() {
     }, [editAdData]),
   )
 
-  // useEffect(() => {
-  //   if (editAdData.images) {
-  //     setImages(editAdData.images)
-  //   } else {
-  //     setImages(createAdImage)
-  //   }
-  // }, [editAdData])
-
   useEffect(() => {
-    console.log('Images =>', images)
-  }, [images])
+    console.log('createAdImage =>', createAdImage)
+  }, [createAdImage])
 
   return (
     <Box>
