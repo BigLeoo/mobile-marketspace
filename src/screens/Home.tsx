@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import {
   Actionsheet,
   Box,
@@ -34,12 +35,12 @@ import { useProducts } from '../hooks/useProducts'
 import { AppError } from '../utils/AppErros'
 
 import { AddDTO } from '../dtos/addDTO'
-import { CheckBox } from '../components/CheckBox'
 
 import { Controller, useForm } from 'react-hook-form'
-import * as yup from 'yup'
+
 import { yupResolver } from '@hookform/resolvers/yup'
 import { defaultHomeFilter, signUpSchema } from '../form/homeFilter'
+import { CheckBox3 } from '../components/CheckBox3'
 
 export function Home() {
   const [isLoading, setIsLoading] = useState(false)
@@ -65,24 +66,51 @@ export function Home() {
     is_new: boolean
     is_used: boolean
     accept_trade: boolean
-    paymant_methods: string[]
+    boleto: boolean
+    pix: boolean
+    cash: boolean
+    card: boolean
+    deposit: boolean
   }
 
-  const { control, handleSubmit, setValue, getValues, watch, reset } =
-    useForm<FormDataProps>({
-      defaultValues: defaultHomeFilter,
-      resolver: yupResolver(signUpSchema),
-    })
-
-  const watchPaymentMethods = watch('paymant_methods')
+  const { control, handleSubmit, reset } = useForm<FormDataProps>({
+    defaultValues: defaultHomeFilter,
+    resolver: yupResolver(signUpSchema),
+  })
 
   function handleFilterAdsByConditions({
     is_new,
     is_used,
     accept_trade,
-    paymant_methods,
+    boleto,
+    pix,
+    cash,
+    card,
+    deposit,
   }: FormDataProps) {
-    console.log(is_new, is_used, accept_trade, paymant_methods)
+    // console.log(is_new, is_used, accept_trade)
+
+    const paymant_methods = []
+
+    if (boleto) {
+      paymant_methods.push('boleto')
+    }
+
+    if (pix) {
+      paymant_methods.push('pix')
+    }
+
+    if (card) {
+      paymant_methods.push('card')
+    }
+
+    if (cash) {
+      paymant_methods.push('cash')
+    }
+
+    if (deposit) {
+      paymant_methods.push('deposit')
+    }
 
     if (is_new === true && is_used === true) {
       const filteredAds = activeAds.filter((ad) => {
@@ -346,46 +374,57 @@ export function Home() {
                 Meios de pagamento aceitos
               </Text>
 
-              <VStack space={2}>
-                <CheckBox
-                  title="Boleto"
-                  value="boleto"
-                  nameGroup="paymant_methods"
-                  setValue={setValue}
-                  getValues={getValues}
-                  watchFormData={watchPaymentMethods}
+              <VStack space={'8px'}>
+                <Controller
+                  control={control}
+                  name="boleto"
+                  render={({ field: { onChange, value } }) => (
+                    <CheckBox3
+                      title="Boleto"
+                      onChange={onChange}
+                      value={value}
+                    />
+                  )}
                 />
-                <CheckBox
-                  title="Pix"
-                  value="pix"
-                  nameGroup="paymant_methods"
-                  setValue={setValue}
-                  getValues={getValues}
-                  watchFormData={watchPaymentMethods}
+                <Controller
+                  control={control}
+                  name="pix"
+                  render={({ field: { onChange, value } }) => (
+                    <CheckBox3 title="Pix" onChange={onChange} value={value} />
+                  )}
                 />
-                <CheckBox
-                  title="Dinheiro"
-                  value="cash"
-                  nameGroup="paymant_methods"
-                  setValue={setValue}
-                  getValues={getValues}
-                  watchFormData={watchPaymentMethods}
+                <Controller
+                  control={control}
+                  name="cash"
+                  render={({ field: { onChange, value } }) => (
+                    <CheckBox3
+                      title="Dinheiro"
+                      onChange={onChange}
+                      value={value}
+                    />
+                  )}
                 />
-                <CheckBox
-                  title="Cartão de Crédito"
-                  value="card"
-                  nameGroup="paymant_methods"
-                  setValue={setValue}
-                  getValues={getValues}
-                  watchFormData={watchPaymentMethods}
+                <Controller
+                  control={control}
+                  name="card"
+                  render={({ field: { onChange, value } }) => (
+                    <CheckBox3
+                      title="Cartão de Crédito"
+                      onChange={onChange}
+                      value={value}
+                    />
+                  )}
                 />
-                <CheckBox
-                  title="Depósito"
-                  value="deposit"
-                  nameGroup="paymant_methods"
-                  setValue={setValue}
-                  getValues={getValues}
-                  watchFormData={watchPaymentMethods}
+                <Controller
+                  control={control}
+                  name="deposit"
+                  render={({ field: { onChange, value } }) => (
+                    <CheckBox3
+                      title="Depósito Bancário"
+                      onChange={onChange}
+                      value={value}
+                    />
+                  )}
                 />
               </VStack>
 

@@ -7,72 +7,23 @@ const signUpSchema = yup
     is_new: yup.boolean().required('Informe o estado do produto'),
     price: yup.number().required('Informe preço do produto'),
     accept_trade: yup.boolean().required('Informe se o anúncio aceita troca'),
-    paymant_methods: yup
-      .array()
-      .min(1, 'Selecione ao menos um método de pagamento')
-      .required('Informe os métodos de pagamento'),
-    // paymant_methods2: yup
-    //   .object({
-    //     pix: yup.boolean().optional(),
-    //     boleto: yup.boolean().optional(),
-    //     card: yup.boolean().optional(),
-    //     deposit: yup.boolean().optional(),
-    //     cash: yup.boolean().optional(),
-    //   })
-    //   .test(
-    //     'atLeastOneSelected',
-    //     'Selecione ao menos 1 método de pagamento',
-    //     (obj) => {
-    //       const { pix, boleto, card, deposit, cash } = obj
-    //       console.log(
-    //         'PIX ',
-    //         pix,
-    //         'Boleto ',
-    //         boleto,
-    //         'CARD: ',
-    //         card,
-    //         'DEPOSIT: ',
-    //         deposit,
-    //         'CASH: ',
-    //         cash,
-    //       )
-
-    //       if (pix || boleto || card || deposit || cash) {
-    //         return true
-    //       }
-    //       return false
-    //     },
-    //   ),
-    // paymant_methods2: paymentMethodsValidation,
+    boleto: yup.boolean(),
+    pix: yup.boolean(),
+    cash: yup.boolean(),
+    card: yup.boolean(),
+    deposit: yup.boolean(),
   })
   .required()
-
-const paymantMethodsOptions: {
-  value: keyof FormDataProps['paymant_methods2']
-  title: string
-}[] = [
-  {
-    value: 'pix',
-    title: 'Pix',
-  },
-  {
-    value: 'boleto',
-    title: 'Boleto',
-  },
-  {
-    value: 'card',
-    title: 'Cartão de crédito',
-  },
-  {
-    value: 'deposit',
-    title: 'Depósito Bancário',
-  },
-  {
-    value: 'cash',
-    title: 'Dinheiro',
-  },
-]
-
-export { paymantMethodsOptions }
+  .test('paymantMethodsError', null, (obj) => {
+    const { boleto, pix, cash, card, deposit } = obj
+    if (!(boleto || pix || cash || card || deposit)) {
+      return new yup.ValidationError(
+        'Selecione ao menos um método de pagamento',
+        null,
+        'paymantMethodsError',
+      )
+    }
+    return true
+  })
 
 export { signUpSchema }

@@ -7,7 +7,7 @@ import { XCircle } from 'phosphor-react-native'
 type TagComponentProps = IHStackProps & {
   title: string
   statusSize?: 'string'
-  onChange?: () => void
+  onChange?: (value: boolean) => void
   value?: boolean
 }
 

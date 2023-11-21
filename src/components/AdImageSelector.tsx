@@ -96,9 +96,9 @@ export function AdImageSelector() {
     }, [editAdData]),
   )
 
-  useEffect(() => {
-    console.log('createAdImage =>', createAdImage)
-  }, [createAdImage])
+  // useEffect(() => {
+  //   console.log('createAdImage =>', createAdImage)
+  // }, [createAdImage])
 
   return (
     <Box>

@@ -15,7 +15,6 @@ import { AdImageSelector } from '../components/AdImageSelector'
 import { Input } from '../components/Input'
 import { BottomMenu } from '../components/BottomMenu'
 import { TextArea } from '../components/TextArea'
-import { CheckBox } from '../components/CheckBox'
 
 import { useState, useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -31,7 +30,7 @@ import {
 } from '../routes/app.routes'
 import { paymantMethodsDTO } from '../dtos/paymantMethodsDTO'
 import { useProducts } from '../hooks/useProducts'
-// import { CheckBox2 } from '../components/CheckBox2'
+import { CheckBox3 } from '../components/CheckBox3'
 
 type FormDataProps = {
   name: string
@@ -40,14 +39,11 @@ type FormDataProps = {
   price: number
   accept_trade: boolean
   paymant_methods: paymantMethodsDTO[]
-  // paymant_methods2: {
-  //   pix?: boolean
-  //   boleto?: boolean
-  //   card?: boolean
-  //   deposit?: boolean
-  //   cash?: boolean
-  // }
-  // paymant_methods3: string[]
+  boleto: boolean
+  pix: boolean
+  cash: boolean
+  card: boolean
+  deposit: boolean
 }
 
 export function CreateAd() {
@@ -55,7 +51,6 @@ export function CreateAd() {
 
   const route = useRoute()
 
-  // const { isEditingAd = false } = route.params as createAdRouteParameters
   const { isEditingAd } = route.params as createAdRouteParameters
 
   const {
@@ -79,14 +74,27 @@ export function CreateAd() {
       editAdData.is_new === undefined ? 'true' : editAdData.is_new.toString(),
     price: editAdData.price ? editAdData.price.toString() : null,
     accept_trade:
-      editAdData.accept_trade === undefined ? null : editAdData.accept_trade,
-    paymant_methods:
+      editAdData.accept_trade === undefined ? false : editAdData.accept_trade,
+    boleto:
       editAdData.payment_methods === undefined
-        ? []
-        : editAdData.payment_methods,
-    // paymant_methods2: {
-    //   // pix: true,
-    // },
+        ? false
+        : !!editAdData.payment_methods.includes('boleto'),
+    pix:
+      editAdData.payment_methods === undefined
+        ? false
+        : !!editAdData.payment_methods.includes('pix'),
+    cash:
+      editAdData.payment_methods === undefined
+        ? false
+        : !!editAdData.payment_methods.includes('cash'),
+    card:
+      editAdData.payment_methods === undefined
+        ? false
+        : !!editAdData.payment_methods.includes('card'),
+    deposit:
+      editAdData.payment_methods === undefined
+        ? false
+        : !!editAdData.payment_methods.includes('deposit'),
   }
 
   const {
@@ -94,15 +102,10 @@ export function CreateAd() {
     handleSubmit,
     formState: { errors },
     reset,
-    setValue,
-    getValues,
-    watch,
   } = useForm<FormDataProps>({
     defaultValues: defaulFormValues,
     resolver: yupResolver(signUpSchema),
   })
-
-  const WatchformData = watch('paymant_methods')
 
   function handlePreAd({
     name,
@@ -110,8 +113,34 @@ export function CreateAd() {
     is_new,
     price,
     accept_trade,
-    paymant_methods, // paymant_methods2,
+    boleto,
+    pix,
+    card,
+    cash,
+    deposit, // paymant_methods, // paymant_methods2,
   }: FormDataProps) {
+    const paymant_methods = []
+
+    if (boleto) {
+      paymant_methods.push('boleto')
+    }
+
+    if (pix) {
+      paymant_methods.push('pix')
+    }
+
+    if (card) {
+      paymant_methods.push('card')
+    }
+
+    if (cash) {
+      paymant_methods.push('cash')
+    }
+
+    if (deposit) {
+      paymant_methods.push('deposit')
+    }
+
     try {
       setIsLoading(true)
 
@@ -172,13 +201,13 @@ export function CreateAd() {
     try {
       setIsLoading(true)
 
-      console.log(imagesToDelete)
+      // console.log(imagesToDelete)
 
       if (imagesToDelete.length > 0) {
         await deleteImage(imagesToDelete)
       }
 
-      await await editAd(
+      await editAd(
         editAdData.id,
         name,
         description,
@@ -217,12 +246,14 @@ export function CreateAd() {
 
   function handleCancelForm() {
     setEditAdData({})
+    setCreateAdImage([])
     reset(defaulFormValues)
     navigation.goBack()
   }
 
   useEffect(() => {
     reset(defaulFormValues)
+    console.log(editAdData)
   }, [editAdData])
 
   return (
@@ -372,11 +403,12 @@ export function CreateAd() {
         <Controller
           control={control}
           name="accept_trade"
-          defaultValue={false}
+          // defaultValue={false}
           render={({ field: { onChange, value } }) => (
             <Switch
               alignSelf={'flex-start'}
               size={'lg'}
+              value={value}
               onTrackColor={'blue.700'}
               onToggle={(val: boolean) => onChange(val)}
               isChecked={value}
@@ -393,74 +425,55 @@ export function CreateAd() {
           Meios de pagamentos aceitos
         </Heading>
 
-        <Controller
-          control={control}
-          name="paymant_methods"
-          render={() => (
-            <VStack space={'8px'}>
-              <CheckBox
-                title="Boleto"
-                value="boleto"
-                nameGroup="paymant_methods"
-                setValue={setValue}
-                getValues={getValues}
-                watchFormData={WatchformData}
-              />
-              <CheckBox
-                title="Pix"
-                value="pix"
-                nameGroup="paymant_methods"
-                setValue={setValue}
-                getValues={getValues}
-                watchFormData={WatchformData}
-              />
-              <CheckBox
-                title="Dinheiro"
-                value="cash"
-                nameGroup="paymant_methods"
-                setValue={setValue}
-                getValues={getValues}
-                watchFormData={WatchformData}
-              />
-              <CheckBox
+        <VStack space={'8px'}>
+          <Controller
+            control={control}
+            name="boleto"
+            render={({ field: { onChange, value } }) => (
+              <CheckBox3 title="Boleto" onChange={onChange} value={value} />
+            )}
+          />
+          <Controller
+            control={control}
+            name="pix"
+            render={({ field: { onChange, value } }) => (
+              <CheckBox3 title="Pix" onChange={onChange} value={value} />
+            )}
+          />
+          <Controller
+            control={control}
+            name="cash"
+            render={({ field: { onChange, value } }) => (
+              <CheckBox3 title="Dinheiro" onChange={onChange} value={value} />
+            )}
+          />
+          <Controller
+            control={control}
+            name="card"
+            render={({ field: { onChange, value } }) => (
+              <CheckBox3
                 title="Cartão de Crédito"
-                value="card"
-                nameGroup="paymant_methods"
-                setValue={setValue}
-                getValues={getValues}
-                watchFormData={WatchformData}
+                onChange={onChange}
+                value={value}
               />
-              <CheckBox
-                title="Depósito"
-                value="deposit"
-                nameGroup="paymant_methods"
-                setValue={setValue}
-                getValues={getValues}
-                watchFormData={WatchformData}
+            )}
+          />
+          <Controller
+            control={control}
+            name="deposit"
+            render={({ field: { onChange, value } }) => (
+              <CheckBox3
+                title="Depósito Bancário"
+                onChange={onChange}
+                value={value}
               />
-            </VStack>
-          )}
-        />
-        {/* <VStack space={'8px'}>
-          {paymantMethodsOptions.map((payment) => (
-            <Controller
-              key={payment.value}
-              control={control}
-              name={`paymant_methods2.${payment.value}`}
-              render={({ field: { onChange, value } }) => (
-                <CheckBox2
-                  title={payment.title}
-                  value={value}
-                  onChangeCheckbox={onChange}
-                />
-              )}
-            />
-          ))}
-        </VStack> */}
+            )}
+          />
+        </VStack>
 
-        {errors.paymant_methods?.message ? (
+        {errors.paymantMethodsError?.message ? (
           <Text mt={'10px'} color={'red.500'}>
-            {errors.paymant_methods.message}
+            {errors.paymantMethodsError.message}
           </Text>
         ) : (
           <></>

@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const */
 /* eslint-disable no-useless-catch */
 /* eslint-disable camelcase */
-import { ReactNode, createContext, useState } from 'react'
+import { ReactNode, createContext, useEffect, useState } from 'react'
 
 import { useAuth } from '../hooks/useAuth'
 
@@ -163,7 +163,7 @@ export function ProductsContextProvider({
     try {
       const imagesToDelete = { productImagesIds: imageIds }
 
-      console.log('imageToDelete => ', imagesToDelete)
+      // console.log('imageToDelete => ', imagesToDelete)
 
       api.delete(`/products/images/`, {
         data: imagesToDelete,
@@ -175,7 +175,7 @@ export function ProductsContextProvider({
 
       setImagesToDelete([])
     } catch (error) {
-      console.log('Erro deleteImage => ', error)
+      // console.log('Erro deleteImage => ', error)
 
       throw error
     }
@@ -291,9 +291,9 @@ export function ProductsContextProvider({
     return data
   }
 
-  // useEffect(() => {
-  //   console.log('EDIT DATA =>', editAdData)
-  // }, [editAdData])
+  useEffect(() => {
+    // console.log('createAdImage =>', createAdImage)
+  }, [createAdImage])
 
   return (
     <ProductsContext.Provider
