@@ -80,8 +80,8 @@ export function AppRoutes() {
         name="home"
         component={Home}
         options={{
-          tabBarIcon: () => (
-            <House size={24} weight="bold" color={colors.gray[200]} />
+          tabBarIcon: ({ color }) => (
+            <House size={24} weight="bold" color={color} />
           ),
         }}
       />
@@ -90,7 +90,9 @@ export function AppRoutes() {
         name="myAds"
         component={MyAds}
         options={{
-          tabBarIcon: () => <Tag size={24} color={colors.gray[400]} />,
+          tabBarIcon: ({ color }) => (
+            <Tag size={24} weight="bold" color={color} />
+          ),
         }}
       />
 

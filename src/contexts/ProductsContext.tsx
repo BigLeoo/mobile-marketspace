@@ -293,14 +293,6 @@ export function ProductsContextProvider({
     return data
   }
 
-  // useEffect(() => {
-  //   console.log('createAdImage =>', createAdImage)
-  // }, [createAdImage])
-
-  // useEffect(() => {
-  //   console.log('editAdData => ', editAdData)
-  // }, [])
-
   return (
     <ProductsContext.Provider
       value={{

@@ -216,20 +216,10 @@ export function CreateAd() {
       paymentMethods.push('deposit')
     }
 
-    // paymant_methods.forEach((item) => {
-    //   filterPaymantDuplicates.add(item)
-    // })
-
-    // const filterPaymantDuplicates = new Set()
-
-    // const paymentMethods = [...filterPaymantDuplicates.values()]
-
     console.log('paymentMethods => ', paymentMethods)
 
     try {
       setIsLoading(true)
-
-      // console.log(imagesToDelete)
 
       if (imagesToDelete.length > 0) {
         await deleteImage(imagesToDelete)
