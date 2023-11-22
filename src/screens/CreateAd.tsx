@@ -253,7 +253,7 @@ export function CreateAd() {
 
   useEffect(() => {
     reset(defaulFormValues)
-    console.log(editAdData)
+    // console.log('editAdData => ', editAdData)
   }, [editAdData])
 
   return (

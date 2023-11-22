@@ -163,7 +163,7 @@ export function ProductsContextProvider({
     try {
       const imagesToDelete = { productImagesIds: imageIds }
 
-      // console.log('imageToDelete => ', imagesToDelete)
+      console.log('imageToDelete => ', imagesToDelete)
 
       api.delete(`/products/images/`, {
         data: imagesToDelete,
@@ -175,7 +175,7 @@ export function ProductsContextProvider({
 
       setImagesToDelete([])
     } catch (error) {
-      // console.log('Erro deleteImage => ', error)
+      console.log('Erro deleteImage => ', error)
 
       throw error
     }
@@ -292,7 +292,7 @@ export function ProductsContextProvider({
   }
 
   useEffect(() => {
-    // console.log('createAdImage =>', createAdImage)
+    console.log('createAdImage =>', createAdImage)
   }, [createAdImage])
 
   return (

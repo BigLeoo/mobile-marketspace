@@ -54,24 +54,26 @@ export function AdImageSelector() {
   }
 
   function handleDeleteImage(item) {
-    if (item.path) {
-      setImagesToDelete((prevState) => [...prevState, item.id])
-    }
+    console.log('Item para deletar => ', item)
 
-    setImages((prevState) =>
-      prevState.filter((image) => {
-        if (image.path) {
-          return image.path !== item?.path
-        }
-        if (image.assets[0]) {
-          if (item?.path) {
-            return true
-          }
+    // if (item.path) {
+    //   setImagesToDelete((prevState) => [...prevState, item.id])
+    // }
 
-          return image.assets[0].uri !== item?.assets[0].uri
-        }
-      }),
-    )
+    // setImages((prevState) =>
+    //   prevState.filter((image) => {
+    //     if (image.path) {
+    //       return image.path !== item?.path
+    //     }
+    //     if (image.assets[0]) {
+    //       if (item?.path) {
+    //         return true
+    //       }
+
+    //       return image.assets[0].uri !== item?.assets[0].uri
+    //     }
+    //   }),
+    // )
 
     if (item?.assets[0]) {
       // console.log(item.assets[0])
@@ -86,7 +88,7 @@ export function AdImageSelector() {
 
   useFocusEffect(
     useCallback(() => {
-      console.log(editAdData)
+      console.log('editAdData =>', editAdData)
 
       if (editAdData.images) {
         setImages(editAdData.images)

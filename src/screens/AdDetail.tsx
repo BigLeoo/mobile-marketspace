@@ -229,7 +229,9 @@ export function AdDetail() {
           is_new,
           price,
           accept_trade,
-          payment_methods: paymentMethodsArray,
+          payment_methods: paymentMethodsArray.includes(undefined)
+            ? paymant_methods
+            : paymentMethodsArray,
           images: product_images,
         })
       } catch (error) {}
