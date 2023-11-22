@@ -135,7 +135,7 @@ export function AdDetail() {
 
       resetForm()
 
-      navigation.goBack()
+      navigation.navigate('myAds')
     } catch (error) {
       const isAppError = error instanceof AppError
       const title = isAppError

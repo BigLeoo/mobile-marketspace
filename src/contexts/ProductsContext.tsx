@@ -154,6 +154,8 @@ export function ProductsContextProvider({
           'Content-Type': 'multipart/form-data',
         },
       })
+
+      setCreateAdImage([])
     } catch (error) {
       throw error
     }
@@ -163,7 +165,7 @@ export function ProductsContextProvider({
     try {
       const imagesToDelete = { productImagesIds: imageIds }
 
-      console.log('imageToDelete => ', imagesToDelete)
+      // console.log('imageToDelete => ', imagesToDelete)
 
       api.delete(`/products/images/`, {
         data: imagesToDelete,
@@ -175,7 +177,7 @@ export function ProductsContextProvider({
 
       setImagesToDelete([])
     } catch (error) {
-      console.log('Erro deleteImage => ', error)
+      // console.log('Erro deleteImage => ', error)
 
       throw error
     }
@@ -291,9 +293,13 @@ export function ProductsContextProvider({
     return data
   }
 
-  useEffect(() => {
-    console.log('createAdImage =>', createAdImage)
-  }, [createAdImage])
+  // useEffect(() => {
+  //   console.log('createAdImage =>', createAdImage)
+  // }, [createAdImage])
+
+  // useEffect(() => {
+  //   console.log('editAdData => ', editAdData)
+  // }, [])
 
   return (
     <ProductsContext.Provider

@@ -188,15 +188,43 @@ export function CreateAd() {
     is_new,
     price,
     accept_trade,
-    paymant_methods,
+    boleto,
+    pix,
+    card,
+    cash,
+    deposit,
   }: FormDataProps) {
-    const filterPaymantDuplicates = new Set()
+    const paymentMethods = []
 
-    paymant_methods.forEach((item) => {
-      filterPaymantDuplicates.add(item)
-    })
+    if (boleto) {
+      paymentMethods.push('boleto')
+    }
 
-    const paymentMethods = [...filterPaymantDuplicates.values()]
+    if (pix) {
+      paymentMethods.push('pix')
+    }
+
+    if (card) {
+      paymentMethods.push('card')
+    }
+
+    if (cash) {
+      paymentMethods.push('cash')
+    }
+
+    if (deposit) {
+      paymentMethods.push('deposit')
+    }
+
+    // paymant_methods.forEach((item) => {
+    //   filterPaymantDuplicates.add(item)
+    // })
+
+    // const filterPaymantDuplicates = new Set()
+
+    // const paymentMethods = [...filterPaymantDuplicates.values()]
+
+    console.log('paymentMethods => ', paymentMethods)
 
     try {
       setIsLoading(true)
@@ -229,6 +257,8 @@ export function CreateAd() {
         bgColor: 'green.500',
       })
     } catch (error) {
+      console.log('Error editAd => ', error)
+
       const isAppError = error instanceof AppError
       const title = isAppError
         ? error.message

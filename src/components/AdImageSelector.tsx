@@ -54,29 +54,32 @@ export function AdImageSelector() {
   }
 
   function handleDeleteImage(item) {
-    console.log('Item para deletar => ', item)
+    // console.log('Item para deletar => ', item)
 
-    // if (item.path) {
-    //   setImagesToDelete((prevState) => [...prevState, item.id])
-    // }
+    if (item.path) {
+      setImagesToDelete((prevState) => [...prevState, item.id])
+    }
 
-    // setImages((prevState) =>
-    //   prevState.filter((image) => {
-    //     if (image.path) {
-    //       return image.path !== item?.path
-    //     }
-    //     if (image.assets[0]) {
-    //       if (item?.path) {
-    //         return true
-    //       }
+    setImages((prevState) =>
+      prevState.filter((image) => {
+        if (image.path) {
+          return image.path !== item?.path
+        }
+        if (image.assets[0]) {
+          if (item?.path) {
+            return true
+          }
 
-    //       return image.assets[0].uri !== item?.assets[0].uri
-    //     }
-    //   }),
-    // )
+          return image.assets[0].uri !== item?.assets[0].uri
+        }
+      }),
+    )
 
-    if (item?.assets[0]) {
-      // console.log(item.assets[0])
+    if (
+      // item?.assets[0]
+      !item.path
+    ) {
+      // console.log('item.assets[0] => ', item.assets[0])
 
       setCreateAdImage((prevState: any) => {
         return prevState.filter(
@@ -88,7 +91,7 @@ export function AdImageSelector() {
 
   useFocusEffect(
     useCallback(() => {
-      console.log('editAdData =>', editAdData)
+      // console.log('editAdData =>', editAdData)
 
       if (editAdData.images) {
         setImages(editAdData.images)
