@@ -44,6 +44,8 @@ export function SignUp() {
 
   const navigation = useNavigation<AuthNavigatorRoutesProps>()
 
+  const phoneRegExp = /^(?:[0-9] ?){6,14}[0-9]$/
+
   const signUpSchema = yup
     .object({
       name: yup.string().required('Informe o nome'),
@@ -51,7 +53,7 @@ export function SignUp() {
       tel: yup
         .string()
         .required('Informe o número de telefone')
-        .min(7, 'Informe o número de telefone correto.'),
+        .matches(phoneRegExp, 'Caracteres inválidos'),
       password: yup
         .string()
         .min(6, 'A senha deve ter 6 caracteres no mínimo.')
@@ -114,7 +116,7 @@ export function SignUp() {
       userForm.append('avatar', photoFile)
       userForm.append('name', name)
       userForm.append('email', email)
-      userForm.append('tel', tel)
+      userForm.append('tel', tel.toString())
       userForm.append('password', password)
 
       await api.post('/users', userForm, {
@@ -234,7 +236,7 @@ export function SignUp() {
                 onChangeText={onChange}
                 keyboardType="numeric"
                 value={value}
-                errorMessage={errors.phone?.message}
+                errorMessage={errors.tel?.message}
               />
             )}
           />
