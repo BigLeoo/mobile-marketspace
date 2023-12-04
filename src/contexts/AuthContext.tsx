@@ -8,11 +8,11 @@ import { storageAuthTokenRemove, storageTokenRefreshTokenGet, storageTokenRefres
 
 export type AuthContextDataProps = {
   user: UserDTO
-  userToken: string
+ 
   isLoadingUserStorageData: boolean
   signIn: (email: string, password: string) => void
   signOut: () => void
-  updateToken: (token: string) => void
+
 }
 
 type AuthContextProviderProps = {
@@ -25,7 +25,7 @@ export const AuthContext = createContext<AuthContextDataProps>(
 
 export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const [user, setUser] = useState<UserDTO>({} as UserDTO)
-  const [userToken, setUserToken] = useState<string>('')
+
 
   const [isLoadingUserStorageData, setIsLoadingUserStorageData] = useState(true)
 
@@ -33,8 +33,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     try {
       const {data} = await api.post('/sessions', { email, password })
 
-      // console.log('Refresh Token', data.refresh_token)
-
+    
       if(data.user && data.token && data.refresh_token) {
 
         setIsLoadingUserStorageData(true)
@@ -47,7 +46,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         await storageUserSave(data.user)
         
         setUser(data.user)
-        setUserToken(data.token)
+    
       }
 
     } catch (error) {
@@ -63,10 +62,10 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
       const userData = await storageUserGet()
 
-      const tokenData = await storageTokenRefreshTokenGet()
+      const {token} = await storageTokenRefreshTokenGet()
 
       setUser(userData)
-      setUserToken(tokenData.token)
+
 
     } catch (error) {
       throw error
@@ -84,9 +83,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     }
   }
 
-  async function updateToken(token: string){
-    setUserToken(token)
-  }
+
 
 
   useEffect(() => {
@@ -106,10 +103,10 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
       value={{
         user,
         signIn,
-        userToken,
+
         signOut,
         isLoadingUserStorageData,
-        updateToken
+  
       }}
     >
       {children}

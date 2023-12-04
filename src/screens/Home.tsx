@@ -90,26 +90,20 @@ export function Home() {
   }: FormDataProps) {
     // console.log(is_new, is_used, accept_trade)
 
-    const paymant_methods = []
+    const paymant_methods: string[] = []
 
-    if (boleto) {
-      paymant_methods.push('boleto')
+    const paymentOptions = {
+      boleto,
+      pix,
+      card,
+      cash,
+      deposit,
     }
 
-    if (pix) {
-      paymant_methods.push('pix')
-    }
-
-    if (card) {
-      paymant_methods.push('card')
-    }
-
-    if (cash) {
-      paymant_methods.push('cash')
-    }
-
-    if (deposit) {
-      paymant_methods.push('deposit')
+    for (const [method, isEnabled] of Object.entries(paymentOptions)) {
+      if (isEnabled) {
+        paymant_methods.push(method)
+      }
     }
 
     if (is_new === true && is_used === true) {

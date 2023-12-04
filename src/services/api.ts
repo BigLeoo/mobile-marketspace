@@ -6,8 +6,6 @@ import {
   storageTokenRefreshTokenGet,
   storageTokenRefreshTokenSave,
 } from '../storage/storageAuthToken'
-import { useAuth } from '../hooks/useAuth'
-import { err } from 'react-native-svg/lib/typescript/xml'
 
 type SignOut = () => void
 
@@ -26,14 +24,10 @@ const api = axios.create({
   timeout: 8000,
 }) as APIIntanceProps
 
-// api.defaults.headers['Content-type'] = 'application/json'
-
 let failedQueue: PromiseType[] = []
 let isRefreshing = false
 
 api.registerInterceptTokenManager = (signOut) => {
-  console.log('INTERCEPTOU')
-
   const interceptTokenManager = api.interceptors.response.use(
     (response) => response,
     async (requestError) => {
@@ -44,11 +38,7 @@ api.registerInterceptTokenManager = (signOut) => {
         ) {
           const { refreshToken } = await storageTokenRefreshTokenGet()
 
-          // console.log(refreshToken)
-
           if (!refreshToken) {
-            console.log('DESLOGANDO POR FALTA DE REFRESHTOKEN')
-
             signOut()
             return Promise.reject(requestError)
           }
@@ -73,20 +63,14 @@ api.registerInterceptTokenManager = (signOut) => {
           isRefreshing = true
 
           return new Promise(async (resolve, reject) => {
-            console.log('TENTANDO ATUALIZAR O TOKEN')
-
             try {
-              console.log(refreshToken)
-
               const { data } = await api.post('/sessions/refresh-token', {
                 refresh_token: refreshToken,
               })
 
-              console.log(data)
-
               await storageTokenRefreshTokenSave({
                 token: data.token,
-                refreshToken: data.refresh_token,
+                refreshToken,
               })
 
               if (originalRequestConfig.data) {
@@ -103,8 +87,6 @@ api.registerInterceptTokenManager = (signOut) => {
               failedQueue.forEach((request) => {
                 request.onSuccess(data.token)
               })
-
-              console.log('TOKEN ATUALIZADO!')
 
               resolve(api(originalRequestConfig))
             } catch (error: any) {

@@ -5,7 +5,7 @@ import { TouchableOpacity } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 
 import { useProducts } from '../hooks/useProducts'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { api } from '../services/api'
 import { useFocusEffect } from '@react-navigation/native'
 
@@ -54,8 +54,6 @@ export function AdImageSelector() {
   }
 
   function handleDeleteImage(item) {
-    // console.log('Item para deletar => ', item)
-
     if (item.path) {
       setImagesToDelete((prevState) => [...prevState, item.id])
     }
@@ -75,10 +73,7 @@ export function AdImageSelector() {
       }),
     )
 
-    if (
-      // item?.assets[0]
-      !item.path
-    ) {
+    if (!item.path) {
       // console.log('item.assets[0] => ', item.assets[0])
 
       setCreateAdImage((prevState: any) => {

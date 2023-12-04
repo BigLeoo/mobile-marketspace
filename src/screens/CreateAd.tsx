@@ -121,24 +121,18 @@ export function CreateAd() {
   }: FormDataProps) {
     const paymant_methods = []
 
-    if (boleto) {
-      paymant_methods.push('boleto')
+    const paymentOptions = {
+      boleto,
+      pix,
+      card,
+      cash,
+      deposit,
     }
 
-    if (pix) {
-      paymant_methods.push('pix')
-    }
-
-    if (card) {
-      paymant_methods.push('card')
-    }
-
-    if (cash) {
-      paymant_methods.push('cash')
-    }
-
-    if (deposit) {
-      paymant_methods.push('deposit')
+    for (const [method, isEnabled] of Object.entries(paymentOptions)) {
+      if (isEnabled) {
+        paymant_methods.push(method)
+      }
     }
 
     try {
@@ -196,27 +190,19 @@ export function CreateAd() {
   }: FormDataProps) {
     const paymentMethods = []
 
-    if (boleto) {
-      paymentMethods.push('boleto')
+    const paymentOptions = {
+      boleto,
+      pix,
+      card,
+      cash,
+      deposit,
     }
 
-    if (pix) {
-      paymentMethods.push('pix')
+    for (const [method, isEnabled] of Object.entries(paymentOptions)) {
+      if (isEnabled) {
+        paymentMethods.push(method)
+      }
     }
-
-    if (card) {
-      paymentMethods.push('card')
-    }
-
-    if (cash) {
-      paymentMethods.push('cash')
-    }
-
-    if (deposit) {
-      paymentMethods.push('deposit')
-    }
-
-    console.log('paymentMethods => ', paymentMethods)
 
     try {
       setIsLoading(true)

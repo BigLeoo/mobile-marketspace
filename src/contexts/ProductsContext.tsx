@@ -1,9 +1,7 @@
 /* eslint-disable prefer-const */
 /* eslint-disable no-useless-catch */
 /* eslint-disable camelcase */
-import { ReactNode, createContext, useEffect, useState } from 'react'
-
-import { useAuth } from '../hooks/useAuth'
+import { ReactNode, createContext, useState } from 'react'
 
 import { api } from '../services/api'
 
@@ -13,6 +11,7 @@ import { AddDTO } from '../dtos/addDTO'
 import { productImageDTO } from '../dtos/productImageDTO'
 import { adImageDTO } from '../dtos/adImageDTO'
 import { addDetailDTO } from '../dtos/addDetailDTO'
+import { storageTokenRefreshTokenGet } from '../storage/storageAuthToken'
 
 type editAdDataType = {
   id: string
@@ -87,8 +86,6 @@ export const ProductsContext = createContext<ProductsContextDataProps>(
 export function ProductsContextProvider({
   children,
 }: ProductsContextProviderProps) {
-  const { userToken } = useAuth()
-
   const [createAdImage, setCreateAdImage] = useState<adImageDTO[]>([])
 
   const [imagesToDelete, setImagesToDelete] = useState<imagesToDelete[]>([])
@@ -106,6 +103,8 @@ export function ProductsContextProvider({
     payment_methods: paymantMethodsDTO[],
   ) {
     try {
+      const { token } = await storageTokenRefreshTokenGet()
+
       const { data } = await api.post(
         '/products',
         {
@@ -118,7 +117,7 @@ export function ProductsContextProvider({
         },
         {
           headers: {
-            Authorization: `Bearer ${userToken}`,
+            Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         },
@@ -132,6 +131,8 @@ export function ProductsContextProvider({
 
   async function imageCreateProduct(productId: string, adImages: adImageDTO[]) {
     try {
+      const { token } = await storageTokenRefreshTokenGet()
+
       const productImageForm = new FormData()
 
       productImageForm.append('product_id', productId)
@@ -150,7 +151,7 @@ export function ProductsContextProvider({
 
       await api.post('/products/images', productImageForm, {
         headers: {
-          Authorization: `Bearer ${userToken}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',
         },
       })
@@ -163,6 +164,8 @@ export function ProductsContextProvider({
 
   async function deleteImage(imageIds: string[]) {
     try {
+      const { token } = await storageTokenRefreshTokenGet()
+
       const imagesToDelete = { productImagesIds: imageIds }
 
       // console.log('imageToDelete => ', imagesToDelete)
@@ -170,7 +173,7 @@ export function ProductsContextProvider({
       api.delete(`/products/images/`, {
         data: imagesToDelete,
         headers: {
-          Authorization: `Bearer ${userToken}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       })
@@ -185,12 +188,14 @@ export function ProductsContextProvider({
 
   async function changeAdStatus(id: string, is_active: boolean) {
     try {
+      const { token } = await storageTokenRefreshTokenGet()
+
       await api.patch(
         `/products/${id}`,
         { is_active },
         {
           headers: {
-            Authorization: `Bearer ${userToken}`,
+            Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         },
@@ -210,6 +215,8 @@ export function ProductsContextProvider({
     payment_methods: paymantMethodsDTO[],
   ) {
     try {
+      const { token } = await storageTokenRefreshTokenGet()
+
       api.put(
         `products/${id}`,
         {
@@ -222,7 +229,7 @@ export function ProductsContextProvider({
         },
         {
           headers: {
-            Authorization: `Bearer ${userToken}`,
+            Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         },
@@ -240,9 +247,11 @@ export function ProductsContextProvider({
 
   async function deleteAd(id: string) {
     try {
+      const { token } = await storageTokenRefreshTokenGet()
+
       await api.delete(`products/${id}`, {
         headers: {
-          Authorization: `Bearer ${userToken}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       })
@@ -253,8 +262,12 @@ export function ProductsContextProvider({
 
   async function fetchUserAds() {
     try {
+      const { token } = await storageTokenRefreshTokenGet()
+
       const { data } = await api.get('/users/products', {
-        headers: { Authorization: `Bearer ${userToken}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       })
 
       return data
@@ -265,8 +278,12 @@ export function ProductsContextProvider({
 
   async function fetchAds() {
     try {
+      const { token } = await storageTokenRefreshTokenGet()
+
       const { data } = await api.get('/products', {
-        headers: { Authorization: `Bearer ${userToken}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       })
 
       return data
@@ -277,8 +294,12 @@ export function ProductsContextProvider({
 
   async function fetchAdDetail(id: string) {
     try {
+      const { token } = await storageTokenRefreshTokenGet()
+
       const { data } = await api.get(`/products/${id}`, {
-        headers: { Authorization: `Bearer ${userToken}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       })
 
       return data
