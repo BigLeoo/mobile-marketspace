@@ -5,12 +5,9 @@
 
 > Marketspace is a simple marketplace plataform built with React Native & Typescript. 
 
-### Ajustes e melhorias
+### Improvments
 
-O projeto ainda está em desenvolvimento e as próximas atualizações serão voltadas nas seguintes tarefas:
+The project still in development and the next updates will focus in following tasks:
 
-- [x] Tarefa 1
-- [x] Tarefa 2
-- [x] Tarefa 3
-- [ ] Tarefa 4
-- [ ] Tarefa 5
+- [x] refresh-token
+- [ ] Performance
