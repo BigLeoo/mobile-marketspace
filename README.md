@@ -15,7 +15,7 @@ The project is still under development and the next updates will focus in follow
 ## 💻 What you need to start
 
 - An android phone (ex: Pixel 4, ..) or android emulation (ex: Android Studio)
-- Run backend 
+- Run backend: https://github.com/rocketseat-education/ignite-rn-2022-challenge-marketspace-api
 
 ## 🚀 How to install
 
