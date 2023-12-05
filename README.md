@@ -3,9 +3,9 @@
 
 ![telas markespace2](https://github.com/BigLeoo/mobile-marketspace/assets/97001094/cdd29f14-adbf-44a0-a41b-499e713976f4)
 
-### Ajustes e melhorias
+> Marketspace is a simple marketplace plataform built with React Native & Typescript. 
 
-> Linha adicional de texto informativo sobre o que o projeto faz. Sua introdução deve ter cerca de 2 ou 3 linhas. Não exagere, as pessoas não vão ler.
+### Ajustes e melhorias
 
 O projeto ainda está em desenvolvimento e as próximas atualizações serão voltadas nas seguintes tarefas:
 
