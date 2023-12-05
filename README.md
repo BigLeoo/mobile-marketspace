@@ -21,12 +21,12 @@
 - Filter Ads
 - Fetch User Ads
 - Fetch Ad Detail
+- token and refresh-token
 
 ### 🪛 Improvments
 
 The project is still under development and the next updates will focus in following tasks:
 
-- [x] refresh-token
 - [ ] Performance
 
 ## 💻 What you need to start
