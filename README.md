@@ -1,6 +1,6 @@
 # Mobile Marketspace
 ![GitHub repo size](https://img.shields.io/github/repo-size/BigLeoo/README-template?style=for-the-badge)
-![GitHub repo size](https://img.shields.io/github/repo-size/BigLeoo/mobile-marketspace)
+![GitHub repo size](https://img.shields.io/github/repo-size/BigLeoo/mobile-marketspace?style=for-the-badge)
 
 
 
