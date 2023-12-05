@@ -11,3 +11,26 @@ The project is still under development and the next updates will focus in follow
 
 - [x] refresh-token
 - [ ] Performance
+
+## 💻 What you need to start
+
+- An android (ex: Pixel 4, ..) or android emulation (ex: Android Studio) 
+
+## 🚀 How to install
+
+For the first time you will need to run:
+```
+yarn
+```
+
+or
+
+```
+npm install
+```
+
+and every time to start the project:
+
+```
+npx expo start
+```
