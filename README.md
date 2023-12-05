@@ -14,7 +14,8 @@ The project is still under development and the next updates will focus in follow
 
 ## 💻 What you need to start
 
-- An android (ex: Pixel 4, ..) or android emulation (ex: Android Studio) 
+- An android phone (ex: Pixel 4, ..) or android emulation (ex: Android Studio)
+- Run backend 
 
 ## 🚀 How to install
 
