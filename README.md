@@ -11,7 +11,18 @@
 - TypeScript
 - Expo
 
-### Improvments
+### 🧨 Challanges
+
+- SignIn and SignUp
+- Create Ad
+- Edit Ad
+- Delete Ad
+- Change Ad Status
+- Filter Ads
+- Fetch User Ads
+- Fetch Ad Detail
+
+### 🪛 Improvments
 
 The project is still under development and the next updates will focus in following tasks:
 
