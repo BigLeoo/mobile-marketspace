@@ -7,7 +7,7 @@
 
 ### Improvments
 
-The project still in development and the next updates will focus in following tasks:
+The project is still under development and the next updates will focus in following tasks:
 
 - [x] refresh-token
 - [ ] Performance
